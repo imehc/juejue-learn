@@ -80,5 +80,5 @@ export class User {
 
   @ManyToMany(() => Role)
   @JoinTable({ name: 'user_roles' /** 中间表名称 */ })
-  role: Role[];
+  roles: Role[];
 }
