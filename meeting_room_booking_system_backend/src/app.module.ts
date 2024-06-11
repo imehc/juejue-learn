@@ -11,8 +11,8 @@ import { Permission } from './user/entities/permission.entity';
 import { RedisModule } from './redis/redis.module';
 import { EmailModule } from './email/email.module';
 import { APP_GUARD } from '@nestjs/core';
-import { LoginGuard } from './login.guard';
-import { PermissionGuard } from './permission.guard';
+import { LoginGuard } from './helper/login.guard';
+import { PermissionGuard } from './helper/permission.guard';
 
 @Module({
   imports: [

@@ -10,6 +10,14 @@ import { Permission } from './entities/permission.entity';
 import { LoginUserDto } from './dto/login-user.dto';
 import { ApiException } from 'src/helper/exception/api.exception';
 import { LoginUserVo } from './vo/login-user.vo';
+import { UserDetailVo } from './vo/user-info.vo';
+import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
+import {
+  REGISTER_CAPTCHA,
+  UPDATE_PASSWORD_CAPTCHA,
+  UPDATE_USER_CAPTCHA,
+} from 'src/helper/consts';
+import { UpdateUserDto } from './dto/udpate-user.dto';
 
 @Injectable()
 export class UserService {
@@ -28,14 +36,24 @@ export class UserService {
   private redisService: RedisService;
 
   async register(user: RegisterUserDto) {
-    const captcha = await this.redisService.get(`captcha_${user.email}`);
+    const captcha = await this.redisService.get(REGISTER_CAPTCHA(user.email));
 
-    if (!captcha) {
-      throw new ApiException('验证码已失效', HttpStatus.BAD_REQUEST);
-    }
+    // if (!captcha) {
+    //   throw new ApiException('验证码已失效', HttpStatus.BAD_REQUEST);
+    // }
     // 用户填写的验证码与redis验证码比较
-    if (user.captcha !== captcha) {
+    if (!captcha || user.captcha !== captcha) {
       throw new ApiException('验证码不正确', HttpStatus.BAD_REQUEST);
+    }
+
+    const u = await this.userRepository.findOne({
+      where: { email: user.email },
+    });
+    if (u) {
+      throw new ApiException(
+        '邮箱已存在，换个邮箱试试吧',
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     const foundUser = await this.userRepository.findOneBy({
@@ -58,6 +76,8 @@ export class UserService {
     } catch (e) {
       this.logger.error(e, UserService);
       return '注册失败';
+    } finally {
+      this.redisService.del(REGISTER_CAPTCHA(user.email));
     }
   }
 
@@ -128,6 +148,95 @@ export class UserService {
         return arr;
       }, []),
     };
+  }
+
+  async updatePassword(userId: number, passwordDto: UpdateUserPasswordDto) {
+    const u = await this.findUserDetailById(userId);
+    if (u.email !== passwordDto.email) {
+      throw new ApiException('邮箱与绑定邮箱不一致', HttpStatus.BAD_REQUEST);
+    }
+
+    const captcha = await this.redisService.get(
+      UPDATE_PASSWORD_CAPTCHA(passwordDto.email),
+    );
+
+    if (!captcha || passwordDto.captcha !== captcha) {
+      throw new ApiException('验证码不正确', HttpStatus.BAD_REQUEST);
+    }
+
+    const foundUser = await this.userRepository.findOneBy({
+      id: userId,
+    });
+
+    foundUser.password = md5(passwordDto.password);
+
+    try {
+      await this.userRepository.save(foundUser);
+      return '密码修改成功';
+    } catch (e) {
+      this.logger.error(e, UserService);
+      return '密码修改失败';
+    } finally {
+      this.redisService.del(UPDATE_PASSWORD_CAPTCHA(passwordDto.email));
+    }
+  }
+
+  async findUserDetailById(userId: number) {
+    const user = await this.userRepository.findOne({
+      where: {
+        id: userId,
+      },
+    });
+
+    const vo = new UserDetailVo();
+    vo.id = user.id;
+    vo.email = user.email;
+    vo.username = user.username;
+    vo.headPic = user.headPic;
+    vo.phoneNumber = user.phoneNumber;
+    vo.nickName = user.nickName;
+    vo.createAt = user.createAt;
+    vo.isFrozen = user.isFrozen;
+
+    return vo;
+  }
+
+  async update(userId: number, updateUserDto: UpdateUserDto) {
+    const u = await this.findUserDetailById(userId);
+    if (u.email !== updateUserDto.email) {
+      throw new ApiException('邮箱与绑定邮箱不一致', HttpStatus.BAD_REQUEST);
+    }
+
+    const captcha = await this.redisService.get(
+      UPDATE_USER_CAPTCHA(updateUserDto.email),
+    );
+
+    if (!captcha || updateUserDto.captcha !== captcha) {
+      throw new ApiException('验证码不正确', HttpStatus.BAD_REQUEST);
+    }
+
+    const foundUser = await this.userRepository.findOneBy({
+      id: userId,
+    });
+
+    // 更新昵称
+    if (updateUserDto.nickName) {
+      foundUser.nickName = updateUserDto.nickName;
+    }
+    // 更新头像
+    if (updateUserDto.headPic) {
+      foundUser.headPic = updateUserDto.headPic;
+    }
+
+    try {
+      await this.userRepository.save(foundUser);
+      return '用户信息修改成功';
+    } catch (e) {
+      this.logger.error(e, UserService);
+      return '用户信息修改成功';
+    } finally {
+      this.redisService.del(UPDATE_USER_CAPTCHA(updateUserDto.email));
+    }
   }
 
   async initData() {

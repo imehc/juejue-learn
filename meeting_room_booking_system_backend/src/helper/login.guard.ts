@@ -6,26 +6,10 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
-import { Permission } from './user/entities/permission.entity';
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
-import { LOGIN_METADATA } from './helper/consts';
-
-export interface JwtUserData {
-  userId: number;
-  username: string;
-  roles: string[];
-  permissions: Permission[];
-}
-
-declare global {
-  interface Request {
-    user: JwtUserData;
-  }
-  interface Headers {
-    authorization?: string;
-  }
-}
+import { LOGIN_METADATA } from './consts';
+import { JwtUserData } from '.';
 
 @Injectable()
 export class LoginGuard implements CanActivate {

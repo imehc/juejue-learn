@@ -5,7 +5,7 @@ import {
   RequirePermission,
   UserInfo,
 } from './helper/custom.decorator';
-import { JwtUserData } from './login.guard';
+import { JwtUserData } from './helper';
 
 @Controller()
 export class AppController {
