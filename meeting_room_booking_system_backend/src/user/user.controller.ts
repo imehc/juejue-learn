@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  DefaultValuePipe,
   Get,
   HttpCode,
   HttpStatus,
@@ -26,10 +27,11 @@ import {
   UPDATE_USER_CAPTCHA,
 } from 'src/helper/consts';
 import { UpdateUserDto } from './dto/udpate-user.dto';
+import { generateParseIntPipe } from 'src/helper/utils';
 
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly userService: UserService) { }
 
   @Inject(EmailService)
   private emailService: EmailService;
@@ -174,6 +176,26 @@ export class UserController {
     @Body() updateUserDto: UpdateUserDto,
   ) {
     return await this.userService.update(userId, updateUserDto);
+  }
+
+  /** 冻结用户 */
+  @Get('freeze')
+  async freeze(@Query('id') userId: number) {
+    await this.userService.freezeUserById(userId);
+    return 'success';
+  }
+
+  /** 用户列表 */
+  @Get('list')
+  async list(
+    // 默认值
+    @Query('skip', new DefaultValuePipe(1), generateParseIntPipe('skip')) skip: number,
+    @Query('limit', new DefaultValuePipe(2), generateParseIntPipe("limit")) limit: number,
+    @Query('username') username: string,
+    @Query('nickName') nickName: string,
+    @Query('email') email: string
+  ) {
+    return await this.userService.findUsers(username, nickName, email, limit, skip);
   }
 
   private handleJwt({

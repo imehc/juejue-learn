@@ -18,3 +18,10 @@ declare global {
     authorization?: string;
   }
 }
+
+/** 返回统一的返回格式 */
+export interface UnifiledResponse<T> {
+  code: number;
+  message: 'success' | 'fail';
+  data: T;
+}

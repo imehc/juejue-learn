@@ -1,10 +1,9 @@
 import { HttpStatus, Inject, Injectable, Logger } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { RedisService } from 'src/redis/redis.service';
-import { md5 } from 'src/utils';
 import { Role } from './entities/role.entity';
 import { Permission } from './entities/permission.entity';
 import { LoginUserDto } from './dto/login-user.dto';
@@ -18,6 +17,7 @@ import {
   UPDATE_USER_CAPTCHA,
 } from 'src/helper/consts';
 import { UpdateUserDto } from './dto/udpate-user.dto';
+import { md5 } from 'src/helper/utils';
 
 @Injectable()
 export class UserService {
@@ -236,6 +236,57 @@ export class UserService {
       return '用户信息修改成功';
     } finally {
       this.redisService.del(UPDATE_USER_CAPTCHA(updateUserDto.email));
+    }
+  }
+
+  async freezeUserById(id: number) {
+    const user = await this.userRepository.findOneBy({
+      id
+    });
+    user.isFrozen = true;
+
+    await this.userRepository.save(user);
+  }
+
+  async findUsersByPage(limit: number, skip: number) {
+    const skipCount = (skip - 1) * limit;
+    // 查找与给定查找选项匹配的实体。还计算匹配给定条件的所有实体，但忽略分页设置(from和take选项)
+    const [users, total] = await this.userRepository.findAndCount({
+      select: ['id', 'username', 'nickName', 'email', 'phoneNumber', 'isFrozen', 'headPic', 'createAt'],
+      skip: skipCount,
+      take: limit
+    });
+    return {
+      users,
+      total
+    }
+  }
+
+  async findUsers(username: string, nickName: string, email: string, limit: number, skip: number) {
+    // TODO: 优雅处理参数
+    limit = limit > 100 ? 100 : limit;
+    skip = skip < 1 ? 1 : skip;
+    const skipCount = (skip - 1) * limit;
+    const condition: Record<string, any> = {};
+    if (username) {
+      condition.username = Like(`%${username}%`);
+    }
+    if (nickName) {
+      condition.nickName = Like(`%${nickName}%`);
+    }
+    if (email) {
+      condition.email = Like(`%${email}%`);
+    }
+    const [users, total] = await this.userRepository.findAndCount({
+      select: ['id', 'username', 'nickName', 'email', 'phoneNumber', 'isFrozen', 'headPic', 'createAt'],
+      skip: skipCount,
+      take: limit,
+      where: condition
+    });
+
+    return {
+      users,
+      total
     }
   }
 
