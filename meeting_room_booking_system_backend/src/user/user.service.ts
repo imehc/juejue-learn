@@ -1,4 +1,10 @@
-import { HttpStatus, Inject, Injectable, Logger } from '@nestjs/common';
+import {
+  HttpStatus,
+  Inject,
+  Injectable,
+  Logger,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { Like, Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -18,6 +24,7 @@ import {
 } from 'src/helper/consts';
 import { UpdateUserDto } from './dto/udpate-user.dto';
 import { md5 } from 'src/helper/utils';
+import { UserListVo } from './vo/user-list.vo';
 
 @Injectable()
 export class UserService {
@@ -239,35 +246,56 @@ export class UserService {
     }
   }
 
-  async freezeUserById(id: number) {
-    const user = await this.userRepository.findOneBy({
-      id
+  async freezeUserById(id: number, userId: number) {
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    if (!user?.isFrozen) {
+      throw new UnauthorizedException('你没有该权限冻结此用户');
+    }
+    const freezeUser = await this.userRepository.findOneBy({
+      id,
     });
-    user.isFrozen = true;
+    freezeUser.isFrozen = true;
 
-    await this.userRepository.save(user);
+    await this.userRepository.save(freezeUser);
   }
 
+  /** @deprecated */
   async findUsersByPage(limit: number, skip: number) {
     const skipCount = (skip - 1) * limit;
     // 查找与给定查找选项匹配的实体。还计算匹配给定条件的所有实体，但忽略分页设置(from和take选项)
-    const [users, total] = await this.userRepository.findAndCount({
-      select: ['id', 'username', 'nickName', 'email', 'phoneNumber', 'isFrozen', 'headPic', 'createAt'],
+    const [users, totalCount] = await this.userRepository.findAndCount({
+      select: [
+        'id',
+        'username',
+        'nickName',
+        'email',
+        'phoneNumber',
+        'isFrozen',
+        'headPic',
+        'createAt',
+      ],
       skip: skipCount,
-      take: limit
+      take: limit,
     });
-    return {
-      users,
-      total
-    }
+    const vo = new UserListVo();
+    vo.users = users;
+    vo.totalCount = totalCount;
+    return vo;
   }
 
-  async findUsers(username: string, nickName: string, email: string, limit: number, skip: number) {
+  async findUsers(
+    username: string,
+    nickName: string,
+    email: string,
+    limit: number,
+    skip: number,
+  ) {
     // TODO: 优雅处理参数
     limit = limit > 100 ? 100 : limit;
     skip = skip < 1 ? 1 : skip;
     const skipCount = (skip - 1) * limit;
     const condition: Record<string, any> = {};
+    // 模糊搜索
     if (username) {
       condition.username = Like(`%${username}%`);
     }
@@ -277,17 +305,26 @@ export class UserService {
     if (email) {
       condition.email = Like(`%${email}%`);
     }
-    const [users, total] = await this.userRepository.findAndCount({
-      select: ['id', 'username', 'nickName', 'email', 'phoneNumber', 'isFrozen', 'headPic', 'createAt'],
+    const [users, totalCount] = await this.userRepository.findAndCount({
+      select: [
+        'id',
+        'username',
+        'nickName',
+        'email',
+        'phoneNumber',
+        'isFrozen',
+        'headPic',
+        'createAt',
+      ],
       skip: skipCount,
       take: limit,
-      where: condition
+      where: condition,
     });
 
-    return {
-      users,
-      total
-    }
+    const vo = new UserListVo();
+    vo.users = users;
+    vo.totalCount = totalCount;
+    return vo;
   }
 
   async initData() {

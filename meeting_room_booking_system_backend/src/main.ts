@@ -1,7 +1,8 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ValidationPipe } from '@nestjs/common';
+import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { FormatResponseInterceptor } from './helper/format-response.interceptor';
 import { InvokeRecordInterceptor } from './helper/invoke-record.interceptor';
 import { UnloginFilter } from './helper/unlogin.filter';
@@ -17,7 +18,22 @@ async function bootstrap() {
   app.useGlobalFilters(new UnloginFilter());
   app.useGlobalFilters(new CustomExceptionFilter());
 
+  initConfig(app);
+
   const configService = app.get(ConfigService);
   await app.listen(configService.get('nest_server_port'));
 }
 bootstrap();
+
+function initConfig(app: INestApplication<any>) {
+  // 减少模版代码参考 https://docs.nestjs.com/openapi/cli-plugin#using-the-cli-plugin
+  const config = new DocumentBuilder()
+    .setTitle('会议室预订系统')
+    .setDescription('api 接口文档')
+    .setVersion('1.0')
+    .addBearerAuth({ type: 'http', description: '基于jwt的认证' })
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
+  // http://localhost:6020/api-doc
+  SwaggerModule.setup('api-doc', app, document);
+}
