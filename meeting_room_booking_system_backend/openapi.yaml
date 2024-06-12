@@ -1,0 +1,622 @@
+openapi: 3.0.0
+paths:
+  /:
+    get:
+      operationId: AppController_getHello
+      parameters: []
+      responses:
+        '200':
+          description: ''
+  /aaa:
+    get:
+      operationId: AppController_aaaa
+      parameters: []
+      responses:
+        '200':
+          description: ''
+  /bbb:
+    get:
+      operationId: AppController_bbb
+      parameters: []
+      responses:
+        '200':
+          description: ''
+  /user/register-captcha:
+    get:
+      operationId: register-captcha
+      summary: 获取注册验证码
+      tags:
+        - captcha
+      parameters:
+        - name: address
+          required: true
+          in: query
+          description: 邮箱地址
+          example: xxx@xx.com
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 发送成功
+          content:
+            application/json:
+              schema:
+                type: string
+  /user/update-password/captcha:
+    get:
+      operationId: update-password-captcha
+      summary: 获取更改密码验证码
+      tags:
+        - captcha
+      parameters:
+        - name: address
+          required: true
+          in: query
+          description: 邮箱地址
+          schema:
+            type: string
+      responses:
+        default:
+          description: 发送成功
+          content:
+            application/json:
+              schema:
+                type: string
+      security:
+        - bearer: []
+  /user/update/captcha:
+    get:
+      operationId: update-user-info-captcha
+      summary: 获取更新用户信息验证码
+      tags:
+        - captcha
+        - user
+      parameters:
+        - name: address
+          required: true
+          in: query
+          description: 邮箱地址
+          schema:
+            type: string
+      responses:
+        default:
+          description: 发送成功
+          content:
+            application/json:
+              schema:
+                type: string
+      security:
+        - bearer: []
+  /user/register:
+    post:
+      operationId: user-register
+      summary: 注册用户
+      tags:
+        - user
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterUserDto'
+      responses:
+        '200':
+          description: 注册成功/失败
+          content:
+            application/json:
+              schema:
+                type: string
+        '400':
+          description: 验证码已失效/验证码不正确/用户已存在
+          content:
+            application/json:
+              schema:
+                type: string
+  /user/login:
+    post:
+      operationId: user-login
+      summary: 普通用户登录
+      tags:
+        - user
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginUserDto'
+      responses:
+        '200':
+          description: 用户信息和token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginUserVo'
+        '400':
+          description: 用户不存在/密码错误
+          content:
+            application/json:
+              schema:
+                type: string
+  /user/admin/login:
+    post:
+      operationId: system-user-login
+      summary: 管理员登录
+      tags:
+        - user
+        - system-user
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginUserDto'
+      responses:
+        '200':
+          description: 用户信息和token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginUserVo'
+        '400':
+          description: 用户不存在/密码错误
+          content:
+            application/json:
+              schema:
+                type: string
+  /user/refresh:
+    get:
+      operationId: refresh-token
+      summary: 普通用户使用refreshToken换取新token
+      tags:
+        - auth
+      parameters:
+        - name: refreshToken
+          required: true
+          in: query
+          description: 刷新token
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 刷新成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Auth'
+        '401':
+          description: token 已失效，请重新登录
+  /user/admin/refresh:
+    get:
+      operationId: refresh-admin-token
+      summary: 管理员使用refreshToken换取新token
+      tags:
+        - auth
+        - system-user
+      parameters:
+        - name: refreshToken
+          required: true
+          in: query
+          description: 刷新token
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 刷新成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Auth'
+        '401':
+          description: token 已失效，请重新登录
+  /user/info:
+    get:
+      operationId: get-user-info
+      summary: 获取用户/管理员信息
+      tags:
+        - user
+        - system-user
+      parameters: []
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDetailVo'
+      security:
+        - bearer: []
+  /user/update-password:
+    post:
+      operationId: update-password
+      summary: 用户更新密码
+      tags:
+        - user
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserPasswordDto'
+      responses:
+        default:
+          description: 验证码已失效/不正确
+          content:
+            application/json:
+              schema:
+                type: string
+      security:
+        - bearer: []
+  /user/admin/update-password:
+    post:
+      operationId: update-system-password
+      summary: 管理员更新密码
+      tags:
+        - user
+        - system-user
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserPasswordDto'
+      responses:
+        default:
+          description: 验证码已失效/不正确
+          content:
+            application/json:
+              schema:
+                type: string
+      security:
+        - bearer: []
+  /user/update:
+    post:
+      operationId: update-user-info
+      summary: 用户更新用户信息
+      tags:
+        - user
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserDto'
+      responses:
+        '200':
+          description: 更新成功
+          content:
+            application/json:
+              schema:
+                type: string
+        '400':
+          description: 验证码不正确/已失效
+      security:
+        - bearer: []
+  /user/admin/update:
+    post:
+      operationId: update-system-user-info
+      summary: 管理员更新管理员信息
+      tags:
+        - user
+        - system-user
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserDto'
+      responses:
+        '200':
+          description: 更新成功
+          content:
+            application/json:
+              schema:
+                type: string
+        '400':
+          description: 验证码不正确/已失效
+      security:
+        - bearer: []
+  /user/freeze/{id}:
+    put:
+      operationId: freeze-user
+      summary: 冻结用户
+      tags:
+        - system-user
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: 冻结用户的用户ID
+          schema:
+            type: number
+      responses:
+        default:
+          description: success
+          content:
+            application/json:
+              schema:
+                type: string
+      security:
+        - bearer: []
+  /user/list:
+    get:
+      operationId: get-user-list
+      summary: 用户列表
+      tags:
+        - user
+      parameters:
+        - name: skip
+          required: true
+          in: query
+          description: 第几页
+          schema:
+            type: number
+        - name: limit
+          required: true
+          in: query
+          description: 每页多少条
+          schema:
+            type: number
+        - name: username
+          required: false
+          in: query
+          description: 用户名
+          schema:
+            type: string
+        - name: nickName
+          required: false
+          in: query
+          description: 昵称
+          schema:
+            type: string
+        - name: email
+          required: false
+          in: query
+          description: 邮箱地址
+          schema:
+            type: string
+      responses:
+        default:
+          description: 用户列表
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserListVo'
+      security:
+        - bearer: []
+  /user/init-data:
+    get:
+      operationId: UserController_initData
+      summary: ''
+      deprecated: true
+      parameters: []
+      responses:
+        '200':
+          description: ''
+info:
+  title: 会议室预订系统
+  description: api 接口文档
+  version: '1.0'
+  contact: {}
+tags: []
+servers: []
+components:
+  securitySchemes:
+    bearer:
+      scheme: bearer
+      bearerFormat: JWT
+      type: http
+      description: 基于jwt的认证
+  schemas:
+    RegisterUserDto:
+      type: object
+      properties:
+        username:
+          type: string
+        nickName:
+          type: string
+        password:
+          type: string
+        email:
+          type: string
+        captcha:
+          type: string
+      required:
+        - username
+        - nickName
+        - password
+        - email
+        - captcha
+    LoginUserDto:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+      required:
+        - username
+        - password
+    UserInfo:
+      type: object
+      properties:
+        id:
+          type: number
+        username:
+          type: string
+          example: zhangsan
+        nickName:
+          type: string
+          example: 张三
+        email:
+          type: string
+          example: xx@xx.com
+        headPic:
+          type: string
+          example: xxx.png
+        phoneNumber:
+          type: string
+          example: '13233333333'
+        isFrozen:
+          type: boolean
+        isAdmin:
+          type: boolean
+        createAt:
+          format: date-time
+          type: string
+        roles:
+          example:
+            - 管理员
+          type: array
+          items:
+            type: string
+        permissions:
+          example: query_aaa
+          type: array
+          items:
+            type: string
+      required:
+        - id
+        - username
+        - nickName
+        - email
+        - headPic
+        - phoneNumber
+        - isFrozen
+        - isAdmin
+        - createAt
+        - roles
+        - permissions
+    Auth:
+      type: object
+      properties:
+        accessToken:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.
+        refreshToken:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9
+        expiresIn:
+          type: number
+          example: '1800000'
+      required:
+        - accessToken
+        - refreshToken
+        - expiresIn
+    LoginUserVo:
+      type: object
+      properties:
+        userInfo:
+          $ref: '#/components/schemas/UserInfo'
+        auth:
+          $ref: '#/components/schemas/Auth'
+      required:
+        - userInfo
+        - auth
+    UserDetailVo:
+      type: object
+      properties:
+        id:
+          type: number
+        username:
+          type: string
+        nickName:
+          type: string
+        email:
+          type: string
+        headPic:
+          type: string
+        phoneNumber:
+          type: string
+        isFrozen:
+          type: boolean
+        createAt:
+          format: date-time
+          type: string
+      required:
+        - id
+        - username
+        - nickName
+        - email
+        - headPic
+        - phoneNumber
+        - isFrozen
+        - createAt
+    UpdateUserPasswordDto:
+      type: object
+      properties:
+        password:
+          type: string
+        email:
+          type: string
+        captcha:
+          type: string
+      required:
+        - password
+        - email
+        - captcha
+    UpdateUserDto:
+      type: object
+      properties:
+        headPic:
+          type: string
+        nickName:
+          type: string
+        email:
+          type: string
+        captcha:
+          type: string
+      required:
+        - headPic
+        - nickName
+        - email
+        - captcha
+    User:
+      type: object
+      properties:
+        id:
+          type: number
+        username:
+          type: string
+        nickName:
+          type: string
+        email:
+          type: string
+        phoneNumber:
+          type: string
+        isFrozen:
+          type: boolean
+        headPic:
+          type: string
+        createAt:
+          format: date-time
+          type: string
+      required:
+        - id
+        - username
+        - nickName
+        - email
+        - phoneNumber
+        - isFrozen
+        - headPic
+        - createAt
+    UserListVo:
+      type: object
+      properties:
+        users:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+        totalCount:
+          type: number
+      required:
+        - users
+        - totalCount

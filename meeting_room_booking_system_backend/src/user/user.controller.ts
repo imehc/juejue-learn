@@ -37,12 +37,11 @@ import {
   ApiParam,
   ApiQuery,
   ApiResponse,
-  ApiTags,
 } from '@nestjs/swagger';
 import { UserDetailVo } from './vo/user-info.vo';
 import { UserListVo } from './vo/user-list.vo';
 
-@ApiTags('用户管理模块')
+// @ApiTags('用户管理模块') // 注意：使用这个会导致使用openAPI generate失败
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -70,7 +69,11 @@ export class UserController {
     description: '发送成功',
     type: String,
   })
-  @ApiOperation({ summary: '获取注册验证码' })
+  @ApiOperation({
+    summary: '获取注册验证码',
+    operationId: 'register-captcha',
+    tags: ['captcha'],
+  })
   @Get('register-captcha')
   async captcha(@Query('address') address: string) {
     await this.handleSendCode(REGISTER_CAPTCHA(address), address, {
@@ -84,9 +87,13 @@ export class UserController {
   @ApiBearerAuth()
   @ApiQuery({ name: 'address', description: '邮箱地址', type: String })
   @ApiResponse({ type: String, description: '发送成功' })
-  @ApiOperation({ summary: '获取更改密码验证码' })
+  @ApiOperation({
+    summary: '获取更改密码验证码',
+    operationId: 'update-password-captcha',
+    tags: ['captcha'],
+  })
   @RequireLogin()
-  @Get('update_password/captcha')
+  @Get('update-password/captcha')
   async updatePasswordCaptcha(@Query('address') address: string) {
     await this.handleSendCode(UPDATE_PASSWORD_CAPTCHA(address), address, {
       title: '更改密码验证码',
@@ -99,7 +106,11 @@ export class UserController {
   @ApiBearerAuth()
   @ApiQuery({ name: 'address', description: '邮箱地址', type: String })
   @ApiResponse({ type: String, description: '发送成功' })
-  @ApiOperation({ summary: '获取更新用户信息验证码' })
+  @ApiOperation({
+    summary: '获取更新用户信息验证码',
+    operationId: 'update-user-info-captcha',
+    tags: ['captcha', 'user'],
+  })
   @RequireLogin()
   @Get('update/captcha')
   async updateCaptcha(@Query('address') address: string) {
@@ -122,7 +133,11 @@ export class UserController {
     description: '注册成功/失败',
     type: String,
   })
-  @ApiOperation({ summary: '注册用户' })
+  @ApiOperation({
+    summary: '注册用户',
+    operationId: 'user-register',
+    tags: ['user'],
+  })
   @Post('register')
   @HttpCode(HttpStatus.OK)
   async register(@Body() registerUser: RegisterUserDto) {
@@ -140,7 +155,11 @@ export class UserController {
     description: '用户信息和token',
     type: LoginUserVo,
   })
-  @ApiOperation({ summary: '普通用户登录' })
+  @ApiOperation({
+    summary: '普通用户登录',
+    operationId: 'user-login',
+    tags: ['user'],
+  })
   @Post('login')
   @HttpCode(HttpStatus.OK)
   async userLogin(@Body() loginUser: LoginUserDto) {
@@ -165,7 +184,11 @@ export class UserController {
     description: '用户信息和token',
     type: LoginUserVo,
   })
-  @ApiOperation({ summary: '管理员登录' })
+  @ApiOperation({
+    summary: '管理员登录',
+    operationId: 'system-user-login',
+    tags: ['user', 'system-user'],
+  })
   @Post('admin/login')
   @HttpCode(HttpStatus.OK)
   async adminLogin(@Body() loginUser: LoginUserDto) {
@@ -194,7 +217,11 @@ export class UserController {
     description: '刷新成功',
     type: Auth,
   })
-  @ApiOperation({ summary: '普通用户使用refreshToken换取新token' })
+  @ApiOperation({
+    summary: '普通用户使用refreshToken换取新token',
+    operationId: 'refresh-token',
+    tags: ['auth'],
+  })
   @Get('refresh')
   async refresh(@Query('refreshToken') refreshToken: string) {
     try {
@@ -228,7 +255,11 @@ export class UserController {
     description: '刷新成功',
     type: Auth,
   })
-  @ApiOperation({ summary: '管理员使用refreshToken换取新token' })
+  @ApiOperation({
+    summary: '管理员使用refreshToken换取新token',
+    operationId: 'refresh-admin-token',
+    tags: ['auth', 'system-user'],
+  })
   @Get('admin/refresh')
   async adminRefresh(@Query('refreshToken') refreshToken: string) {
     try {
@@ -253,7 +284,11 @@ export class UserController {
     description: 'success',
     type: UserDetailVo,
   })
-  @ApiOperation({ summary: '获取用户/管理员信息' })
+  @ApiOperation({
+    summary: '获取用户/管理员信息',
+    operationId: 'get-user-info',
+    tags: ['user', 'system-user'],
+  })
   @Get('info')
   @RequireLogin()
   async info(@UserInfo('userId') userId: number) {
@@ -263,10 +298,32 @@ export class UserController {
   @ApiBearerAuth()
   @ApiBody({ type: UpdateUserPasswordDto })
   @ApiResponse({ type: String, description: '验证码已失效/不正确' })
-  @ApiOperation({ summary: '用户/管理员更新密码' })
-  @Post(['update_password', 'admin/update_password'])
+  @ApiOperation({
+    summary: '用户更新密码',
+    operationId: 'update-password',
+    tags: ['user'],
+  })
+  // @Post(['update-password', 'admin/update-password']) // 由于需要指定唯一operationId，所以需要拆分
+  @Post('update-password')
   @RequireLogin()
   async updatePassword(
+    @UserInfo('userId') userId: number,
+    @Body() passwordDto: UpdateUserPasswordDto,
+  ) {
+    return await this.userService.updatePassword(userId, passwordDto);
+  }
+
+  @ApiBearerAuth()
+  @ApiBody({ type: UpdateUserPasswordDto })
+  @ApiResponse({ type: String, description: '验证码已失效/不正确' })
+  @ApiOperation({
+    summary: '管理员更新密码',
+    operationId: 'update-system-password',
+    tags: ['user', 'system-user'],
+  })
+  @Post('admin/update-password')
+  @RequireLogin()
+  async updateAdminPassword(
     @UserInfo('userId') userId: number,
     @Body() passwordDto: UpdateUserPasswordDto,
   ) {
@@ -284,8 +341,12 @@ export class UserController {
     description: '更新成功',
     type: String,
   })
-  @ApiOperation({ summary: '用户/管理员更新用户/管理员信息' })
-  @Post(['update', 'admin/update'])
+  @ApiOperation({
+    summary: '用户更新用户信息',
+    operationId: 'update-user-info',
+    tags: ['user'],
+  })
+  @Post('update')
   @RequireLogin()
   async update(
     @UserInfo('userId') userId: number,
@@ -295,9 +356,38 @@ export class UserController {
   }
 
   @ApiBearerAuth()
+  @ApiBody({ type: UpdateUserDto })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: '验证码不正确/已失效',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: '更新成功',
+    type: String,
+  })
+  @ApiOperation({
+    summary: '管理员更新管理员信息',
+    operationId: 'update-system-user-info',
+    tags: ['user', 'system-user'],
+  })
+  @Post('admin/update')
+  @RequireLogin()
+  async updateAdmin(
+    @UserInfo('userId') userId: number,
+    @Body() updateUserDto: UpdateUserDto,
+  ) {
+    return await this.userService.update(userId, updateUserDto);
+  }
+
+  @ApiBearerAuth()
   @ApiParam({ name: 'id', description: '冻结用户的用户ID', type: Number })
   @ApiResponse({ type: String, description: 'success' })
-  @ApiOperation({ summary: '冻结用户' })
+  @ApiOperation({
+    summary: '冻结用户',
+    operationId: 'freeze-user',
+    tags: ['system-user'],
+  })
   @Put('freeze/:id')
   @RequireLogin()
   async freeze(
@@ -315,7 +405,11 @@ export class UserController {
   @ApiQuery({ name: 'nickName', description: '昵称', required: false })
   @ApiQuery({ name: 'email', description: '邮箱地址', required: false })
   @ApiResponse({ type: UserListVo, description: '用户列表' })
-  @ApiOperation({ summary: '用户列表' })
+  @ApiOperation({
+    summary: '用户列表',
+    operationId: 'get-user-list',
+    tags: ['user'],
+  })
   @Get('list')
   async list(
     // 默认值

@@ -7,6 +7,8 @@ import { FormatResponseInterceptor } from './helper/format-response.interceptor'
 import { InvokeRecordInterceptor } from './helper/invoke-record.interceptor';
 import { UnloginFilter } from './helper/unlogin.filter';
 import { CustomExceptionFilter } from './helper/custom-exception.filter';
+import { writeFileSync } from 'fs';
+import { dump } from 'js-yaml';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -34,6 +36,8 @@ function initConfig(app: INestApplication<any>) {
     .addBearerAuth({ type: 'http', description: '基于jwt的认证' })
     .build();
   const document = SwaggerModule.createDocument(app, config);
+  // 写入到文件
+  writeFileSync('./openapi.yaml', dump(document, {}));
   // http://localhost:6020/api-doc
   SwaggerModule.setup('api-doc', app, document);
 }
