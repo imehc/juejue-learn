@@ -56,7 +56,7 @@ paths:
           schema:
             type: string
       responses:
-        default:
+        '200':
           description: 发送成功
           content:
             application/json:
@@ -79,7 +79,7 @@ paths:
           schema:
             type: string
       responses:
-        default:
+        '200':
           description: 发送成功
           content:
             application/json:
@@ -102,7 +102,7 @@ paths:
               $ref: '#/components/schemas/RegisterUserDto'
       responses:
         '200':
-          description: 注册成功/失败
+          description: 注册成功
           content:
             application/json:
               schema:
@@ -238,6 +238,32 @@ paths:
                 $ref: '#/components/schemas/UserDetailVo'
       security:
         - bearer: []
+  /user/forgot-password:
+    post:
+      operationId: forgot-password
+      summary: 用户忘记密码
+      tags:
+        - user
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ForgotUserPasswordDto'
+      responses:
+        '200':
+          description: 找回密码成功
+          content:
+            application/json:
+              schema:
+                type: string
+        '400':
+          description: 验证码已失效/不正确
+          content:
+            application/json:
+              schema:
+                type: string
   /user/update-password:
     post:
       operationId: update-password
@@ -252,7 +278,13 @@ paths:
             schema:
               $ref: '#/components/schemas/UpdateUserPasswordDto'
       responses:
-        default:
+        '200':
+          description: 用户更新密码
+          content:
+            application/json:
+              schema:
+                type: string
+        '400':
           description: 验证码已失效/不正确
           content:
             application/json:
@@ -275,7 +307,13 @@ paths:
             schema:
               $ref: '#/components/schemas/UpdateUserPasswordDto'
       responses:
-        default:
+        '200':
+          description: 管理员更新密码成功
+          content:
+            application/json:
+              schema:
+                type: string
+        '400':
           description: 验证码已失效/不正确
           content:
             application/json:
@@ -354,7 +392,7 @@ paths:
           schema:
             type: number
       responses:
-        default:
+        '200':
           description: success
           content:
             application/json:
@@ -400,7 +438,7 @@ paths:
           schema:
             type: string
       responses:
-        default:
+        '200':
           description: 用户列表
           content:
             application/json:
@@ -567,6 +605,22 @@ components:
         - phoneNumber
         - isFrozen
         - createAt
+    ForgotUserPasswordDto:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+        email:
+          type: string
+        captcha:
+          type: number
+      required:
+        - username
+        - password
+        - email
+        - captcha
     UpdateUserPasswordDto:
       type: object
       properties:

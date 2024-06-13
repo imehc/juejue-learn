@@ -25,6 +25,7 @@ import {
 import { UpdateUserDto } from './dto/udpate-user.dto';
 import { md5 } from 'src/helper/utils';
 import { UserListVo } from './vo/user-list.vo';
+import { ForgotUserPasswordDto } from './dto/forgot-user-password.dto';
 
 @Injectable()
 export class UserService {
@@ -157,18 +158,47 @@ export class UserService {
     };
   }
 
-  async updatePassword(userId: number, passwordDto: UpdateUserPasswordDto) {
-    const u = await this.findUserDetailById(userId);
-    if (u.email !== passwordDto.email) {
-      throw new HttpException('邮箱与绑定邮箱不一致', HttpStatus.BAD_REQUEST);
-    }
-
+  async forgotPassword(passwordDto: ForgotUserPasswordDto) {
     const captcha = await this.redisService.get(
       UPDATE_PASSWORD_CAPTCHA(passwordDto.email),
     );
 
     if (!captcha || passwordDto.captcha.toString() !== captcha) {
       throw new HttpException('验证码不正确', HttpStatus.BAD_REQUEST);
+    }
+
+    const foundUser = await this.userRepository.findOne({
+      where: { username: passwordDto.username },
+    });
+    if (foundUser.email !== passwordDto.email) {
+      throw new HttpException('邮箱与绑定邮箱不一致', HttpStatus.BAD_REQUEST);
+    }
+
+    foundUser.password = md5(passwordDto.password);
+
+    try {
+      await this.userRepository.save(foundUser);
+      return '密码修改成功';
+    } catch (e) {
+      this.logger.error(e, UserService);
+      return '密码修改失败';
+    } finally {
+      this.redisService.del(UPDATE_PASSWORD_CAPTCHA(passwordDto.email));
+    }
+  }
+
+  async updatePassword(userId: number, passwordDto: UpdateUserPasswordDto) {
+    const captcha = await this.redisService.get(
+      UPDATE_PASSWORD_CAPTCHA(passwordDto.email),
+    );
+
+    if (!captcha || passwordDto.captcha.toString() !== captcha) {
+      throw new HttpException('验证码不正确', HttpStatus.BAD_REQUEST);
+    }
+
+    const u = await this.findUserDetailById(userId);
+    if (u.email !== passwordDto.email) {
+      throw new HttpException('邮箱与绑定邮箱不一致', HttpStatus.BAD_REQUEST);
     }
 
     const foundUser = await this.userRepository.findOneBy({

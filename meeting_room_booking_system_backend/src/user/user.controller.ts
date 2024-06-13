@@ -41,6 +41,7 @@ import {
 } from '@nestjs/swagger';
 import { UserDetailVo } from './vo/user-info.vo';
 import { UserListVo } from './vo/user-list.vo';
+import { ForgotUserPasswordDto } from './dto/forgot-user-password.dto';
 
 // @ApiTags('用户管理模块') // 注意：使用这个会导致使用openAPI generate失败
 @Controller('user')
@@ -94,7 +95,7 @@ export class UserController {
 
   @ApiBearerAuth()
   @ApiQuery({ name: 'address', description: '邮箱地址', type: String })
-  @ApiResponse({ type: String, description: '发送成功' })
+  @ApiResponse({ status: HttpStatus.OK, description: '发送成功', type: String })
   @ApiOperation({
     summary: '获取更改密码验证码',
     operationId: 'update-password-captcha',
@@ -120,7 +121,7 @@ export class UserController {
 
   @ApiBearerAuth()
   @ApiQuery({ name: 'address', description: '邮箱地址', type: String })
-  @ApiResponse({ type: String, description: '发送成功' })
+  @ApiResponse({ status: HttpStatus.OK, description: '发送成功', type: String })
   @ApiOperation({
     summary: '获取更新用户信息验证码',
     operationId: 'update-user-info-captcha',
@@ -152,7 +153,7 @@ export class UserController {
   })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: '注册成功/失败',
+    description: '注册成功',
     type: String,
   })
   @ApiOperation({
@@ -319,11 +320,38 @@ export class UserController {
     return await this.userService.findUserDetailById(userId);
   }
 
+  @ApiBody({ type: ForgotUserPasswordDto })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: '验证码已失效/不正确',
+    type: String,
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: '找回密码成功',
+    type: String,
+  })
+  @ApiOperation({
+    summary: '用户忘记密码',
+    operationId: 'forgot-password',
+    tags: ['user'],
+  })
+  @Post('forgot-password')
+  async forgotPassword(@Body() passwordDto: ForgotUserPasswordDto) {
+    return await this.userService.forgotPassword(passwordDto);
+  }
+
   @ApiBearerAuth()
   @ApiBody({ type: UpdateUserPasswordDto })
   @ApiResponse({
-    type: String,
+    status: HttpStatus.BAD_REQUEST,
     description: '验证码已失效/不正确',
+    type: String,
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: '用户更新密码',
+    type: String,
   })
   @ApiOperation({
     summary: '用户更新密码',
@@ -343,8 +371,14 @@ export class UserController {
   @ApiBearerAuth()
   @ApiBody({ type: UpdateUserPasswordDto })
   @ApiResponse({
-    type: String,
+    status: HttpStatus.BAD_REQUEST,
     description: '验证码已失效/不正确',
+    type: String,
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: '管理员更新密码成功',
+    type: String,
   })
   @ApiOperation({
     summary: '管理员更新密码',
@@ -414,7 +448,7 @@ export class UserController {
 
   @ApiBearerAuth()
   @ApiParam({ name: 'id', description: '冻结用户的用户ID', type: Number })
-  @ApiResponse({ type: String, description: 'success' })
+  @ApiResponse({ status: HttpStatus.OK, description: 'success', type: String })
   @ApiOperation({
     summary: '冻结用户',
     operationId: 'freeze-user',
@@ -436,7 +470,11 @@ export class UserController {
   @ApiQuery({ name: 'username', description: '用户名', required: false })
   @ApiQuery({ name: 'nickName', description: '昵称', required: false })
   @ApiQuery({ name: 'email', description: '邮箱地址', required: false })
-  @ApiResponse({ type: UserListVo, description: '用户列表' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: '用户列表',
+    type: UserListVo,
+  })
   @ApiOperation({
     summary: '用户列表',
     operationId: 'get-user-list',
