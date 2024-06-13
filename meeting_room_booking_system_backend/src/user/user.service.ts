@@ -49,7 +49,7 @@ export class UserService {
     //   throw new HttpException('验证码已失效', HttpStatus.BAD_REQUEST);
     // }
     // 用户填写的验证码与redis验证码比较
-    if (!captcha || user.captcha !== captcha) {
+    if (!captcha || user.captcha.toString() !== captcha) {
       throw new HttpException('验证码不正确', HttpStatus.BAD_REQUEST);
     }
 
@@ -167,7 +167,7 @@ export class UserService {
       UPDATE_PASSWORD_CAPTCHA(passwordDto.email),
     );
 
-    if (!captcha || passwordDto.captcha !== captcha) {
+    if (!captcha || passwordDto.captcha.toString() !== captcha) {
       throw new HttpException('验证码不正确', HttpStatus.BAD_REQUEST);
     }
 
@@ -218,7 +218,7 @@ export class UserService {
       UPDATE_USER_CAPTCHA(updateUserDto.email),
     );
 
-    if (!captcha || updateUserDto.captcha !== captcha) {
+    if (!captcha || updateUserDto.captcha.toString() !== captcha) {
       throw new HttpException('验证码不正确', HttpStatus.BAD_REQUEST);
     }
 
@@ -325,6 +325,10 @@ export class UserService {
     vo.users = users;
     vo.totalCount = totalCount;
     return vo;
+  }
+
+  async checkEmailIsExist(email: string) {
+    return this.userRepository.exists({ where: { email } });
   }
 
   async initData() {

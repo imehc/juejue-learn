@@ -445,7 +445,7 @@ components:
         email:
           type: string
         captcha:
-          type: string
+          type: number
       required:
         - username
         - nickName
@@ -575,7 +575,7 @@ components:
         email:
           type: string
         captcha:
-          type: string
+          type: number
       required:
         - password
         - email
@@ -590,7 +590,7 @@ components:
         email:
           type: string
         captcha:
-          type: string
+          type: number
       required:
         - headPic
         - nickName

@@ -4,6 +4,7 @@ import {
   DefaultValuePipe,
   Get,
   HttpCode,
+  HttpException,
   HttpStatus,
   Inject,
   Param,
@@ -76,6 +77,13 @@ export class UserController {
   })
   @Get('register-captcha')
   async captcha(@Query('address') address: string) {
+    const isExist = await this.userService.checkEmailIsExist(address);
+    if (isExist) {
+      throw new HttpException(
+        '邮箱已存在，换个邮箱试试吧',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
     await this.handleSendCode(REGISTER_CAPTCHA(address), address, {
       ttl: 5,
       title: '注册验证码',
@@ -95,6 +103,13 @@ export class UserController {
   @RequireLogin()
   @Get('update-password/captcha')
   async updatePasswordCaptcha(@Query('address') address: string) {
+    const isExist = await this.userService.checkEmailIsExist(address);
+    if (isExist) {
+      throw new HttpException(
+        '邮箱已存在，换个邮箱试试吧',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
     await this.handleSendCode(UPDATE_PASSWORD_CAPTCHA(address), address, {
       title: '更改密码验证码',
       type: '更改密码',
@@ -114,6 +129,13 @@ export class UserController {
   @RequireLogin()
   @Get('update/captcha')
   async updateCaptcha(@Query('address') address: string) {
+    const isExist = await this.userService.checkEmailIsExist(address);
+    if (isExist) {
+      throw new HttpException(
+        '邮箱已存在，换个邮箱试试吧',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
     await this.handleSendCode(UPDATE_USER_CAPTCHA(address), address, {
       title: '更改用户信息验证码',
       type: '更改用户信息',

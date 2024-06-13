@@ -24,5 +24,5 @@ export class UpdateUserDto {
     message: '验证码不能为空',
   })
   @ApiProperty()
-  captcha: string;
+  captcha: number;
 }
