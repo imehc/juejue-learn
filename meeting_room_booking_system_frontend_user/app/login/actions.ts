@@ -25,10 +25,10 @@ export async function login(
   prevState: State,
   formData: FormData,
 ): Promise<State> {
-  const username = formData.get("username");
-  const password = formData.get("password");
+  // const username = formData.get("username");
+  // const password = formData.get("password");
 
-  const payload = loginSchema.safeParse({ username, password });
+  const payload = loginSchema.safeParse(Object.fromEntries(formData.entries()));
 
   if (!payload.success) {
     const usernameErr = payload.error.errors.find(

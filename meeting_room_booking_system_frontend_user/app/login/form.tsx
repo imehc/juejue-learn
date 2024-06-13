@@ -7,6 +7,7 @@ import { Button, ButtonProps } from "@nextui-org/button";
 import { Divider } from "@nextui-org/divider";
 import { useEffect } from "react";
 import { toast } from "sonner";
+// import Link from "next/link";
 
 import { login } from "./actions";
 
@@ -41,7 +42,7 @@ export function LoginForm() {
         type="password"
       />
       <div className="flex w-full justify-between items-center mb-4">
-        <Link href="#" underline="hover">
+        <Link href="/register" underline="hover">
           创建账号
         </Link>
         <Link href="#" underline="hover">
@@ -62,7 +63,7 @@ function SubmitButton(props: ButtonProps) {
       fullWidth
       className="max-w-sm"
       color="primary"
-      disabled={pending}
+      isDisabled={pending}
       type="submit"
       {...props}
     >
