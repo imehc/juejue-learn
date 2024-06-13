@@ -23,11 +23,12 @@ export class UnloginFilter implements ExceptionFilter {
 
     response
       .status(HttpStatus.UNAUTHORIZED)
-      .json({
-        code: HttpStatus.UNAUTHORIZED,
-        message: 'fail',
-        data: exception.message || '用户未登录',
-      } satisfies UnifiledResponse<string>)
+      // .json({
+      //   code: HttpStatus.UNAUTHORIZED,
+      //   message: 'fail',
+      //   data: exception.message || '用户未登录',
+      // } satisfies UnifiledResponse<string>)
+      .json({ data: exception.message || '用户未登录' })
       .end();
   }
 }

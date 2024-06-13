@@ -12,6 +12,8 @@ export class ApiException extends HttpException {
    * @param msg 错误消息
    * @param code 错误码
    * @param statuscode http 错误码，默认500
+   * @deprecated
+   * use HttpException
    */
   constructor(
     msg: string,

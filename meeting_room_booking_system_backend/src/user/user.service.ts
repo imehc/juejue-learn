@@ -1,4 +1,5 @@
 import {
+  HttpException,
   HttpStatus,
   Inject,
   Injectable,
@@ -13,7 +14,6 @@ import { RedisService } from 'src/redis/redis.service';
 import { Role } from './entities/role.entity';
 import { Permission } from './entities/permission.entity';
 import { LoginUserDto } from './dto/login-user.dto';
-import { ApiException } from 'src/helper/exception/api.exception';
 import { LoginUserVo } from './vo/login-user.vo';
 import { UserDetailVo } from './vo/user-info.vo';
 import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
@@ -46,18 +46,18 @@ export class UserService {
     const captcha = await this.redisService.get(REGISTER_CAPTCHA(user.email));
 
     // if (!captcha) {
-    //   throw new ApiException('验证码已失效', HttpStatus.BAD_REQUEST);
+    //   throw new HttpException('验证码已失效', HttpStatus.BAD_REQUEST);
     // }
     // 用户填写的验证码与redis验证码比较
     if (!captcha || user.captcha !== captcha) {
-      throw new ApiException('验证码不正确', HttpStatus.BAD_REQUEST);
+      throw new HttpException('验证码不正确', HttpStatus.BAD_REQUEST);
     }
 
     const u = await this.userRepository.findOne({
       where: { email: user.email },
     });
     if (u) {
-      throw new ApiException(
+      throw new HttpException(
         '邮箱已存在，换个邮箱试试吧',
         HttpStatus.BAD_REQUEST,
       );
@@ -68,7 +68,7 @@ export class UserService {
     });
 
     if (foundUser) {
-      throw new ApiException('用户已存在', HttpStatus.BAD_REQUEST);
+      throw new HttpException('用户已存在', HttpStatus.BAD_REQUEST);
     }
 
     const newUser = new User();
@@ -99,11 +99,11 @@ export class UserService {
     });
 
     if (!user) {
-      throw new ApiException('用户不存在', HttpStatus.BAD_REQUEST);
+      throw new HttpException('用户不存在', HttpStatus.BAD_REQUEST);
     }
 
     if (user.password !== md5(loginUserDto.password)) {
-      throw new ApiException('密码错误', HttpStatus.BAD_REQUEST);
+      throw new HttpException('密码错误', HttpStatus.BAD_REQUEST);
     }
 
     const vo = new LoginUserVo(); // view object
@@ -160,7 +160,7 @@ export class UserService {
   async updatePassword(userId: number, passwordDto: UpdateUserPasswordDto) {
     const u = await this.findUserDetailById(userId);
     if (u.email !== passwordDto.email) {
-      throw new ApiException('邮箱与绑定邮箱不一致', HttpStatus.BAD_REQUEST);
+      throw new HttpException('邮箱与绑定邮箱不一致', HttpStatus.BAD_REQUEST);
     }
 
     const captcha = await this.redisService.get(
@@ -168,7 +168,7 @@ export class UserService {
     );
 
     if (!captcha || passwordDto.captcha !== captcha) {
-      throw new ApiException('验证码不正确', HttpStatus.BAD_REQUEST);
+      throw new HttpException('验证码不正确', HttpStatus.BAD_REQUEST);
     }
 
     const foundUser = await this.userRepository.findOneBy({
@@ -211,7 +211,7 @@ export class UserService {
   async update(userId: number, updateUserDto: UpdateUserDto) {
     const u = await this.findUserDetailById(userId);
     if (u.email !== updateUserDto.email) {
-      throw new ApiException('邮箱与绑定邮箱不一致', HttpStatus.BAD_REQUEST);
+      throw new HttpException('邮箱与绑定邮箱不一致', HttpStatus.BAD_REQUEST);
     }
 
     const captcha = await this.redisService.get(
@@ -219,7 +219,7 @@ export class UserService {
     );
 
     if (!captcha || updateUserDto.captcha !== captcha) {
-      throw new ApiException('验证码不正确', HttpStatus.BAD_REQUEST);
+      throw new HttpException('验证码不正确', HttpStatus.BAD_REQUEST);
     }
 
     const foundUser = await this.userRepository.findOneBy({

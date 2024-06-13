@@ -189,6 +189,10 @@ paths:
                 $ref: '#/components/schemas/Auth'
         '401':
           description: token 已失效，请重新登录
+          content:
+            application/json:
+              schema:
+                type: string
   /user/admin/refresh:
     get:
       operationId: refresh-admin-token
@@ -213,6 +217,10 @@ paths:
                 $ref: '#/components/schemas/Auth'
         '401':
           description: token 已失效，请重新登录
+          content:
+            application/json:
+              schema:
+                type: string
   /user/info:
     get:
       operationId: get-user-info
@@ -297,6 +305,10 @@ paths:
                 type: string
         '400':
           description: 验证码不正确/已失效
+          content:
+            application/json:
+              schema:
+                type: string
       security:
         - bearer: []
   /user/admin/update:
@@ -322,6 +334,10 @@ paths:
                 type: string
         '400':
           description: 验证码不正确/已失效
+          content:
+            application/json:
+              schema:
+                type: string
       security:
         - bearer: []
   /user/freeze/{id}:
@@ -407,7 +423,8 @@ info:
   version: '1.0'
   contact: {}
 tags: []
-servers: []
+servers:
+  - url: http://localhost:6020
 components:
   securitySchemes:
     bearer:

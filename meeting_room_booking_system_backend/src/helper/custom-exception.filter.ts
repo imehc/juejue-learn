@@ -5,7 +5,6 @@ import {
   HttpException,
 } from '@nestjs/common';
 import { Response } from 'express';
-import { UnifiledResponse } from '.';
 
 @Catch(HttpException)
 export class CustomExceptionFilter implements ExceptionFilter {
@@ -14,21 +13,23 @@ export class CustomExceptionFilter implements ExceptionFilter {
     const code = exception.getStatus();
     response.statusCode = code;
 
-    const res = exception.getResponse() as { message: string[] };
+    const res = exception.getResponse() as { message: string[] | string };
     let message = exception.message;
-    try {
+
+    if (res.message instanceof Array) {
       message = res?.message?.join('；');
-    } catch (error) {
-      //
+    } else {
+      message = res.message;
     }
 
     response
-      // .status(code)
-      .json({
-        code,
-        message: 'fail',
-        data: message,
-      } satisfies UnifiledResponse<string>)
+      .status(code)
+      // .json({
+      //   code,
+      //   message: 'fail',
+      //   data: message,
+      // } satisfies UnifiledResponse<string>)
+      .send(message ?? res.message ?? res)
       .end();
   }
 }

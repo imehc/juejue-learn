@@ -211,6 +211,7 @@ export class UserController {
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
     description: 'token 已失效，请重新登录',
+    type: String,
   })
   @ApiResponse({
     status: HttpStatus.OK,
@@ -249,6 +250,7 @@ export class UserController {
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
     description: 'token 已失效，请重新登录',
+    type: String,
   })
   @ApiResponse({
     status: HttpStatus.OK,
@@ -297,7 +299,10 @@ export class UserController {
 
   @ApiBearerAuth()
   @ApiBody({ type: UpdateUserPasswordDto })
-  @ApiResponse({ type: String, description: '验证码已失效/不正确' })
+  @ApiResponse({
+    type: String,
+    description: '验证码已失效/不正确',
+  })
   @ApiOperation({
     summary: '用户更新密码',
     operationId: 'update-password',
@@ -315,7 +320,10 @@ export class UserController {
 
   @ApiBearerAuth()
   @ApiBody({ type: UpdateUserPasswordDto })
-  @ApiResponse({ type: String, description: '验证码已失效/不正确' })
+  @ApiResponse({
+    type: String,
+    description: '验证码已失效/不正确',
+  })
   @ApiOperation({
     summary: '管理员更新密码',
     operationId: 'update-system-password',
@@ -335,6 +343,7 @@ export class UserController {
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
     description: '验证码不正确/已失效',
+    type: String,
   })
   @ApiResponse({
     status: HttpStatus.OK,
@@ -360,6 +369,7 @@ export class UserController {
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
     description: '验证码不正确/已失效',
+    type: String,
   })
   @ApiResponse({
     status: HttpStatus.OK,
