@@ -1,0 +1,9 @@
+enumUnknownDefaultCase: false
+modelPropertyNaming: original
+supportsES6: true
+paramNaming: camelCase
+enumPropertyNaming: PascalCase
+disallowAdditionalPropertiesIfNotPresent: false
+
+# 与原有模板保持兼容
+prefixParameterInterfaces: true
