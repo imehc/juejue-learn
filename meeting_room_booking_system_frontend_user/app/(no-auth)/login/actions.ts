@@ -1,6 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
 
 import { loginSchema } from "./schema";
 
@@ -73,4 +74,12 @@ export async function login(
   }
   // TODO: 验证成功后跳转
   redirect("/");
+}
+
+export async function clearCookie() {
+  const cookieStore = cookies();
+
+  cookieStore.delete("access-token");
+  cookieStore.delete("expires-in");
+  cookieStore.delete("refresh-token");
 }

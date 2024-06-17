@@ -1,18 +1,7 @@
 import { z } from "zod";
 
-export const loginSchema = z
+export const updatePasswordSchema = z
   .object({
-    username: z
-      .string({ required_error: "请填写用户名" })
-      .trim()
-      .min(1, "请填写用户名")
-      .refine((value) => /^[A-Za-z0-9]+$/.test(value), {
-        message: "用户名不合法",
-      }),
-    nickName: z
-      .string({ required_error: "请填写昵称" })
-      .trim()
-      .min(1, "请填写昵称"),
     password: z
       .string({ required_error: "请填写密码" })
       .trim()
@@ -27,10 +16,6 @@ export const loginSchema = z
       .refine((value) => /^[A-Za-z0-9]+$/.test(value), {
         message: "密码格式不合法",
       }),
-    email: z
-      .string({ required_error: "请填写邮箱" })
-      .trim()
-      .email("邮箱格式不合法"),
     captcha: z.coerce
       .number({ required_error: "请填写验证码" })
       .refine((num) => num.toString().length === 6, {
@@ -44,4 +29,4 @@ export const loginSchema = z
     path: ["confirmPassword"],
   });
 
-export type LoginFormValues = z.infer<typeof loginSchema>;
+export type UpdatePasswordValues = z.infer<typeof updatePasswordSchema>;

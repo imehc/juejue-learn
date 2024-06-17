@@ -1,6 +1,6 @@
 "use server";
 
-import { loginSchema } from "./schema";
+import { forgotSchema } from "./schema";
 
 import { apiInstance } from "@/helper/auth";
 import { CaptchaApi, ResponseError, UserApi } from "@/meeting-room-booking-api";
@@ -8,7 +8,6 @@ import { CaptchaApi, ResponseError, UserApi } from "@/meeting-room-booking-api";
 interface State {
   message?: {
     username?: string;
-    nickName?: string;
     password?: string;
     confirmPassword?: string;
     email?: string;
@@ -18,18 +17,17 @@ interface State {
   success?: string;
 }
 
-export async function register(
+export async function forgotPassword(
   prevState: State,
   formData: FormData,
 ): Promise<State> {
-  const payload = loginSchema.safeParse(Object.fromEntries(formData.entries()));
+  const payload = forgotSchema.safeParse(
+    Object.fromEntries(formData.entries()),
+  );
 
   if (!payload.success) {
     const usernameErr = payload.error.errors.find(
       (err) => err.path[0] === "username",
-    )?.message;
-    const nickNameErr = payload.error.errors.find(
-      (err) => err.path[0] === "nickName",
     )?.message;
     const passwordErr = payload.error.errors.find(
       (err) => err.path[0] === "password",
@@ -47,7 +45,6 @@ export async function register(
     return {
       message: {
         username: usernameErr,
-        nickName: nickNameErr,
         password: passwordErr,
         confirmPassword: confirmPasswordErr,
         email: emailErr,
@@ -59,8 +56,8 @@ export async function register(
   try {
     const userApi = apiInstance(UserApi);
 
-    const success = await userApi.userRegister({
-      registerUserDto: payload.data,
+    const success = await userApi.forgotPassword({
+      forgotUserPasswordDto: payload.data,
     });
 
     return { success };
@@ -69,18 +66,18 @@ export async function register(
       const text = await error.response.text();
 
       return {
-        error: text ?? "注册失败",
+        error: text ?? "找回失败",
       };
     }
     console.error(error);
 
     return {
-      error: "注册失败",
+      error: "找回密码失败",
     };
   }
 }
 
-export async function registerCaptcha(
+export async function forgotPasswordCaptcha(
   prevState: State,
   formData: FormData,
 ): Promise<State> {
@@ -95,7 +92,7 @@ export async function registerCaptcha(
 
   try {
     const captchaApi = apiInstance(CaptchaApi);
-    const success = await captchaApi.registerCaptcha({ address: email });
+    const success = await captchaApi.fotgotCaptcha({ address: email });
 
     return { success };
   } catch (error) {

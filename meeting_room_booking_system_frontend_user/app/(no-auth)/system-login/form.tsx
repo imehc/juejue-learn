@@ -2,17 +2,17 @@
 
 import { Input } from "@nextui-org/input";
 import { useFormState, useFormStatus } from "react-dom";
-import { Link } from "@nextui-org/link";
 import { Button, ButtonProps } from "@nextui-org/button";
 import { Divider } from "@nextui-org/divider";
 import { useEffect } from "react";
 import { toast } from "sonner";
-// import Link from "next/link";
 
-import { login } from "./actions";
+import { systemLogin } from "./actions";
 
-export function LoginForm() {
-  const [loginState, loginFormAction] = useFormState(login, { message: null });
+export function SystemLoginForm() {
+  const [loginState, loginFormAction] = useFormState(systemLogin, {
+    message: null,
+  });
 
   useEffect(() => {
     if (!loginState?.error) return;
@@ -41,14 +41,6 @@ export function LoginForm() {
         name="password"
         type="password"
       />
-      <div className="flex w-full justify-between items-center mb-4">
-        <Link href="/register" underline="hover">
-          创建账号
-        </Link>
-        <Link href="#" underline="hover">
-          忘记密码
-        </Link>
-      </div>
       <Divider className="mb-4" />
       <SubmitButton formAction={loginFormAction} />
     </form>

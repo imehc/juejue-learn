@@ -16,7 +16,10 @@ export function Providers({ children, themeProps }: ProvidersProps) {
   const router = useRouter();
 
   return (
-    <NextUIProvider navigate={router.push}>
+    <NextUIProvider
+      className="w-full h-full overflow-hidden flex flex-col justify-center items-center"
+      navigate={router.push}
+    >
       <NextThemesProvider {...themeProps}>{children}</NextThemesProvider>
       <Toaster richColors position="top-center" />
     </NextUIProvider>
