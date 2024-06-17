@@ -369,6 +369,33 @@ paths:
                 $ref: '#/components/schemas/UserListVo'
       security:
         - bearer: []
+  /user/upload:
+    post:
+      operationId: uploadPicture
+      summary: 上传图片
+      tags:
+        - user
+        - file
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                type: string
+      security:
+        - bearer: []
   /user/init-data:
     get:
       operationId: UserController_initData
@@ -522,9 +549,7 @@ components:
       required:
         - id
         - username
-        - nickName
         - email
-        - headPic
         - phoneNumber
         - isFrozen
         - createAt

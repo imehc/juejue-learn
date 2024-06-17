@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   DefaultValuePipe,
@@ -12,6 +13,8 @@ import {
   Put,
   Query,
   UnauthorizedException,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
@@ -35,6 +38,7 @@ import { generateParseIntPipe } from 'src/helper/utils';
 import {
   ApiBearerAuth,
   ApiBody,
+  ApiConsumes,
   ApiOperation,
   ApiParam,
   ApiQuery,
@@ -43,6 +47,9 @@ import {
 import { UserDetailVo } from './vo/user-info.vo';
 import { UserListVo } from './vo/user-list.vo';
 import { ForgotUserPasswordDto } from './dto/forgot-user-password.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import path from 'path';
+import { storage } from 'src/helper/file-storage';
 
 // @ApiTags('用户管理模块') // 注意：使用这个会导致使用openAPI generate失败
 @Controller('user')
@@ -426,6 +433,51 @@ export class UserController {
       limit,
       skip,
     );
+  }
+
+  @ApiBearerAuth()
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+    },
+  })
+  @ApiResponse({ status: HttpStatus.OK, description: 'success', type: String })
+  @RequireLogin()
+  @ApiOperation({
+    summary: '上传图片',
+    operationId: 'uploadPicture',
+    tags: ['user', 'file'],
+  })
+  @Post('upload')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      dest: 'uploads',
+      storage: storage,
+      limits: {
+        fieldSize: 1024 * 1024 * 3, // 限制图片上传大小
+      },
+      fileFilter(req, file, callback) {
+        // 限制只能上传图片
+        const extname = path.extname(file.originalname);
+        if (['.png', '.jpg', '.gif'].includes(extname)) {
+          callback(null, true);
+          return;
+        }
+        callback(new BadRequestException('只能上传图片'), false);
+        return;
+      },
+    }),
+  )
+  async updateFile(@UploadedFile() file: Express.Multer.File) {
+    console.log('file: ', file);
+    return file.path;
   }
 
   private handleJwt({

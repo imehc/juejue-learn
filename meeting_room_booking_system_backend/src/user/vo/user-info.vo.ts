@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class UserDetailVo {
   @ApiProperty()
@@ -7,13 +7,13 @@ export class UserDetailVo {
   @ApiProperty()
   username: string;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   nickName: string;
 
   @ApiProperty()
   email: string;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   headPic: string;
 
   @ApiProperty()

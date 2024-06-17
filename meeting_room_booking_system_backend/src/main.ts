@@ -9,9 +9,11 @@ import { UnloginFilter } from './helper/unlogin.filter';
 import { CustomExceptionFilter } from './helper/custom-exception.filter';
 import { writeFileSync } from 'fs';
 import { dump } from 'js-yaml';
+import { NestExpressApplication } from '@nestjs/platform-express';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  app.useStaticAssets('uploads', { prefix: '/uploads' }); // 设置目录为静态文件目录
 
   // 全局启用
   app.useGlobalPipes(new ValidationPipe());
