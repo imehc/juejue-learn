@@ -1,12 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsNotEmpty, Max, Min, MinLength } from 'class-validator';
+import { IsEmail, IsNotEmpty, MaxLength, MinLength } from 'class-validator';
 
 export class RegisterUserDto {
   @IsNotEmpty({
     message: '用户名不能为空',
   })
-  @Min(2)
-  @Max(8)
+  @MinLength(2)
+  @MaxLength(16)
   @ApiProperty() // api文档查看具体的字段信息
   username: string;
 

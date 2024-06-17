@@ -51,6 +51,7 @@ export class UserService {
     // }
     // 用户填写的验证码与redis验证码比较
     if (!captcha || user.captcha.toString() !== captcha) {
+      this.redisService.del(REGISTER_CAPTCHA(user.email));
       throw new HttpException('验证码不正确', HttpStatus.BAD_REQUEST);
     }
 
@@ -58,6 +59,7 @@ export class UserService {
       where: { email: user.email },
     });
     if (u) {
+      this.redisService.del(REGISTER_CAPTCHA(user.email));
       throw new HttpException(
         '邮箱已存在，换个邮箱试试吧',
         HttpStatus.BAD_REQUEST,
@@ -69,6 +71,7 @@ export class UserService {
     });
 
     if (foundUser) {
+      this.redisService.del(REGISTER_CAPTCHA(user.email));
       throw new HttpException('用户已存在', HttpStatus.BAD_REQUEST);
     }
 
@@ -83,7 +86,7 @@ export class UserService {
       return '注册成功';
     } catch (e) {
       this.logger.error(e, UserService);
-      return '注册失败';
+      throw new HttpException('注册失败', HttpStatus.INTERNAL_SERVER_ERROR);
     } finally {
       this.redisService.del(REGISTER_CAPTCHA(user.email));
     }
@@ -164,13 +167,20 @@ export class UserService {
     );
 
     if (!captcha || passwordDto.captcha.toString() !== captcha) {
+      this.redisService.del(UPDATE_PASSWORD_CAPTCHA(passwordDto.email));
       throw new HttpException('验证码不正确', HttpStatus.BAD_REQUEST);
     }
 
     const foundUser = await this.userRepository.findOne({
       where: { username: passwordDto.username },
     });
+    if (!foundUser) {
+      this.redisService.del(UPDATE_PASSWORD_CAPTCHA(passwordDto.email));
+      throw new HttpException('没有这个用户', HttpStatus.BAD_REQUEST);
+    }
+
     if (foundUser.email !== passwordDto.email) {
+      this.redisService.del(UPDATE_PASSWORD_CAPTCHA(passwordDto.email));
       throw new HttpException('邮箱与绑定邮箱不一致', HttpStatus.BAD_REQUEST);
     }
 
@@ -181,7 +191,7 @@ export class UserService {
       return '密码修改成功';
     } catch (e) {
       this.logger.error(e, UserService);
-      return '密码修改失败';
+      throw new HttpException('密码修改失败', HttpStatus.INTERNAL_SERVER_ERROR);
     } finally {
       this.redisService.del(UPDATE_PASSWORD_CAPTCHA(passwordDto.email));
     }
@@ -193,11 +203,13 @@ export class UserService {
     );
 
     if (!captcha || passwordDto.captcha.toString() !== captcha) {
+      this.redisService.del(UPDATE_PASSWORD_CAPTCHA(passwordDto.email));
       throw new HttpException('验证码不正确', HttpStatus.BAD_REQUEST);
     }
 
     const u = await this.findUserDetailById(userId);
     if (u.email !== passwordDto.email) {
+      this.redisService.del(UPDATE_PASSWORD_CAPTCHA(passwordDto.email));
       throw new HttpException('邮箱与绑定邮箱不一致', HttpStatus.BAD_REQUEST);
     }
 
@@ -212,7 +224,7 @@ export class UserService {
       return '密码修改成功';
     } catch (e) {
       this.logger.error(e, UserService);
-      return '密码修改失败';
+      throw new HttpException('密码修改失败', HttpStatus.INTERNAL_SERVER_ERROR);
     } finally {
       this.redisService.del(UPDATE_PASSWORD_CAPTCHA(passwordDto.email));
     }
@@ -241,6 +253,7 @@ export class UserService {
   async update(userId: number, updateUserDto: UpdateUserDto) {
     const u = await this.findUserDetailById(userId);
     if (u.email !== updateUserDto.email) {
+      this.redisService.del(UPDATE_USER_CAPTCHA(updateUserDto.email));
       throw new HttpException('邮箱与绑定邮箱不一致', HttpStatus.BAD_REQUEST);
     }
 
@@ -249,6 +262,7 @@ export class UserService {
     );
 
     if (!captcha || updateUserDto.captcha.toString() !== captcha) {
+      this.redisService.del(UPDATE_USER_CAPTCHA(updateUserDto.email));
       throw new HttpException('验证码不正确', HttpStatus.BAD_REQUEST);
     }
 
@@ -270,7 +284,10 @@ export class UserService {
       return '用户信息修改成功';
     } catch (e) {
       this.logger.error(e, UserService);
-      return '用户信息修改成功';
+      throw new HttpException(
+        '用户信息修改失败',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     } finally {
       this.redisService.del(UPDATE_USER_CAPTCHA(updateUserDto.email));
     }
