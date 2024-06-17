@@ -18,6 +18,7 @@ import { LoginUserVo } from './vo/login-user.vo';
 import { UserDetailVo } from './vo/user-info.vo';
 import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
 import {
+  FORGOT_PASSWORD_CAPTCHA,
   REGISTER_CAPTCHA,
   UPDATE_PASSWORD_CAPTCHA,
   UPDATE_USER_CAPTCHA,
@@ -149,6 +150,7 @@ export class UserService {
       id: user.id,
       username: user.username,
       isAdmin: user.isAdmin,
+      email: user.email,
       roles: user.roles.map((item) => item.name),
       permissions: user.roles.reduce((arr, item) => {
         item.permissions.forEach((permission) => {
@@ -163,11 +165,11 @@ export class UserService {
 
   async forgotPassword(passwordDto: ForgotUserPasswordDto) {
     const captcha = await this.redisService.get(
-      UPDATE_PASSWORD_CAPTCHA(passwordDto.email),
+      FORGOT_PASSWORD_CAPTCHA(passwordDto.email),
     );
 
     if (!captcha || passwordDto.captcha.toString() !== captcha) {
-      this.redisService.del(UPDATE_PASSWORD_CAPTCHA(passwordDto.email));
+      this.redisService.del(FORGOT_PASSWORD_CAPTCHA(passwordDto.email));
       throw new HttpException('验证码不正确', HttpStatus.BAD_REQUEST);
     }
 
@@ -175,12 +177,12 @@ export class UserService {
       where: { username: passwordDto.username },
     });
     if (!foundUser) {
-      this.redisService.del(UPDATE_PASSWORD_CAPTCHA(passwordDto.email));
+      this.redisService.del(FORGOT_PASSWORD_CAPTCHA(passwordDto.email));
       throw new HttpException('没有这个用户', HttpStatus.BAD_REQUEST);
     }
 
     if (foundUser.email !== passwordDto.email) {
-      this.redisService.del(UPDATE_PASSWORD_CAPTCHA(passwordDto.email));
+      this.redisService.del(FORGOT_PASSWORD_CAPTCHA(passwordDto.email));
       throw new HttpException('邮箱与绑定邮箱不一致', HttpStatus.BAD_REQUEST);
     }
 
@@ -193,24 +195,22 @@ export class UserService {
       this.logger.error(e, UserService);
       throw new HttpException('密码修改失败', HttpStatus.INTERNAL_SERVER_ERROR);
     } finally {
-      this.redisService.del(UPDATE_PASSWORD_CAPTCHA(passwordDto.email));
+      this.redisService.del(FORGOT_PASSWORD_CAPTCHA(passwordDto.email));
     }
   }
 
-  async updatePassword(userId: number, passwordDto: UpdateUserPasswordDto) {
+  async updatePassword(
+    userId: number,
+    address: string,
+    passwordDto: UpdateUserPasswordDto,
+  ) {
     const captcha = await this.redisService.get(
-      UPDATE_PASSWORD_CAPTCHA(passwordDto.email),
+      UPDATE_PASSWORD_CAPTCHA(address),
     );
 
     if (!captcha || passwordDto.captcha.toString() !== captcha) {
-      this.redisService.del(UPDATE_PASSWORD_CAPTCHA(passwordDto.email));
+      this.redisService.del(UPDATE_PASSWORD_CAPTCHA(address));
       throw new HttpException('验证码不正确', HttpStatus.BAD_REQUEST);
-    }
-
-    const u = await this.findUserDetailById(userId);
-    if (u.email !== passwordDto.email) {
-      this.redisService.del(UPDATE_PASSWORD_CAPTCHA(passwordDto.email));
-      throw new HttpException('邮箱与绑定邮箱不一致', HttpStatus.BAD_REQUEST);
     }
 
     const foundUser = await this.userRepository.findOneBy({
@@ -226,7 +226,7 @@ export class UserService {
       this.logger.error(e, UserService);
       throw new HttpException('密码修改失败', HttpStatus.INTERNAL_SERVER_ERROR);
     } finally {
-      this.redisService.del(UPDATE_PASSWORD_CAPTCHA(passwordDto.email));
+      this.redisService.del(UPDATE_PASSWORD_CAPTCHA(address));
     }
   }
 

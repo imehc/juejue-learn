@@ -25,6 +25,7 @@ import { Auth, LoginUserVo } from './vo/login-user.vo';
 import { RequireLogin, UserInfo } from 'src/helper/custom.decorator';
 import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
 import {
+  FORGOT_PASSWORD_CAPTCHA,
   REGISTER_CAPTCHA,
   UPDATE_PASSWORD_CAPTCHA,
   UPDATE_USER_CAPTCHA,
@@ -93,8 +94,33 @@ export class UserController {
     return '发送成功';
   }
 
+  @ApiQuery({
+    name: 'address',
+    type: String,
+    description: '邮箱地址',
+    example: 'xxx@xx.com',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: '发送成功',
+    type: String,
+  })
+  @ApiOperation({
+    summary: '获取找回密码验证码',
+    operationId: 'fotgot-captcha',
+    tags: ['captcha'],
+  })
+  @Get('forgot-password-captcha')
+  async forgotPasswordCaptcha(@Query('address') address: string) {
+    await this.handleSendCode(FORGOT_PASSWORD_CAPTCHA(address), address, {
+      ttl: 5,
+      title: '找回密码验证码',
+      type: '找回密码',
+    });
+    return '发送成功';
+  }
+
   @ApiBearerAuth()
-  @ApiQuery({ name: 'address', description: '邮箱地址', type: String })
   @ApiResponse({ status: HttpStatus.OK, description: '发送成功', type: String })
   @ApiOperation({
     summary: '获取更改密码验证码',
@@ -103,14 +129,7 @@ export class UserController {
   })
   @RequireLogin()
   @Get('update-password/captcha')
-  async updatePasswordCaptcha(@Query('address') address: string) {
-    const isExist = await this.userService.checkEmailIsExist(address);
-    if (isExist) {
-      throw new HttpException(
-        '邮箱已存在，换个邮箱试试吧',
-        HttpStatus.BAD_REQUEST,
-      );
-    }
+  async updatePasswordCaptcha(@UserInfo('email') address: string) {
     await this.handleSendCode(UPDATE_PASSWORD_CAPTCHA(address), address, {
       title: '更改密码验证码',
       type: '更改密码',
@@ -119,8 +138,8 @@ export class UserController {
     return '发送成功';
   }
 
+  // 登录后将邮箱放入token，所以不需要传入邮箱
   @ApiBearerAuth()
-  @ApiQuery({ name: 'address', description: '邮箱地址', type: String })
   @ApiResponse({ status: HttpStatus.OK, description: '发送成功', type: String })
   @ApiOperation({
     summary: '获取更新用户信息验证码',
@@ -129,14 +148,7 @@ export class UserController {
   })
   @RequireLogin()
   @Get('update/captcha')
-  async updateCaptcha(@Query('address') address: string) {
-    const isExist = await this.userService.checkEmailIsExist(address);
-    if (isExist) {
-      throw new HttpException(
-        '邮箱已存在，换个邮箱试试吧',
-        HttpStatus.BAD_REQUEST,
-      );
-    }
+  async updateCaptcha(@UserInfo('email') address: string) {
     await this.handleSendCode(UPDATE_USER_CAPTCHA(address), address, {
       title: '更改用户信息验证码',
       type: '更改用户信息',
@@ -190,6 +202,7 @@ export class UserController {
     vo.auth = this.handleJwt({
       userId: vo.userInfo.id,
       username: vo.userInfo.username,
+      email: vo.userInfo.email,
       roles: vo.userInfo.roles,
       permissions: vo.userInfo.permissions,
     });
@@ -219,6 +232,7 @@ export class UserController {
     vo.auth = this.handleJwt({
       userId: vo.userInfo.id,
       username: vo.userInfo.username,
+      email: vo.userInfo.email,
       roles: vo.userInfo.roles,
       permissions: vo.userInfo.permissions,
     });
@@ -256,6 +270,7 @@ export class UserController {
       return this.handleJwt({
         userId: user.id,
         username: user.username,
+        email: user.email,
         roles: user.roles,
         permissions: user.permissions,
       });
@@ -295,6 +310,7 @@ export class UserController {
       return this.handleJwt({
         userId: user.id,
         username: user.username,
+        email: user.email,
         roles: user.roles,
         permissions: user.permissions,
       });
@@ -363,9 +379,10 @@ export class UserController {
   @RequireLogin()
   async updatePassword(
     @UserInfo('userId') userId: number,
+    @UserInfo('email') address: string,
     @Body() passwordDto: UpdateUserPasswordDto,
   ) {
-    return await this.userService.updatePassword(userId, passwordDto);
+    return await this.userService.updatePassword(userId, address, passwordDto);
   }
 
   @ApiBearerAuth()
@@ -389,9 +406,10 @@ export class UserController {
   @RequireLogin()
   async updateAdminPassword(
     @UserInfo('userId') userId: number,
+    @UserInfo('email') address: string,
     @Body() passwordDto: UpdateUserPasswordDto,
   ) {
-    return await this.userService.updatePassword(userId, passwordDto);
+    return await this.userService.updatePassword(userId, address, passwordDto);
   }
 
   @ApiBearerAuth()
@@ -505,9 +523,11 @@ export class UserController {
     username,
     roles,
     permissions,
+    email,
   }: {
     userId: number;
     username: string;
+    email: string;
     roles: string[];
     permissions: string[];
   }): LoginUserVo['auth'] {
@@ -518,6 +538,7 @@ export class UserController {
       {
         userId,
         username,
+        email,
         roles,
         permissions,
       },

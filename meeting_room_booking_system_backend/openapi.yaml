@@ -42,10 +42,10 @@ paths:
             application/json:
               schema:
                 type: string
-  /user/update-password/captcha:
+  /user/forgot-password-captcha:
     get:
-      operationId: update-password-captcha
-      summary: 获取更改密码验证码
+      operationId: fotgot-captcha
+      summary: 获取找回密码验证码
       tags:
         - captcha
       parameters:
@@ -53,8 +53,23 @@ paths:
           required: true
           in: query
           description: 邮箱地址
+          example: xxx@xx.com
           schema:
             type: string
+      responses:
+        '200':
+          description: 发送成功
+          content:
+            application/json:
+              schema:
+                type: string
+  /user/update-password/captcha:
+    get:
+      operationId: update-password-captcha
+      summary: 获取更改密码验证码
+      tags:
+        - captcha
+      parameters: []
       responses:
         '200':
           description: 发送成功
@@ -71,13 +86,7 @@ paths:
       tags:
         - captcha
         - user
-      parameters:
-        - name: address
-          required: true
-          in: query
-          description: 邮箱地址
-          schema:
-            type: string
+      parameters: []
       responses:
         '200':
           description: 发送成功
@@ -626,13 +635,10 @@ components:
       properties:
         password:
           type: string
-        email:
-          type: string
         captcha:
           type: number
       required:
         - password
-        - email
         - captcha
     UpdateUserDto:
       type: object
