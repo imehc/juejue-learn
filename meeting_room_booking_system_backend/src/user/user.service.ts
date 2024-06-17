@@ -137,11 +137,11 @@ export class UserService {
     return vo;
   }
 
-  async findUserById(userId: number, isAdmin: boolean) {
+  async findUserById(userId: number /** , isAdmin: boolean */) {
     const user = await this.userRepository.findOne({
       where: {
         id: userId,
-        isAdmin,
+        // isAdmin,
       },
       relations: ['roles', 'roles.permissions'],
     });
@@ -250,19 +250,11 @@ export class UserService {
     return vo;
   }
 
-  async update(userId: number, updateUserDto: UpdateUserDto) {
-    const u = await this.findUserDetailById(userId);
-    if (u.email !== updateUserDto.email) {
-      this.redisService.del(UPDATE_USER_CAPTCHA(updateUserDto.email));
-      throw new HttpException('邮箱与绑定邮箱不一致', HttpStatus.BAD_REQUEST);
-    }
-
-    const captcha = await this.redisService.get(
-      UPDATE_USER_CAPTCHA(updateUserDto.email),
-    );
+  async update(userId: number, address: string, updateUserDto: UpdateUserDto) {
+    const captcha = await this.redisService.get(UPDATE_USER_CAPTCHA(address));
 
     if (!captcha || updateUserDto.captcha.toString() !== captcha) {
-      this.redisService.del(UPDATE_USER_CAPTCHA(updateUserDto.email));
+      this.redisService.del(UPDATE_USER_CAPTCHA(address));
       throw new HttpException('验证码不正确', HttpStatus.BAD_REQUEST);
     }
 
@@ -289,7 +281,7 @@ export class UserService {
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     } finally {
-      this.redisService.del(UPDATE_USER_CAPTCHA(updateUserDto.email));
+      this.redisService.del(UPDATE_USER_CAPTCHA(address));
     }
   }
 

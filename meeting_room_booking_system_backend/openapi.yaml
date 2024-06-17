@@ -178,37 +178,9 @@ paths:
   /user/refresh:
     get:
       operationId: refresh-token
-      summary: 普通用户使用refreshToken换取新token
+      summary: 使用refreshToken换取新token
       tags:
         - auth
-      parameters:
-        - name: refreshToken
-          required: true
-          in: query
-          description: 刷新token
-          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9
-          schema:
-            type: string
-      responses:
-        '200':
-          description: 刷新成功
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Auth'
-        '401':
-          description: token 已失效，请重新登录
-          content:
-            application/json:
-              schema:
-                type: string
-  /user/admin/refresh:
-    get:
-      operationId: refresh-admin-token
-      summary: 管理员使用refreshToken换取新token
-      tags:
-        - auth
-        - system-user
       parameters:
         - name: refreshToken
           required: true
@@ -276,7 +248,7 @@ paths:
   /user/update-password:
     post:
       operationId: update-password
-      summary: 用户更新密码
+      summary: 用户/管理员更新密码
       tags:
         - user
       parameters: []
@@ -288,36 +260,7 @@ paths:
               $ref: '#/components/schemas/UpdateUserPasswordDto'
       responses:
         '200':
-          description: 用户更新密码
-          content:
-            application/json:
-              schema:
-                type: string
-        '400':
-          description: 验证码已失效/不正确
-          content:
-            application/json:
-              schema:
-                type: string
-      security:
-        - bearer: []
-  /user/admin/update-password:
-    post:
-      operationId: update-system-password
-      summary: 管理员更新密码
-      tags:
-        - user
-        - system-user
-      parameters: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UpdateUserPasswordDto'
-      responses:
-        '200':
-          description: 管理员更新密码成功
+          description: 用户/管理员更新密码
           content:
             application/json:
               schema:
@@ -333,38 +276,9 @@ paths:
   /user/update:
     post:
       operationId: update-user-info
-      summary: 用户更新用户信息
+      summary: 用户/管理员更新用户/管理员信息
       tags:
         - user
-      parameters: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UpdateUserDto'
-      responses:
-        '200':
-          description: 更新成功
-          content:
-            application/json:
-              schema:
-                type: string
-        '400':
-          description: 验证码不正确/已失效
-          content:
-            application/json:
-              schema:
-                type: string
-      security:
-        - bearer: []
-  /user/admin/update:
-    post:
-      operationId: update-system-user-info
-      summary: 管理员更新管理员信息
-      tags:
-        - user
-        - system-user
       parameters: []
       requestBody:
         required: true
@@ -647,14 +561,9 @@ components:
           type: string
         nickName:
           type: string
-        email:
-          type: string
         captcha:
           type: number
       required:
-        - headPic
-        - nickName
-        - email
         - captcha
     User:
       type: object

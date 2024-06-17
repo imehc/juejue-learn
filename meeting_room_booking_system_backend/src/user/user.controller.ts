@@ -256,7 +256,7 @@ export class UserController {
     type: Auth,
   })
   @ApiOperation({
-    summary: '普通用户使用refreshToken换取新token',
+    summary: '使用refreshToken换取新token',
     operationId: 'refresh-token',
     tags: ['auth'],
   })
@@ -265,47 +265,9 @@ export class UserController {
     try {
       const data = this.jwtService.verify(refreshToken);
 
-      const user = await this.userService.findUserById(data.userId, false);
-
-      return this.handleJwt({
-        userId: user.id,
-        username: user.username,
-        email: user.email,
-        roles: user.roles,
-        permissions: user.permissions,
-      });
-    } catch (e) {
-      throw new UnauthorizedException('token 已失效，请重新登录');
-    }
-  }
-
-  @ApiQuery({
-    name: 'refreshToken',
-    type: String,
-    description: '刷新token',
-    example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9',
-  })
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'token 已失效，请重新登录',
-    type: String,
-  })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: '刷新成功',
-    type: Auth,
-  })
-  @ApiOperation({
-    summary: '管理员使用refreshToken换取新token',
-    operationId: 'refresh-admin-token',
-    tags: ['auth', 'system-user'],
-  })
-  @Get('admin/refresh')
-  async adminRefresh(@Query('refreshToken') refreshToken: string) {
-    try {
-      const data = this.jwtService.verify(refreshToken);
-
-      const user = await this.userService.findUserById(data.userId, true);
+      const user = await this.userService.findUserById(
+        data.userId /** , false */,
+      );
 
       return this.handleJwt({
         userId: user.id,
@@ -366,11 +328,11 @@ export class UserController {
   })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: '用户更新密码',
+    description: '用户/管理员更新密码',
     type: String,
   })
   @ApiOperation({
-    summary: '用户更新密码',
+    summary: '用户/管理员更新密码',
     operationId: 'update-password',
     tags: ['user'],
   })
@@ -386,33 +348,6 @@ export class UserController {
   }
 
   @ApiBearerAuth()
-  @ApiBody({ type: UpdateUserPasswordDto })
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-    description: '验证码已失效/不正确',
-    type: String,
-  })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: '管理员更新密码成功',
-    type: String,
-  })
-  @ApiOperation({
-    summary: '管理员更新密码',
-    operationId: 'update-system-password',
-    tags: ['user', 'system-user'],
-  })
-  @Post('admin/update-password')
-  @RequireLogin()
-  async updateAdminPassword(
-    @UserInfo('userId') userId: number,
-    @UserInfo('email') address: string,
-    @Body() passwordDto: UpdateUserPasswordDto,
-  ) {
-    return await this.userService.updatePassword(userId, address, passwordDto);
-  }
-
-  @ApiBearerAuth()
   @ApiBody({ type: UpdateUserDto })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
@@ -425,7 +360,7 @@ export class UserController {
     type: String,
   })
   @ApiOperation({
-    summary: '用户更新用户信息',
+    summary: '用户/管理员更新用户/管理员信息',
     operationId: 'update-user-info',
     tags: ['user'],
   })
@@ -433,35 +368,10 @@ export class UserController {
   @RequireLogin()
   async update(
     @UserInfo('userId') userId: number,
+    @UserInfo('email') address: string,
     @Body() updateUserDto: UpdateUserDto,
   ) {
-    return await this.userService.update(userId, updateUserDto);
-  }
-
-  @ApiBearerAuth()
-  @ApiBody({ type: UpdateUserDto })
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-    description: '验证码不正确/已失效',
-    type: String,
-  })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: '更新成功',
-    type: String,
-  })
-  @ApiOperation({
-    summary: '管理员更新管理员信息',
-    operationId: 'update-system-user-info',
-    tags: ['user', 'system-user'],
-  })
-  @Post('admin/update')
-  @RequireLogin()
-  async updateAdmin(
-    @UserInfo('userId') userId: number,
-    @Body() updateUserDto: UpdateUserDto,
-  ) {
-    return await this.userService.update(userId, updateUserDto);
+    return await this.userService.update(userId, address, updateUserDto);
   }
 
   @ApiBearerAuth()
