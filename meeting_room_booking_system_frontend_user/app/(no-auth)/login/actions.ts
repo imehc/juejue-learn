@@ -6,13 +6,8 @@ import { cookies } from "next/headers";
 import { loginSchema } from "./schema";
 
 import { apiInstance } from "@/helper/auth";
-import {
-  ACCESS_TOKEN,
-  EXPIRES_IN,
-  REFRESH_TOKEN,
-  setAuthCookie,
-} from "@/helper/cookie";
-import { ResponseError, UserApi } from "@/meeting-room-booking-api";
+import { ACCESS_TOKEN, EXPIRES_IN, REFRESH_TOKEN } from "@/helper/cookie";
+import { Auth, ResponseError, UserApi } from "@/meeting-room-booking-api";
 
 interface State {
   message?: {
@@ -50,14 +45,9 @@ export async function login(
   try {
     const userApi = apiInstance(UserApi);
 
-    const {
-      auth: { accessToken, refreshToken, expiresIn },
-    } = await userApi.userLogin({ loginUserDto: payload.data });
+    const { auth } = await userApi.userLogin({ loginUserDto: payload.data });
 
-    // TODO: 集中处理
-    setAuthCookie(ACCESS_TOKEN, accessToken);
-    setAuthCookie(REFRESH_TOKEN, refreshToken);
-    setAuthCookie(EXPIRES_IN, expiresIn);
+    await setAuthCookie(auth);
   } catch (error) {
     if (error instanceof ResponseError) {
       const text = await error.response.text();
@@ -79,7 +69,30 @@ export async function login(
 export async function clearCookie() {
   const cookieStore = cookies();
 
-  cookieStore.delete("access-token");
-  cookieStore.delete("expires-in");
-  cookieStore.delete("refresh-token");
+  cookieStore.delete(ACCESS_TOKEN);
+  cookieStore.delete(EXPIRES_IN);
+  cookieStore.delete(REFRESH_TOKEN);
+}
+
+export async function setAuthCookie({
+  accessToken,
+  refreshToken,
+  expiresIn,
+}: Auth) {
+  const cookieStore = cookies();
+
+  cookieStore.set(ACCESS_TOKEN, accessToken, {
+    httpOnly: true,
+    sameSite: "lax",
+    // expires
+  });
+
+  cookieStore.set(REFRESH_TOKEN, refreshToken, {
+    httpOnly: true,
+    sameSite: "lax",
+  });
+  cookies().set(EXPIRES_IN, (new Date().getTime() + expiresIn).toString(), {
+    httpOnly: true,
+    sameSite: "lax",
+  });
 }

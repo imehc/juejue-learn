@@ -1,12 +1,16 @@
 import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
 
-import { ACCESS_TOKEN, getAuthCookie } from "./cookie";
+import { ACCESS_TOKEN, REFRESH_TOKEN, getAuthCookie } from "./cookie";
 
 import {
+  Auth,
   BASE_PATH,
   Configuration,
   ConfigurationParameters,
+  FetchParams,
   Middleware,
+  RequestContext,
   ResponseContext,
 } from "@/meeting-room-booking-api";
 
@@ -19,7 +23,7 @@ export function apiInstance<T extends new (conf?: Configuration) => any>(
     basePath: process.env.API_SERVER || BASE_PATH,
     accessToken,
     headers: conf?.headers,
-    middleware: [new IMiddware()],
+    middleware: [middleware],
     ...conf,
   });
 
@@ -28,31 +32,54 @@ export function apiInstance<T extends new (conf?: Configuration) => any>(
   return instance;
 }
 
-class IMiddware implements Middleware {
-  async post(context: ResponseContext) {
-    if (!context.response.ok) {
-      switch (context.response.status) {
-        case 500:
-          throw new Error("服务异常，请稍后重试");
-        case 401: {
-          // 使用refreshToken获取新token
+const middleware: Middleware = {
+  async pre(context: RequestContext): Promise<FetchParams | void> {},
+  async post(context: ResponseContext): Promise<Response | void> {
+    if (context.response.ok) {
+      return;
+    }
+    switch (context.response.status) {
+      case 500:
+        throw new Error("服务异常，请稍后重试");
+
+      case 401: {
+        const refreshToken = cookies().get(REFRESH_TOKEN)?.value;
+
+        if (!refreshToken) {
           return redirect("/login");
         }
-        case 400: {
-          if (isJson(context.response.headers.get("Content-Type"))) {
-            const res: { message?: string } = await context.response.json();
+        try {
+          const res = await fetch(
+            `${process.env.__NEXT_PRIVATE_ORIGIN}/api/cookie?${REFRESH_TOKEN}=${refreshToken}`,
+          );
 
-            throw new Error(res.message ?? context.response.statusText);
-          }
+          const { accessToken }: Pick<Auth, "accessToken"> = await res.json();
+          const headers: HeadersInit = {
+            Authorization: `Bearer ${accessToken}`,
+          };
 
-          const text = await context.response.text();
+          context.init.headers = { ...context.init.headers, ...headers };
 
-          throw new Error(text);
+          return await context.fetch(context.url, context.init);
+        } catch (error) {
+          return redirect("/login");
         }
       }
+
+      case 400: {
+        if (isJson(context.response.headers.get("Content-Type"))) {
+          const res: { message?: string } = await context.response.json();
+
+          throw new Error(res.message ?? context.response.statusText);
+        }
+
+        const text = await context.response.text();
+
+        throw new Error(text);
+      }
     }
-  }
-}
+  },
+};
 
 const jsonRegex = new RegExp(
   "^(:?application/json|[^;/ \\t]+/[^;/ \\t]+[+]json)[ \\t]*(:?;.*)?$",

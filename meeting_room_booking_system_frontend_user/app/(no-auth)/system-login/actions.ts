@@ -2,15 +2,11 @@
 
 import { redirect } from "next/navigation";
 
+import { setAuthCookie } from "../login/actions";
+
 import { loginSchema } from "./schema";
 
 import { apiInstance } from "@/helper/auth";
-import {
-  ACCESS_TOKEN,
-  EXPIRES_IN,
-  REFRESH_TOKEN,
-  setAuthCookie,
-} from "@/helper/cookie";
 import { ResponseError, UserApi } from "@/meeting-room-booking-api";
 
 interface State {
@@ -49,14 +45,9 @@ export async function systemLogin(
   try {
     const userApi = apiInstance(UserApi);
 
-    const {
-      auth: { accessToken, refreshToken, expiresIn },
-    } = await userApi.userLogin({ loginUserDto: payload.data });
+    const { auth } = await userApi.userLogin({ loginUserDto: payload.data });
 
-    // TODO: 集中处理
-    setAuthCookie(ACCESS_TOKEN, accessToken);
-    setAuthCookie(REFRESH_TOKEN, refreshToken);
-    setAuthCookie(EXPIRES_IN, expiresIn);
+    await setAuthCookie(auth);
   } catch (error) {
     if (error instanceof ResponseError) {
       const text = await error.response.text();
