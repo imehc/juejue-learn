@@ -409,9 +409,18 @@ paths:
                 type: string
       security:
         - bearer: []
-  /user/init-data:
+  /user/mock-users:
     get:
-      operationId: UserController_initData
+      operationId: UserController_mockUsers
+      summary: ''
+      deprecated: true
+      parameters: []
+      responses:
+        '200':
+          description: ''
+  /user/clear-all-auth:
+    get:
+      operationId: UserController_clearAllAuth
       summary: ''
       deprecated: true
       parameters: []

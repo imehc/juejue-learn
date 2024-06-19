@@ -79,7 +79,7 @@ export class User {
   @UpdateDateColumn({ name: 'update_at' })
   updateAt: Date;
 
-  @ManyToMany(() => Role)
+  @ManyToMany(() => Role, { onDelete: 'CASCADE', cascade: true })
   @JoinTable({ name: 'user_roles' /** 中间表名称 */ })
   roles: Role[];
 }

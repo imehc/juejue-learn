@@ -21,7 +21,7 @@ export class Role {
   })
   name: string;
 
-  @ManyToMany(() => Permission)
+  @ManyToMany(() => Permission, { onDelete: 'CASCADE' })
   @JoinTable({ name: 'role_permissions' })
   permissions: Permission[];
 }

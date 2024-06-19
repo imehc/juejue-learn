@@ -60,11 +60,15 @@ import { ForgotUserPasswordDto } from './dto/forgot-user-password.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import path from 'path';
 import { storage } from 'src/helper/file-storage';
+import { UserServiceMock } from './user.server.mock';
 
 // @ApiTags('用户管理模块') // 注意：使用这个会导致使用openAPI generate失败
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly userServerMock: UserServiceMock,
+  ) {}
 
   @Inject(EmailService)
   private emailService: EmailService;
@@ -498,9 +502,18 @@ export class UserController {
   }
 
   @ApiOperation({ deprecated: true })
-  @Get('init-data')
-  async initData() {
-    await this.userService.initData();
+  @RequireLogin()
+  @Get('mock-users')
+  async mockUsers() {
+    await this.userServerMock.mockUsers();
+    return 'done';
+  }
+
+  @ApiOperation({ deprecated: true })
+  @RequireLogin()
+  @Get('clear-all-auth')
+  async clearAllAuth() {
+    await this.userServerMock.clearAuth();
     return 'done';
   }
 }
