@@ -14,7 +14,7 @@ import { RedisService } from 'src/redis/redis.service';
 import { Role } from './entities/role.entity';
 import { Permission } from './entities/permission.entity';
 import { LoginUserDto } from './dto/login-user.dto';
-import { LoginUserVo, UserInfo } from './vo/login-user.vo';
+import { UserInfo } from './vo/login-user.vo';
 import { UserDetailVo } from './vo/user-info.vo';
 import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
 import {
@@ -99,7 +99,7 @@ export class UserService {
         username: loginUserDto.username,
         isAdmin,
       },
-      //级联查询 指示应该加载实体的哪些关系(简化左连接形式)。
+      // 级联查询 指示应该加载实体的哪些关系(简化左连接形式)。
       relations: ['roles', 'roles.permissions'],
     });
 
@@ -111,10 +111,17 @@ export class UserService {
       throw new HttpException('密码错误', HttpStatus.BAD_REQUEST);
     }
 
-    const vo = new LoginUserVo(); // view object
-    vo.userInfo = this.handleUserTransformUserInfo(user);
-
-    return vo;
+    if (user.isAdmin) {
+      return this.handleUserTransformUserInfo(user);
+    }
+    // 普通用户
+    const info = new UserInfo();
+    info.id = user.id;
+    info.username = user.username;
+    info.email = user.email;
+    info.roles = [];
+    info.permissions = [];
+    return info;
   }
 
   async findUserById(userId: number /** , isAdmin: boolean */) {
@@ -215,6 +222,7 @@ export class UserService {
       where: {
         id: userId,
       },
+      relations: ['roles', 'roles.permissions'], // 级联查询 指示应该加载实体的哪些关系(简化左连接形式)。
     });
 
     if (user.isAdmin) {
@@ -358,17 +366,17 @@ export class UserService {
 
   async initData() {
     const user1 = new User();
-    user1.username = 'zhangsan';
+    user1.username = 'zhangsan1';
     user1.password = md5('111111');
-    user1.email = 'xxx@xx.com';
+    user1.email = 'zzz@zz.com';
     user1.isAdmin = true;
     user1.nickName = '张三';
     user1.phoneNumber = '13233323333';
 
     const user2 = new User();
-    user2.username = 'lisi';
+    user2.username = 'lisi1';
     user2.password = md5('222222');
-    user2.email = 'yy@yy.com';
+    user2.email = 'yy1@yy.com';
     user2.nickName = '李四';
 
     const role1 = new Role();
@@ -419,6 +427,7 @@ export class UserService {
         return arr;
       }, []) ?? [];
     userInfo.type = 'system';
+
     return userInfo;
   }
 }

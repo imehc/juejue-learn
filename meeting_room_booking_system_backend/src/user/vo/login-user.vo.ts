@@ -1,5 +1,17 @@
 import { ApiProperty } from '@nestjs/swagger';
 
+/** TODO: 确定权限类型 */
+export class Permission {
+  @ApiProperty()
+  id: number;
+
+  @ApiProperty({ example: 'ccc' })
+  code: string;
+
+  @ApiProperty({ example: '访问 ccc 接口' })
+  description: string;
+}
+
 export class UserInfo {
   @ApiProperty()
   id: number;
@@ -28,12 +40,13 @@ export class UserInfo {
   @ApiProperty()
   createAt: Date;
 
-  @ApiProperty({ example: ['管理员'] })
+  @ApiProperty({ example: ['管理员'], type: String, isArray: true })
   roles: string[];
 
-  @ApiProperty({ example: 'query_aaa' })
-  permissions: string[];
+  @ApiProperty({ type: Permission, isArray: true })
+  permissions: Permission[];
 
+  /** openapi generate oneOf */
   type: 'system';
 }
 
@@ -55,7 +68,8 @@ export class Auth {
 }
 
 export class LoginUserVo {
-  @ApiProperty()
+  /** @deprecated 不需要在这儿获取，通过单独的接口获取用户信息 */
+  @ApiProperty({ deprecated: true, description: '用户信息' })
   userInfo: UserInfo;
 
   @ApiProperty()

@@ -463,6 +463,21 @@ components:
       required:
         - username
         - password
+    Permission:
+      type: object
+      properties:
+        id:
+          type: number
+        code:
+          type: string
+          example: ccc
+        description:
+          type: string
+          example: 访问 ccc 接口
+      required:
+        - id
+        - code
+        - description
     UserInfo:
       type: object
       properties:
@@ -497,10 +512,9 @@ components:
           items:
             type: string
         permissions:
-          example: query_aaa
           type: array
           items:
-            type: string
+            $ref: '#/components/schemas/Permission'
       required:
         - id
         - username
@@ -533,7 +547,10 @@ components:
       type: object
       properties:
         userInfo:
-          $ref: '#/components/schemas/UserInfo'
+          deprecated: true
+          description: 用户信息
+          allOf:
+            - $ref: '#/components/schemas/UserInfo'
         auth:
           $ref: '#/components/schemas/Auth'
       required:

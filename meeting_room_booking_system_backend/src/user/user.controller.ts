@@ -24,7 +24,12 @@ import { EmailService } from 'src/email/email.service';
 import { RedisService } from 'src/redis/redis.service';
 import { LoginUserDto } from './dto/login-user.dto';
 import ms from 'ms';
-import { Auth, LoginUserVo, UserInfo as UserInfoVo } from './vo/login-user.vo';
+import {
+  Auth,
+  LoginUserVo,
+  Permission,
+  UserInfo as UserInfoVo,
+} from './vo/login-user.vo';
 import { RequireLogin, UserInfo } from 'src/helper/custom.decorator';
 import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
 import {
@@ -190,13 +195,15 @@ export class UserController {
   @Post('login')
   @HttpCode(HttpStatus.OK)
   async userLogin(@Body() loginUser: LoginUserDto) {
-    const vo = await this.userService.login(loginUser, false);
+    const info = await this.userService.login(loginUser, false);
+    const vo = new LoginUserVo();
+    vo.userInfo = info;
     vo.auth = this.handleJwt({
-      userId: vo.userInfo.id,
-      username: vo.userInfo.username,
-      email: vo.userInfo.email,
-      roles: vo.userInfo.roles,
-      permissions: vo.userInfo.permissions,
+      userId: info.id,
+      username: info.username,
+      email: info.email,
+      roles: info.roles,
+      permissions: info.permissions,
     });
     return vo;
   }
@@ -212,13 +219,15 @@ export class UserController {
   @Post('admin/login')
   @HttpCode(HttpStatus.OK)
   async adminLogin(@Body() loginUser: LoginUserDto) {
-    const vo = await this.userService.login(loginUser, true);
+    const info = await this.userService.login(loginUser, true);
+    const vo = new LoginUserVo();
+    vo.userInfo = info;
     vo.auth = this.handleJwt({
-      userId: vo.userInfo.id,
-      username: vo.userInfo.username,
-      email: vo.userInfo.email,
-      roles: vo.userInfo.roles,
-      permissions: vo.userInfo.permissions,
+      userId: info.id,
+      username: info.username,
+      email: info.email,
+      roles: info.roles,
+      permissions: info.permissions,
     });
     return vo;
   }
@@ -443,7 +452,7 @@ export class UserController {
     username: string;
     email: string;
     roles: string[];
-    permissions: string[];
+    permissions: Permission[];
   }): LoginUserVo['auth'] {
     // TODO: 使用refreshToken获取新的token时 不能通过accessToken重新获取新的token
     const expiresIn: string =

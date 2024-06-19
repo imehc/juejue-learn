@@ -28,5 +28,8 @@ export class UserDetailVo {
   @ApiPropertyOptional()
   isAdmin?: boolean;
 
+  /** openapi generate oneOf
+   * @link https://stackoverflow.com/questions/71439982/how-can-i-display-multiple-responsedtos-schemas-in-swagger-nestjs
+   */
   type: 'normal';
 }
