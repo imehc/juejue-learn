@@ -42,6 +42,12 @@ paths:
             application/json:
               schema:
                 type: string
+        '400':
+          description: 邮箱已存在
+          content:
+            application/json:
+              schema:
+                type: string
   /user/forgot-password-captcha:
     get:
       operationId: fotgot-captcha
@@ -150,11 +156,11 @@ paths:
                 type: string
   /user/admin/login:
     post:
-      operationId: system-user-login
+      operationId: system-login
       summary: 管理员登录
       tags:
         - user
-        - system-user
+        - system
       parameters: []
       requestBody:
         required: true
@@ -208,15 +214,22 @@ paths:
       summary: 获取用户/管理员信息
       tags:
         - user
-        - system-user
+        - system
       parameters: []
       responses:
         '200':
-          description: success
+          description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserDetailVo'
+                oneOf:
+                  - $ref: '#/components/schemas/UserDetailVo'
+                  - $ref: '#/components/schemas/UserInfo'
+                discriminator:
+                  propertyName: type
+                  mapping:
+                    system: UserInfo
+                    normal: UserDetailVo
       security:
         - bearer: []
   /user/forgot-password:
@@ -306,7 +319,7 @@ paths:
       operationId: freeze-user
       summary: 冻结用户
       tags:
-        - system-user
+        - system
       parameters:
         - name: id
           required: true

@@ -24,7 +24,7 @@ import { EmailService } from 'src/email/email.service';
 import { RedisService } from 'src/redis/redis.service';
 import { LoginUserDto } from './dto/login-user.dto';
 import ms from 'ms';
-import { Auth, LoginUserVo } from './vo/login-user.vo';
+import { Auth, LoginUserVo, UserInfo as UserInfoVo } from './vo/login-user.vo';
 import { RequireLogin, UserInfo } from 'src/helper/custom.decorator';
 import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
 import {
@@ -36,13 +36,18 @@ import {
 import { UpdateUserDto } from './dto/udpate-user.dto';
 import { generateParseIntPipe } from 'src/helper/utils';
 import {
+  ApiBadRequestResponse,
   ApiBearerAuth,
   ApiBody,
   ApiConsumes,
+  ApiExtraModels,
+  ApiOkResponse,
   ApiOperation,
   ApiParam,
   ApiQuery,
   ApiResponse,
+  ApiUnauthorizedResponse,
+  refs,
 } from '@nestjs/swagger';
 import { UserDetailVo } from './vo/user-info.vo';
 import { UserListVo } from './vo/user-list.vo';
@@ -74,11 +79,8 @@ export class UserController {
     description: '邮箱地址',
     example: 'xxx@xx.com',
   })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: '发送成功',
-    type: String,
-  })
+  @ApiBadRequestResponse({ description: '邮箱已存在', type: String })
+  @ApiOkResponse({ description: '发送成功', type: String })
   @ApiOperation({
     summary: '获取注册验证码',
     operationId: 'register-captcha',
@@ -107,11 +109,7 @@ export class UserController {
     description: '邮箱地址',
     example: 'xxx@xx.com',
   })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: '发送成功',
-    type: String,
-  })
+  @ApiOkResponse({ description: '发送成功', type: String })
   @ApiOperation({
     summary: '获取找回密码验证码',
     operationId: 'fotgot-captcha',
@@ -128,7 +126,7 @@ export class UserController {
   }
 
   @ApiBearerAuth()
-  @ApiResponse({ status: HttpStatus.OK, description: '发送成功', type: String })
+  @ApiOkResponse({ description: '发送成功', type: String })
   @ApiOperation({
     summary: '获取更改密码验证码',
     operationId: 'update-password-captcha',
@@ -147,7 +145,7 @@ export class UserController {
 
   // 登录后将邮箱放入token，所以不需要传入邮箱
   @ApiBearerAuth()
-  @ApiResponse({ status: HttpStatus.OK, description: '发送成功', type: String })
+  @ApiOkResponse({ description: '发送成功', type: String })
   @ApiOperation({
     summary: '获取更新用户信息验证码',
     operationId: 'update-user-info-captcha',
@@ -165,16 +163,11 @@ export class UserController {
   }
 
   @ApiBody({ type: RegisterUserDto })
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
+  @ApiBadRequestResponse({
     description: '验证码已失效/验证码不正确/用户已存在',
     type: String,
   })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: '注册成功',
-    type: String,
-  })
+  @ApiOkResponse({ description: '注册成功', type: String })
   @ApiOperation({
     summary: '注册用户',
     operationId: 'user-register',
@@ -187,16 +180,8 @@ export class UserController {
   }
 
   @ApiBody({ type: LoginUserDto })
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-    description: '用户不存在/密码错误',
-    type: String,
-  })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: '用户信息和token',
-    type: LoginUserVo,
-  })
+  @ApiBadRequestResponse({ description: '用户不存在/密码错误', type: String })
+  @ApiOkResponse({ description: '用户信息和token', type: LoginUserVo })
   @ApiOperation({
     summary: '普通用户登录',
     operationId: 'user-login',
@@ -217,20 +202,12 @@ export class UserController {
   }
 
   @ApiBody({ type: LoginUserDto })
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-    description: '用户不存在/密码错误',
-    type: String,
-  })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: '用户信息和token',
-    type: LoginUserVo,
-  })
+  @ApiBadRequestResponse({ description: '用户不存在/密码错误', type: String })
+  @ApiOkResponse({ description: '用户信息和token', type: LoginUserVo })
   @ApiOperation({
     summary: '管理员登录',
-    operationId: 'system-user-login',
-    tags: ['user', 'system-user'],
+    operationId: 'system-login',
+    tags: ['user', 'system'],
   })
   @Post('admin/login')
   @HttpCode(HttpStatus.OK)
@@ -252,16 +229,11 @@ export class UserController {
     description: '刷新token',
     example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9',
   })
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
+  @ApiUnauthorizedResponse({
     description: 'token 已失效，请重新登录',
     type: String,
   })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: '刷新成功',
-    type: Auth,
-  })
+  @ApiOkResponse({ description: '刷新成功', type: Auth })
   @ApiOperation({
     summary: '使用refreshToken换取新token',
     operationId: 'refresh-token',
@@ -289,15 +261,23 @@ export class UserController {
   }
 
   @ApiBearerAuth() // 需要登录标识
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'success',
-    type: UserDetailVo,
+  @ApiExtraModels(UserDetailVo, UserInfoVo) // 如果没有生成对应类型，则需要此
+  @ApiOkResponse({
+    schema: {
+      oneOf: refs(UserDetailVo, UserInfoVo),
+      discriminator: {
+        propertyName: 'type',
+        mapping: {
+          system: 'UserInfo', // 管理员
+          normal: 'UserDetailVo', // 普通用户
+        },
+      },
+    },
   })
   @ApiOperation({
     summary: '获取用户/管理员信息',
     operationId: 'get-user-info',
-    tags: ['user', 'system-user'],
+    tags: ['user', 'system'],
   })
   @Get('info')
   @RequireLogin()
@@ -306,16 +286,8 @@ export class UserController {
   }
 
   @ApiBody({ type: ForgotUserPasswordDto })
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-    description: '验证码已失效/不正确',
-    type: String,
-  })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: '找回密码成功',
-    type: String,
-  })
+  @ApiBadRequestResponse({ description: '验证码已失效/不正确', type: String })
+  @ApiOkResponse({ description: '找回密码成功', type: String })
   @ApiOperation({
     summary: '用户忘记密码',
     operationId: 'forgot-password',
@@ -328,16 +300,8 @@ export class UserController {
 
   @ApiBearerAuth()
   @ApiBody({ type: UpdateUserPasswordDto })
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-    description: '验证码已失效/不正确',
-    type: String,
-  })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: '用户/管理员更新密码',
-    type: String,
-  })
+  @ApiBadRequestResponse({ description: '验证码已失效/不正确', type: String })
+  @ApiOkResponse({ description: '用户/管理员更新密码', type: String })
   @ApiOperation({
     summary: '用户/管理员更新密码',
     operationId: 'update-password',
@@ -356,16 +320,8 @@ export class UserController {
 
   @ApiBearerAuth()
   @ApiBody({ type: UpdateUserDto })
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-    description: '验证码不正确/已失效',
-    type: String,
-  })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: '更新成功',
-    type: String,
-  })
+  @ApiBadRequestResponse({ description: '验证码不正确/已失效', type: String })
+  @ApiOkResponse({ description: '更新成功', type: String })
   @ApiOperation({
     summary: '用户/管理员更新用户/管理员信息',
     operationId: 'update-user-info',
@@ -383,11 +339,11 @@ export class UserController {
 
   @ApiBearerAuth()
   @ApiParam({ name: 'id', description: '冻结用户的用户ID', type: Number })
-  @ApiResponse({ status: HttpStatus.OK, description: 'success', type: String })
+  @ApiOkResponse({ description: 'success', type: String })
   @ApiOperation({
     summary: '冻结用户',
     operationId: 'freeze-user',
-    tags: ['system-user'],
+    tags: ['system'],
   })
   @Put('freeze/:id')
   @RequireLogin()
@@ -405,11 +361,7 @@ export class UserController {
   @ApiQuery({ name: 'username', description: '用户名', required: false })
   @ApiQuery({ name: 'nickName', description: '昵称', required: false })
   @ApiQuery({ name: 'email', description: '邮箱地址', required: false })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: '用户列表',
-    type: UserListVo,
-  })
+  @ApiOkResponse({ description: '用户列表', type: UserListVo })
   @ApiOperation({
     summary: '用户列表',
     operationId: 'get-user-list',

@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-class UserInfo {
+export class UserInfo {
   @ApiProperty()
   id: number;
 
@@ -33,6 +33,8 @@ class UserInfo {
 
   @ApiProperty({ example: 'query_aaa' })
   permissions: string[];
+
+  type: 'system';
 }
 
 export class Auth {

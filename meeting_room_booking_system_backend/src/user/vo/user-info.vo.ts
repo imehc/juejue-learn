@@ -27,4 +27,6 @@ export class UserDetailVo {
 
   @ApiPropertyOptional()
   isAdmin?: boolean;
+
+  type: 'normal';
 }

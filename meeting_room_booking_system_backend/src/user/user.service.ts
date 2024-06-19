@@ -14,7 +14,7 @@ import { RedisService } from 'src/redis/redis.service';
 import { Role } from './entities/role.entity';
 import { Permission } from './entities/permission.entity';
 import { LoginUserDto } from './dto/login-user.dto';
-import { LoginUserVo } from './vo/login-user.vo';
+import { LoginUserVo, UserInfo } from './vo/login-user.vo';
 import { UserDetailVo } from './vo/user-info.vo';
 import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
 import {
@@ -112,27 +112,7 @@ export class UserService {
     }
 
     const vo = new LoginUserVo(); // view object
-    vo.userInfo = {
-      id: user.id,
-      username: user.username,
-      nickName: user.nickName,
-      email: user.email,
-      phoneNumber: user.phoneNumber,
-      headPic: user.headPic,
-      createAt: user.createAt,
-      isFrozen: user.isFrozen,
-      isAdmin: user.isAdmin,
-      roles: user.roles.map((item) => item.name),
-      permissions: user.roles.reduce((arr, item) => {
-        // 去重
-        item.permissions.forEach((permission) => {
-          if (arr.indexOf(permission) === -1) {
-            arr.push(permission);
-          }
-        });
-        return arr;
-      }, []),
-    };
+    vo.userInfo = this.handleUserTransformUserInfo(user);
 
     return vo;
   }
@@ -237,6 +217,10 @@ export class UserService {
       },
     });
 
+    if (user.isAdmin) {
+      return this.handleUserTransformUserInfo(user);
+    }
+
     const vo = new UserDetailVo();
     vo.id = user.id;
     vo.email = user.email;
@@ -246,9 +230,8 @@ export class UserService {
     vo.nickName = user.nickName;
     vo.createAt = user.createAt;
     vo.isFrozen = user.isFrozen;
-    if (user.isAdmin) {
-      vo.isAdmin = user.isAdmin;
-    }
+    vo.isAdmin = user.isAdmin;
+    vo.type = 'normal';
 
     return vo;
   }
@@ -411,5 +394,31 @@ export class UserService {
     await this.permissionRepository.save([permission1, permission2]);
     await this.roleRepository.save([role1, role2]);
     await this.userRepository.save([user1, user2]);
+  }
+
+  private handleUserTransformUserInfo(user: User): UserInfo {
+    const userInfo = new UserInfo();
+    userInfo.id = user.id;
+    userInfo.username = user.username;
+    userInfo.nickName = user.nickName;
+    userInfo.email = user.email;
+    userInfo.phoneNumber = user.phoneNumber;
+    userInfo.headPic = user.headPic;
+    userInfo.createAt = user.createAt;
+    userInfo.isFrozen = user.isFrozen;
+    userInfo.isAdmin = user.isAdmin;
+    userInfo.roles = user.roles?.map((item) => item.name) ?? [];
+    userInfo.permissions =
+      user.roles?.reduce((arr, item) => {
+        // 去重
+        item.permissions.forEach((permission) => {
+          if (arr.indexOf(permission) === -1) {
+            arr.push(permission);
+          }
+        });
+        return arr;
+      }, []) ?? [];
+    userInfo.type = 'system';
+    return userInfo;
   }
 }
