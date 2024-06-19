@@ -77,7 +77,7 @@ export async function register(
     console.error(error);
 
     return {
-      error: "注册失败",
+      error: (error as Error)?.message || "注册失败",
     };
   }
 }
@@ -109,6 +109,6 @@ export async function registerCaptcha(
       };
     }
 
-    return { error: "服务异常" };
+    return { error: (error as Error)?.message || "服务异常" };
   }
 }

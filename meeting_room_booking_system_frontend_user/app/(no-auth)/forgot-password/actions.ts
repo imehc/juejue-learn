@@ -72,7 +72,7 @@ export async function forgotPassword(
     console.error(error);
 
     return {
-      error: "找回密码失败",
+      error: (error as Error)?.message || "找回密码失败",
     };
   }
 }
@@ -104,6 +104,6 @@ export async function forgotPasswordCaptcha(
       };
     }
 
-    return { error: "服务异常" };
+    return { error: (error as Error)?.message || "服务异常" };
   }
 }

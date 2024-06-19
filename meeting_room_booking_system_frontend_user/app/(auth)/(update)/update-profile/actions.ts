@@ -23,9 +23,7 @@ export async function updateProfile(
     Object.fromEntries(formData.entries()),
   );
 
-  console.log(111111);
   if (!payload.success) {
-    console.log(payload.error.errors[0]);
     const captchaErr = payload.error.errors.find(
       (err) => err.path[0] === "captcha",
     )?.message;
@@ -66,7 +64,7 @@ export async function updateProfile(
     console.error(error);
 
     return {
-      error: "修改失败",
+      error: (error as Error)?.message || "修改失败",
     };
   }
 }
@@ -89,6 +87,6 @@ export async function updateProfileCaptcha(
       };
     }
 
-    return { error: "服务异常" };
+    return { error: (error as Error)?.message || "服务异常" };
   }
 }

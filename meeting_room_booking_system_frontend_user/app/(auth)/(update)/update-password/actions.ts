@@ -62,7 +62,7 @@ export async function updatePassword(
     console.error(error);
 
     return {
-      error: "注册失败",
+      error: (error as Error)?.message || "修改失败",
     };
   }
 }
@@ -71,7 +71,6 @@ export async function updatePasswordCaptcha(
   prevState: State,
   formData: FormData,
 ): Promise<State> {
-
   try {
     const captchaApi = apiInstance(CaptchaApi);
     const success = await captchaApi.updatePasswordCaptcha();
@@ -86,6 +85,6 @@ export async function updatePasswordCaptcha(
       };
     }
 
-    return { error: "服务异常" };
+    return { error: (error as Error)?.message || "服务异常" };
   }
 }

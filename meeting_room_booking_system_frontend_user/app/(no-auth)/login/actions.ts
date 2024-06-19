@@ -56,10 +56,9 @@ export async function login(
         error: text ?? "账号或密码错误",
       };
     }
-    console.error(error);
 
     return {
-      error: "账号或密码错误",
+      error: (error as Error)?.message || "账号或密码错误",
     };
   }
   // TODO: 验证成功后跳转

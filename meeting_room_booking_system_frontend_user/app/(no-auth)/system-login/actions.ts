@@ -7,7 +7,7 @@ import { setAuthCookie } from "../login/actions";
 import { loginSchema } from "./schema";
 
 import { apiInstance } from "@/helper/auth";
-import { ResponseError, UserApi } from "@/meeting-room-booking-api";
+import { ResponseError, SystemApi } from "@/meeting-room-booking-api";
 
 interface State {
   message?: {
@@ -43,9 +43,11 @@ export async function systemLogin(
   }
 
   try {
-    const userApi = apiInstance(UserApi);
+    const systemApi = apiInstance(SystemApi);
 
-    const { auth } = await userApi.userLogin({ loginUserDto: payload.data });
+    const { auth } = await systemApi.systemLogin({
+      loginUserDto: payload.data,
+    });
 
     await setAuthCookie(auth);
   } catch (error) {
@@ -59,7 +61,7 @@ export async function systemLogin(
     console.error(error);
 
     return {
-      error: "账号或密码错误",
+      error: (error as Error)?.message || "账号或密码错误",
     };
   }
   // TODO: 验证成功后跳转
