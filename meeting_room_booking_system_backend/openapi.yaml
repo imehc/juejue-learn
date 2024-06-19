@@ -546,6 +546,8 @@ components:
         createAt:
           format: date-time
           type: string
+        isAdmin:
+          type: boolean
       required:
         - id
         - username

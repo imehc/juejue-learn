@@ -246,6 +246,9 @@ export class UserService {
     vo.nickName = user.nickName;
     vo.createAt = user.createAt;
     vo.isFrozen = user.isFrozen;
+    if (user.isAdmin) {
+      vo.isAdmin = user.isAdmin;
+    }
 
     return vo;
   }

@@ -24,4 +24,7 @@ export class UserDetailVo {
 
   @ApiProperty()
   createAt: Date;
+
+  @ApiPropertyOptional()
+  isAdmin?: boolean;
 }
