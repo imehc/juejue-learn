@@ -1,16 +1,13 @@
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 
-import { ACCESS_TOKEN, REFRESH_TOKEN, getAuthCookie } from "./cookie";
+import { ACCESS_TOKEN } from "./cookie";
 
 import {
-  Auth,
   BASE_PATH,
   Configuration,
   ConfigurationParameters,
-  FetchParams,
   Middleware,
-  RequestContext,
   ResponseContext,
 } from "@/meeting-room-booking-api";
 
@@ -18,7 +15,8 @@ export function apiInstance<T extends new (conf?: Configuration) => any>(
   Api: T,
   conf?: ConfigurationParameters,
 ): InstanceType<T> {
-  const accessToken = getAuthCookie(ACCESS_TOKEN);
+  const accessToken = cookies().get(ACCESS_TOKEN)?.value;
+
   const _conf = new Configuration({
     basePath: process.env.API_SERVER || BASE_PATH,
     accessToken,
@@ -33,7 +31,6 @@ export function apiInstance<T extends new (conf?: Configuration) => any>(
 }
 
 const middleware: Middleware = {
-  async pre(context: RequestContext): Promise<FetchParams | void> {},
   async post(context: ResponseContext): Promise<Response | void> {
     if (context.response.ok) {
       return;
@@ -43,24 +40,18 @@ const middleware: Middleware = {
         throw new Error("服务异常，请稍后重试");
 
       case 401: {
-        const refreshToken = cookies().get(REFRESH_TOKEN)?.value;
-
-        if (!refreshToken) {
-          return redirect("/login");
-        }
         try {
-          const res = await fetch(
-            `${process.env.__NEXT_PRIVATE_ORIGIN}/api/cookie?${REFRESH_TOKEN}=${refreshToken}`,
-          );
+          //TODO: 待解决：由于不能同步更新设置新的cookie，所以这里直接跳转到登陆，否则当token过期后每次都要请求一变
+          // const auth = await refreshTokenAction();
+          // const headers: HeadersInit = {
+          //   Authorization: `Bearer ${auth?.accessToken}`,
+          // };
 
-          const { accessToken }: Pick<Auth, "accessToken"> = await res.json();
-          const headers: HeadersInit = {
-            Authorization: `Bearer ${accessToken}`,
-          };
+          // context.init.headers = { ...context.init.headers, ...headers };
 
-          context.init.headers = { ...context.init.headers, ...headers };
+          // return await context.fetch(context.url, context.init);
 
-          return await context.fetch(context.url, context.init);
+          throw new Error();
         } catch (error) {
           return redirect("/login");
         }
