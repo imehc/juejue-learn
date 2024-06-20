@@ -88,7 +88,13 @@ export async function refreshTokenAction() {
   try {
     await authApi.checkTokenExpiration({ token: refreshToken });
 
-    return await authApi.refreshToken({ refreshToken });
+    const auth = await authApi.refreshToken({ refreshToken });
+
+    // Cookies can only be modified in a Server Action or Route Handler
+    //TODO: 待解决，目前延长token时间曲线救国。注释会当token过期后每次请求新的token，不注释会直接抛异常如上所示
+    // await setAuthCookie(auth);
+
+    return auth;
   } catch (error) {
     throw new Error("服务异常");
   }
@@ -112,7 +118,6 @@ export async function setAuthCookie({
   cookieStore.set(REFRESH_TOKEN, refreshToken, {
     httpOnly: true,
     sameSite: "lax",
-    secure: true,
   });
   cookies().set(EXPIRES_IN, now.toString(), {
     httpOnly: true,

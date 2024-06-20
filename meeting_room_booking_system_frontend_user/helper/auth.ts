@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
 
-import { ACCESS_TOKEN, getAuthCookie } from "./cookie";
+import { ACCESS_TOKEN } from "./cookie";
 
 import {
   BASE_PATH,
@@ -9,13 +10,12 @@ import {
   Middleware,
   ResponseContext,
 } from "@/meeting-room-booking-api";
-import { refreshTokenAction } from "@/app/(no-auth)/login/actions";
 
 export function apiInstance<T extends new (conf?: Configuration) => any>(
   Api: T,
   conf?: ConfigurationParameters,
 ): InstanceType<T> {
-  const accessToken = getAuthCookie(ACCESS_TOKEN);
+  const accessToken = cookies().get(ACCESS_TOKEN)?.value;
 
   const _conf = new Configuration({
     basePath: process.env.API_SERVER || BASE_PATH,
@@ -41,14 +41,17 @@ const middleware: Middleware = {
 
       case 401: {
         try {
-          const auth = await refreshTokenAction();
-          const headers: HeadersInit = {
-            Authorization: `Bearer ${auth?.accessToken}`,
-          };
+          //TODO: 待解决：由于不能同步更新设置新的cookie，所以这里直接跳转到登陆，否则当token过期后每次都要请求一变
+          // const auth = await refreshTokenAction();
+          // const headers: HeadersInit = {
+          //   Authorization: `Bearer ${auth?.accessToken}`,
+          // };
 
-          context.init.headers = { ...context.init.headers, ...headers };
+          // context.init.headers = { ...context.init.headers, ...headers };
 
-          return await context.fetch(context.url, context.init);
+          // return await context.fetch(context.url, context.init);
+
+          throw new Error();
         } catch (error) {
           return redirect("/login");
         }

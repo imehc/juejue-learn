@@ -19,7 +19,7 @@ export default async function UserPage() {
       {cookieStore.getAll().map((cookie) => (
         <div key={cookie.name}>
           <p>Name: {cookie.name}</p>
-          <p>Value: {cookie.value}</p>
+          <p>Value: {cookie.value.split(".").at(-1)}</p>
         </div>
       ))}
     </>

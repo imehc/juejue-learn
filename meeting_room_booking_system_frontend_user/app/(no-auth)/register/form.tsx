@@ -116,7 +116,7 @@ export function RegisterForm() {
         />
       </div>
       <div className="w-full text-end mb-4">
-        <text>已有账号？去</text>
+        <span>已有账号？去</span>
         <Link href="/login" underline="hover">
           登录
         </Link>
