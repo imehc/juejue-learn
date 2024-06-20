@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { differenceInMinutes } from "date-fns";
 import { redirect } from "next/navigation";
-import { getCookie } from "cookies-next";
 
 import { ACCESS_TOKEN, EXPIRES_IN, REFRESH_TOKEN } from "./helper/cookie";
 import { AuthApi } from "./meeting-room-booking-api";
@@ -41,9 +40,10 @@ export const config = {
  * @link https://www.reddit.com/r/nextjs/comments/18955c2/issue_updating_nextjs_13_cookie_in_middleware/
  */
 const authMiddleware = async (req: NextRequest) => {
-  const accessToken = getCookie(ACCESS_TOKEN, { cookies })?.toString();
-  const refreshToken = getCookie(REFRESH_TOKEN, { cookies })?.toString();
-  const expiresIn = getCookie(EXPIRES_IN, { cookies })?.toString();
+  const cookieStore = cookies();
+  const accessToken = cookieStore.get(ACCESS_TOKEN)?.value;
+  const refreshToken = cookieStore.get(REFRESH_TOKEN)?.value;
+  const expiresIn = cookieStore.get(EXPIRES_IN)?.value;
 
   if (!accessToken || !refreshToken || !expiresIn) {
     redirect("/login");
