@@ -281,7 +281,7 @@ export class UserService {
 
   async freezeUserById(id: number, userId: number) {
     const user = await this.userRepository.findOne({ where: { id: userId } });
-    if (!user?.isFrozen) {
+    if (!user?.isAdmin) {
       throw new UnauthorizedException('你没有该权限冻结此用户');
     }
     const freezeUser = await this.userRepository.findOneBy({
