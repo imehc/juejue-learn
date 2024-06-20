@@ -1,11 +1,13 @@
-"use cleint";
+"use client";
 
+import { useRouter } from "next/navigation";
 import { FC, useEffect } from "react";
-import { toast } from "sonner";
 
 export const IllegalAccess: FC = () => {
+  const router = useRouter();
+
   useEffect(() => {
-    toast.error("非法访问");
+    router.back();
   }, []);
 
   return null;

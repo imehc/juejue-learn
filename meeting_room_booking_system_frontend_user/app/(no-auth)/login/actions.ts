@@ -7,7 +7,12 @@ import { loginSchema } from "./schema";
 
 import { apiInstance } from "@/helper/auth";
 import { ACCESS_TOKEN, EXPIRES_IN, REFRESH_TOKEN } from "@/helper/cookie";
-import { Auth, ResponseError, UserApi } from "@/meeting-room-booking-api";
+import {
+  Auth,
+  AuthApi,
+  ResponseError,
+  UserApi,
+} from "@/meeting-room-booking-api";
 
 interface State {
   message?: {
@@ -73,6 +78,22 @@ export async function clearCookie() {
   cookieStore.delete(REFRESH_TOKEN);
 }
 
+export async function refreshTokenAction() {
+  const authApi = new AuthApi();
+  const refreshToken = cookies().get(REFRESH_TOKEN)?.value;
+
+  if (!refreshToken) {
+    return;
+  }
+  try {
+    await authApi.checkTokenExpiration({ token: refreshToken });
+
+    return await authApi.refreshToken({ refreshToken });
+  } catch (error) {
+    throw new Error("服务异常");
+  }
+}
+
 export async function setAuthCookie({
   accessToken,
   refreshToken,
@@ -80,18 +101,22 @@ export async function setAuthCookie({
 }: Auth) {
   const cookieStore = cookies();
 
+  const now = new Date().getTime() + expiresIn;
+
   cookieStore.set(ACCESS_TOKEN, accessToken, {
     httpOnly: true,
     sameSite: "lax",
-    // expires
+    expires: now,
   });
 
   cookieStore.set(REFRESH_TOKEN, refreshToken, {
     httpOnly: true,
     sameSite: "lax",
+    secure: true,
   });
-  cookies().set(EXPIRES_IN, (new Date().getTime() + expiresIn).toString(), {
+  cookies().set(EXPIRES_IN, now.toString(), {
     httpOnly: true,
     sameSite: "lax",
+    expires: now,
   });
 }
