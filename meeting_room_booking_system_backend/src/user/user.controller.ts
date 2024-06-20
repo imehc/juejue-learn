@@ -46,6 +46,7 @@ import {
   ApiBody,
   ApiConsumes,
   ApiExtraModels,
+  ApiInternalServerErrorResponse,
   ApiOkResponse,
   ApiOperation,
   ApiParam,
@@ -77,6 +78,29 @@ export class UserController {
 
   @Inject(ConfigService)
   private configService: ConfigService;
+
+  @ApiQuery({
+    name: 'token',
+    description: 'token',
+    type: String,
+    required: true,
+  })
+  @ApiInternalServerErrorResponse({ description: '验证不通过', type: String })
+  @ApiOkResponse({ description: '验证通过', type: String })
+  @ApiOperation({
+    summary: '验证token是否有效',
+    operationId: 'check-token-expiration',
+    tags: ['auth'],
+  })
+  @Get('check-token-expiration')
+  async checkTokenExpiration(@Query('token') token: string) {
+    try {
+      this.jwtService.verify(token);
+      return '验证通过';
+    } catch (error) {
+      throw new HttpException('验证不通过', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
 
   @ApiQuery({
     name: 'address',
@@ -361,7 +385,7 @@ export class UserController {
     @UserInfo('userId') userId: number, // 判断当前是否具有权限冻结
   ) {
     await this.userService.freezeUserById(freezeId, userId);
-    return 'success';
+    return '冻结成功';
   }
 
   @ApiBearerAuth()
