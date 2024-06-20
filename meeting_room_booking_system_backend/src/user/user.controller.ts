@@ -526,7 +526,7 @@ export class UserController {
   }
 
   @ApiOperation({ deprecated: true })
-  @RequireLogin()
+  // @RequireLogin()
   @Get('mock-users')
   async mockUsers() {
     await this.userServerMock.mockUsers();

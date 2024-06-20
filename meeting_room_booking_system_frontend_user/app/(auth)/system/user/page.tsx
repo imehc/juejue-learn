@@ -19,7 +19,10 @@ export default async function SystemUserPage({
     );
   }
   const userApi = apiInstance(UserApi);
-  const userList = await userApi.getUserList(payload.data);
+  const userList = await userApi.getUserList({
+    ...payload.data,
+    skip: payload.data.skip + 1,
+  });
 
   return <UserList {...userList} />;
 }

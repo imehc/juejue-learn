@@ -317,7 +317,7 @@ export class UserService {
   ) {
     // TODO: 优雅处理参数
     limit = limit > 100 ? 100 : limit;
-    skip = skip < 1 ? 1 : skip;
+    skip = skip < 0 ? 0 : skip;
     const skipCount = (skip - 1) * limit;
     const condition: Record<string, any> = {};
     // 模糊搜索
