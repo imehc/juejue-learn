@@ -5,8 +5,8 @@ export const forgotSchema = z
     username: z
       .string({ required_error: "请填写用户名" })
       .trim()
-      .min(2, "至少位2个字符")
-      .max(8, "不能超过8个字符")
+      .min(2, "用户名不能少于2位")
+      .max(8, "用户名不能超过8位")
       .refine((value) => /^[A-Za-z0-9]+$/.test(value), {
         message: "用户名不合法",
       }),

@@ -54,8 +54,8 @@ export function ForgotPasswordForm() {
       <Input
         isRequired
         className="max-w-sm mb-4"
-        errorMessage={forgotPasswordState?.message?.email}
-        isInvalid={!!forgotPasswordState?.message?.email}
+        errorMessage={forgotPasswordState?.message?.username}
+        isInvalid={!!forgotPasswordState?.message?.username}
         label="用户名"
         name="username"
         type="text"
