@@ -182,7 +182,7 @@ export class UserController {
   @ApiOperation({
     summary: '获取更新用户信息验证码',
     operationId: 'update-user-info-captcha',
-    tags: ['captcha', 'user'],
+    tags: ['captcha'],
   })
   @RequireLogin()
   @Get('update/captcha')
@@ -342,7 +342,7 @@ export class UserController {
   @ApiOperation({
     summary: '用户/管理员更新密码',
     operationId: 'update-password',
-    tags: ['user'],
+    tags: ['user', 'system'],
   })
   // @Post(['update-password', 'admin/update-password']) // 由于需要指定唯一operationId，所以需要拆分
   @Post('update-password')
@@ -362,7 +362,7 @@ export class UserController {
   @ApiOperation({
     summary: '用户/管理员更新用户/管理员信息',
     operationId: 'update-user-info',
-    tags: ['user'],
+    tags: ['user', 'system'],
   })
   @Post('update')
   @RequireLogin()
