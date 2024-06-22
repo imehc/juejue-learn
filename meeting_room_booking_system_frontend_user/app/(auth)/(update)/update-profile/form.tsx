@@ -74,10 +74,11 @@ export function UpdateProfileForm({ headPic, nickName, email }: UserDetailVo) {
   }, [file]);
 
   const src = useMemo(() => {
-    if (headPic?.startsWith("http://") || headPic?.startsWith("https://")) {
-      return headPic;
-    }
     if (headPic) {
+      if (headPic?.startsWith("http://") || headPic?.startsWith("https://")) {
+        return headPic;
+      }
+
       return `${BASE_PATH}/${headPic}`;
     }
 

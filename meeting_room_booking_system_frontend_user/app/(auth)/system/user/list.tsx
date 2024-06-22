@@ -25,11 +25,12 @@ import { parseAsInteger, parseAsString, useQueryStates } from "nuqs";
 import { FC, useTransition } from "react";
 import { Button } from "@nextui-org/button";
 import { toast } from "sonner";
+import { Avatar } from "@nextui-org/avatar";
 
 import { userListSchema } from "./schema";
 import { frozenUser } from "./actions";
 
-import { User, UserListVo } from "@/meeting-room-booking-api";
+import { BASE_PATH, User, UserListVo } from "@/meeting-room-booking-api";
 
 interface Props extends UserListVo {}
 
@@ -155,15 +156,24 @@ const TableItem: FC<{ columnKey: string; user: User }> = ({
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   switch (columnKey) {
-    case "headPic":
+    case "headPic": {
+      const checkHeadPic =
+        user.headPic?.startsWith("http://") ||
+        user.headPic?.startsWith("https://");
+      const src = user.headPic
+        ? checkHeadPic
+          ? user.headPic
+          : `${BASE_PATH}/${user.headPic}`
+        : undefined;
+
       return (
-        // <Avatar
-        //   className="w-6 h-6 text-tiny"
-        //   name={user.nickName?.slice(0, 1)}
-        //   src={user.headPic ? `${BASE_PATH}/${user.headPic}` : undefined}
-        // />
-        <div>111</div>
+        <Avatar
+          className="w-6 h-6 text-tiny"
+          name={user.nickName?.slice(0, 1)}
+          src={src}
+        />
       );
+    }
     case "createAt":
       return format(user.createAt, "yyyy-MM-dd HH:mm:ss");
     case "isFrozen":
