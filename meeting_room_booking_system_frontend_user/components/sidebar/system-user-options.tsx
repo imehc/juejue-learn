@@ -12,7 +12,7 @@ import {
 
 import { IconWrapper } from "./icon-wrapper";
 
-export const sidebarOptions = [
+export const sidebarOptionsWithUser = [
   {
     id: 1,
     name: "会议室管理",

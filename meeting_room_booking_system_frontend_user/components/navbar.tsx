@@ -13,12 +13,18 @@ import { Input } from "@nextui-org/input";
 import { link as linkStyles } from "@nextui-org/theme";
 import NextLink from "next/link";
 import clsx from "clsx";
+import { FC, use } from "react";
 
 import { siteConfig } from "@/config/site";
 import { ThemeSwitch } from "@/components/theme-switch";
 import { GithubIcon, SearchIcon, Logo, ProfileIcon } from "@/components/icons";
+import { apiInstance } from "@/helper/auth";
+import { UserApi } from "@/meeting-room-booking-api";
 
-export const Navbar = () => {
+export const Navbar: FC = () => {
+  const userApi = apiInstance(UserApi);
+  const user = use(userApi.getUserInfo());
+
   const searchInput = (
     <Input
       aria-label="Search"
@@ -44,10 +50,14 @@ export const Navbar = () => {
     <NextUINavbar maxWidth="xl" position="sticky">
       <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
         <NavbarBrand as="li" className="gap-3 max-w-fit">
-          <NextLink className="flex justify-start items-center gap-1" href="/">
+          <NextLink
+            className="flex justify-start items-center gap-1"
+            href={user.isAdmin ? "/system/user" : "/"}
+          >
             <Logo />
             <p className="font-bold text-inherit">
-              Meeting room reservation system
+              Meeting room reservation system{" "}
+              {user.isAdmin ? "manage" : undefined}
             </p>
           </NextLink>
         </NavbarBrand>
@@ -84,7 +94,10 @@ export const Navbar = () => {
             <GithubIcon className="text-default-500" />
           </Link>
           <ThemeSwitch />
-          <Link aria-label="Profile" href="/update-profile">
+          <Link
+            aria-label="Profile"
+            href={user.isAdmin ? "/system/profile-modify" : "/profile-modify"}
+          >
             <ProfileIcon />
           </Link>
         </NavbarItem>

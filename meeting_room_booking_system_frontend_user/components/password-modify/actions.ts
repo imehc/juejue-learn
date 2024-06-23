@@ -1,56 +1,54 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
-
-import { updateProfileSchema } from "./schema";
+import { passwordModifySchema } from "./schema";
 
 import { apiInstance } from "@/helper/auth";
 import { CaptchaApi, ResponseError, UserApi } from "@/meeting-room-booking-api";
 
 interface State {
   message?: {
+    password?: string;
+    confirmPassword?: string;
     captcha?: string;
   } | null;
   error?: string;
   success?: string;
 }
 
-export async function updateProfile(
+export async function passwordModify(
   prevState: State,
   formData: FormData,
 ): Promise<State> {
-  const payload = updateProfileSchema.safeParse(
+  const payload = passwordModifySchema.safeParse(
     Object.fromEntries(formData.entries()),
   );
 
   if (!payload.success) {
+    const passwordErr = payload.error.errors.find(
+      (err) => err.path[0] === "password",
+    )?.message;
+    const confirmPasswordErr = payload.error.errors.find(
+      (err) => err.path[0] === "confirmPassword",
+    )?.message;
     const captchaErr = payload.error.errors.find(
       (err) => err.path[0] === "captcha",
     )?.message;
 
     return {
       message: {
+        password: passwordErr,
+        confirmPassword: confirmPasswordErr,
         captcha: captchaErr,
       },
     };
   }
 
-  const file = formData.get("picture") as File | null;
-
-  let headPic = payload.data.headPic;
-
   try {
     const userApi = apiInstance(UserApi);
 
-    if (file?.size) {
-      headPic = await userApi.uploadPicture({ file: file });
-    }
-
-    const success = await userApi.updateUserInfo({
-      updateUserDto: { ...payload.data, headPic },
+    const success = await userApi.updatePassword({
+      updateUserPasswordDto: payload.data,
     });
-
-    revalidatePath(success);
 
     return { success };
   } catch (error) {
@@ -69,7 +67,7 @@ export async function updateProfile(
   }
 }
 
-export async function updateProfileCaptcha(
+export async function passwordModifyCaptcha(
   prevState: State,
   formData: FormData,
 ): Promise<State> {

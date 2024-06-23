@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const updatePasswordSchema = z
+export const passwordModifySchema = z
   .object({
     password: z
       .string({ required_error: "请填写密码" })
@@ -29,4 +29,4 @@ export const updatePasswordSchema = z
     path: ["confirmPassword"],
   });
 
-export type UpdatePasswordValues = z.infer<typeof updatePasswordSchema>;
+export type PasswordModifyValues = z.infer<typeof passwordModifySchema>;

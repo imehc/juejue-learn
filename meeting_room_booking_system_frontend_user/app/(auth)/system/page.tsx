@@ -1,3 +1,5 @@
+import { redirect } from "next/navigation";
+
 export default function SystemPage() {
-  return <div>123</div>;
+  return redirect("/system/user");
 }

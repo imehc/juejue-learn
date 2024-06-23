@@ -1,11 +1,10 @@
-import { UpdateProfileForm } from "./form";
-
+import { PasswordModifyForm } from "@/components/password-modify";
 import { apiInstance } from "@/helper/auth";
 import { UserApi } from "@/meeting-room-booking-api";
 
-export default async function UpdateProfile() {
+export default async function PasswordModifyPage() {
   const userApi = apiInstance(UserApi);
   const userInfo = await userApi.getUserInfo();
 
-  return <UpdateProfileForm {...userInfo} />;
+  return <PasswordModifyForm {...userInfo} />;
 }

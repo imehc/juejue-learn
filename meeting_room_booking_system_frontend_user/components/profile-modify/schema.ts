@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const updateProfileSchema = z.object({
+export const profileModifySchema = z.object({
   headPic: z.string().optional(),
   nickName: z.string().trim().optional(),
   captcha: z.coerce
@@ -10,4 +10,4 @@ export const updateProfileSchema = z.object({
     }),
 });
 
-export type UpdateProfileValues = z.infer<typeof updateProfileSchema>;
+export type ProfileModifyValues = z.infer<typeof profileModifySchema>;

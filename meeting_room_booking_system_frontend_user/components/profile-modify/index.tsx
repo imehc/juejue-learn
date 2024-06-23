@@ -3,25 +3,24 @@
 import { Input } from "@nextui-org/input";
 import { useFormState, useFormStatus } from "react-dom";
 import { Button, ButtonProps } from "@nextui-org/button";
-import { Divider } from "@nextui-org/divider";
 import { Avatar } from "@nextui-org/avatar";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { useCountDown } from "ahooks";
 
-import { updateProfile, updateProfileCaptcha } from "./actions";
+import { profileModify, profileModifyCaptcha } from "./actions";
 
 import { BASE_PATH, UserDetailVo } from "@/meeting-room-booking-api";
 
-export function UpdateProfileForm({ headPic, nickName, email }: UserDetailVo) {
-  const [updateProfileState, updateProfileFormAction] = useFormState(
-    updateProfile,
+export function ProfileModifyForm({ headPic, nickName, email }: UserDetailVo) {
+  const [profileModifyState, profileModifyFormAction] = useFormState(
+    profileModify,
     {
       message: null,
     },
   );
-  const [updateProfileCaptchaState, updateProfileCaptchaFormAction] =
-    useFormState(updateProfileCaptcha, { message: null });
+  const [profileModifyCaptchaState, profileModifyCaptchaFormAction] =
+    useFormState(profileModifyCaptcha, { message: null });
 
   const [targetDate, setTargetDate] = useState<number>();
   const [countDown] = useCountDown({
@@ -32,25 +31,25 @@ export function UpdateProfileForm({ headPic, nickName, email }: UserDetailVo) {
   });
 
   useEffect(() => {
-    if (!updateProfileState?.error) return;
-    toast.error(updateProfileState.error);
-  }, [updateProfileState]);
+    if (!profileModifyState?.error) return;
+    toast.error(profileModifyState.error);
+  }, [profileModifyState]);
 
   useEffect(() => {
-    if (!updateProfileState?.success) return;
-    toast.success(updateProfileState.success);
-  }, [updateProfileState]);
+    if (!profileModifyState?.success) return;
+    toast.success(profileModifyState.success);
+  }, [profileModifyState]);
 
   useEffect(() => {
-    if (!updateProfileCaptchaState?.error) return;
-    toast.error(updateProfileCaptchaState.error);
-  }, [updateProfileCaptchaState]);
+    if (!profileModifyCaptchaState?.error) return;
+    toast.error(profileModifyCaptchaState.error);
+  }, [profileModifyCaptchaState]);
 
   useEffect(() => {
-    if (!updateProfileCaptchaState?.success) return;
+    if (!profileModifyCaptchaState?.success) return;
     setTargetDate(Date.now() + 60 * 1000);
-    toast.success(updateProfileCaptchaState.success);
-  }, [updateProfileCaptchaState]);
+    toast.success(profileModifyCaptchaState.success);
+  }, [profileModifyCaptchaState]);
 
   const [file, setFile] = useState<File>();
   const [tempLink, setTempLink] = useState<string>();
@@ -74,6 +73,9 @@ export function UpdateProfileForm({ headPic, nickName, email }: UserDetailVo) {
   }, [file]);
 
   const src = useMemo(() => {
+    if (tempLink) {
+      return tempLink;
+    }
     if (headPic) {
       if (headPic?.startsWith("http://") || headPic?.startsWith("https://")) {
         return headPic;
@@ -82,11 +84,15 @@ export function UpdateProfileForm({ headPic, nickName, email }: UserDetailVo) {
       return `${BASE_PATH}/${headPic}`;
     }
 
-    return tempLink;
+    return undefined;
   }, [headPic, tempLink]);
 
   return (
-    <form action="" autoComplete="off" className="w-full">
+    <form
+      action=""
+      autoComplete="off"
+      className="w-full h-full flex flex-col justify-center items-center"
+    >
       <div className="flex justify-center items-center relative mb-4">
         <Avatar
           className="w-20 h-20 text-large text-center"
@@ -120,25 +126,24 @@ export function UpdateProfileForm({ headPic, nickName, email }: UserDetailVo) {
         name="email"
         type="email"
       />
-      <div className="max-w-sm grid grid-cols-6 gap-4 mb-4">
+      <div className="max-w-sm w-full grid grid-cols-6 gap-4 mb-4">
         <Input
           fullWidth
           isRequired
           className="col-span-4"
-          errorMessage={updateProfileState?.message?.captcha}
-          isInvalid={!!updateProfileState?.message?.captcha}
+          errorMessage={profileModifyState?.message?.captcha}
+          isInvalid={!!profileModifyState?.message?.captcha}
           label="验证码"
           name="captcha"
           type="number"
         />
         <SendCaptchaButton
           countDown={countDown}
-          formAction={updateProfileCaptchaFormAction}
+          formAction={profileModifyCaptchaFormAction}
         />
       </div>
 
-      <Divider className="mb-4" />
-      <SubmitButton formAction={updateProfileFormAction} />
+      <SubmitButton formAction={profileModifyFormAction} />
     </form>
   );
 }

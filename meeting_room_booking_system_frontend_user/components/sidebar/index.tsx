@@ -3,9 +3,15 @@
 import { Listbox, ListboxItem } from "@nextui-org/listbox";
 import { useRouter } from "next/navigation";
 
-import { sidebarOptions } from "./options";
+import { sidebarOptionsWithUser } from "./system-user-options";
+import { renderSidebarOptionsWithSystemUpdate } from "./system-update-options";
 
-export function SlideBar() {
+interface Props {
+  type: "user" | "update";
+  isAdmin?: boolean;
+}
+
+export function SlideBar({ type, isAdmin = false }: Props) {
   const router = useRouter();
 
   return (
@@ -17,7 +23,10 @@ export function SlideBar() {
       }}
       onAction={(key) => router.push(key as string)}
     >
-      {sidebarOptions
+      {(type === "user"
+        ? sidebarOptionsWithUser
+        : renderSidebarOptionsWithSystemUpdate(isAdmin)
+      )
         .filter((item) => item.visible)
         .map((item) => (
           <ListboxItem
