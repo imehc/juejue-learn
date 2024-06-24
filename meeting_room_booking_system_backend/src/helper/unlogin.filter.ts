@@ -5,7 +5,6 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { Response } from 'express';
-import { UnifiledResponse } from '.';
 
 /** 自定义异常响应的格式 */
 export class UnLoginException {
