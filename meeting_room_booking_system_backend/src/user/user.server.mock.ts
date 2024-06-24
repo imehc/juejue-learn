@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -9,8 +9,6 @@ import { faker, fakerZH_CN } from '@faker-js/faker';
 
 @Injectable()
 export class UserServiceMock {
-  private logger = new Logger();
-
   @InjectRepository(User)
   private userRepository: Repository<User>;
 
@@ -84,16 +82,23 @@ export class UserServiceMock {
       where: { name: '普通用户' },
     });
 
+    const checkAdmin = await this.userRepository.findOne({
+      where: { username: 'admin', isAdmin: true },
+    });
+
     for (let index = 0; index < 36; index++) {
       if ([11, 33].includes(index)) {
         // 为管理员用户
         const user1 = new User();
-        user1.username = faker.person
-          .fullName()
-          .toLowerCase()
-          .split(' ')
-          .join('')
-          .slice(0, 10);
+        user1.username =
+          index === 11 && !checkAdmin
+            ? 'root'
+            : faker.person
+                .fullName()
+                .toLowerCase()
+                .split(' ')
+                .join('')
+                .slice(0, 10);
         user1.password = md5('111111');
         user1.email = faker.internet.email();
         user1.isAdmin = true;

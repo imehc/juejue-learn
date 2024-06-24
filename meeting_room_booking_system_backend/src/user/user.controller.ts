@@ -524,20 +524,4 @@ export class UserController {
       html: `<p>你的${type}验证码是 ${code},${ttl}分钟内有效</p>`,
     });
   }
-
-  @ApiOperation({ deprecated: true })
-  // @RequireLogin()
-  @Get('mock-users')
-  async mockUsers() {
-    await this.userServerMock.mockUsers();
-    return 'done';
-  }
-
-  @ApiOperation({ deprecated: true })
-  @RequireLogin()
-  @Get('clear-all-auth')
-  async clearAllAuth() {
-    await this.userServerMock.clearAuth();
-    return 'done';
-  }
 }
