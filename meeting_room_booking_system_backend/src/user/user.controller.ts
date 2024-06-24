@@ -92,7 +92,7 @@ export class UserController {
   @ApiInternalServerErrorResponse({ description: '验证不通过', type: String })
   @ApiOkResponse({ description: '验证通过', type: String })
   @ApiOperation({
-    summary: '验证token是否有效',
+    description: '验证token是否有效',
     operationId: 'check-token-expiration',
     tags: ['auth'],
   })
@@ -115,7 +115,7 @@ export class UserController {
   @ApiBadRequestResponse({ description: '邮箱已存在', type: String })
   @ApiOkResponse({ description: '发送成功', type: String })
   @ApiOperation({
-    summary: '获取注册验证码',
+    description: '获取注册验证码',
     operationId: 'register-captcha',
     tags: ['captcha'],
   })
@@ -144,7 +144,7 @@ export class UserController {
   })
   @ApiOkResponse({ description: '发送成功', type: String })
   @ApiOperation({
-    summary: '获取找回密码验证码',
+    description: '获取找回密码验证码',
     operationId: 'fotgot-captcha',
     tags: ['captcha'],
   })
@@ -161,7 +161,7 @@ export class UserController {
   @ApiBearerAuth()
   @ApiOkResponse({ description: '发送成功', type: String })
   @ApiOperation({
-    summary: '获取更改密码验证码',
+    description: '获取更改密码验证码',
     operationId: 'update-password-captcha',
     tags: ['captcha'],
   })
@@ -180,7 +180,7 @@ export class UserController {
   @ApiBearerAuth()
   @ApiOkResponse({ description: '发送成功', type: String })
   @ApiOperation({
-    summary: '获取更新用户信息验证码',
+    description: '获取更新用户信息验证码',
     operationId: 'update-user-info-captcha',
     tags: ['captcha'],
   })
@@ -202,7 +202,7 @@ export class UserController {
   })
   @ApiOkResponse({ description: '注册成功', type: String })
   @ApiOperation({
-    summary: '注册用户',
+    description: '注册用户',
     operationId: 'user-register',
     tags: ['user'],
   })
@@ -216,7 +216,7 @@ export class UserController {
   @ApiBadRequestResponse({ description: '用户不存在/密码错误', type: String })
   @ApiOkResponse({ description: '用户信息和token', type: LoginUserVo })
   @ApiOperation({
-    summary: '普通用户登录',
+    description: '普通用户登录',
     operationId: 'user-login',
     tags: ['user'],
   })
@@ -240,7 +240,7 @@ export class UserController {
   @ApiBadRequestResponse({ description: '用户不存在/密码错误', type: String })
   @ApiOkResponse({ description: '用户信息和token', type: LoginUserVo })
   @ApiOperation({
-    summary: '管理员登录',
+    description: '管理员登录',
     operationId: 'system-login',
     tags: ['user', 'system'],
   })
@@ -272,7 +272,7 @@ export class UserController {
   })
   @ApiOkResponse({ description: '刷新成功', type: Auth })
   @ApiOperation({
-    summary: '使用refreshToken换取新token',
+    description: '使用refreshToken换取新token',
     operationId: 'refresh-token',
     tags: ['auth'],
   })
@@ -312,7 +312,7 @@ export class UserController {
     },
   })
   @ApiOperation({
-    summary: '获取用户/管理员信息',
+    description: '获取用户/管理员信息',
     operationId: 'get-user-info',
     tags: ['user', 'system'],
   })
@@ -326,7 +326,7 @@ export class UserController {
   @ApiBadRequestResponse({ description: '验证码已失效/不正确', type: String })
   @ApiOkResponse({ description: '找回密码成功', type: String })
   @ApiOperation({
-    summary: '用户忘记密码',
+    description: '用户忘记密码',
     operationId: 'forgot-password',
     tags: ['user'],
   })
@@ -340,7 +340,7 @@ export class UserController {
   @ApiBadRequestResponse({ description: '验证码已失效/不正确', type: String })
   @ApiOkResponse({ description: '用户/管理员更新密码', type: String })
   @ApiOperation({
-    summary: '用户/管理员更新密码',
+    description: '用户/管理员更新密码',
     operationId: 'update-password',
     tags: ['user', 'system'],
   })
@@ -360,7 +360,7 @@ export class UserController {
   @ApiBadRequestResponse({ description: '验证码不正确/已失效', type: String })
   @ApiOkResponse({ description: '更新成功', type: String })
   @ApiOperation({
-    summary: '用户/管理员更新用户/管理员信息',
+    description: '用户/管理员更新用户/管理员信息',
     operationId: 'update-user-info',
     tags: ['user', 'system'],
   })
@@ -378,7 +378,7 @@ export class UserController {
   @ApiParam({ name: 'id', description: '冻结用户的用户ID', type: Number })
   @ApiOkResponse({ description: 'success', type: String })
   @ApiOperation({
-    summary: '冻结用户',
+    description: '冻结用户',
     operationId: 'freeze-user',
     tags: ['system'],
   })
@@ -400,7 +400,7 @@ export class UserController {
   @ApiQuery({ name: 'email', description: '邮箱地址', required: false })
   @ApiOkResponse({ description: '用户列表', type: UserListVo })
   @ApiOperation({
-    summary: '用户列表',
+    description: '用户列表',
     operationId: 'get-user-list',
     tags: ['user'],
   })
@@ -440,7 +440,7 @@ export class UserController {
   @ApiResponse({ status: HttpStatus.OK, description: 'success', type: String })
   @RequireLogin()
   @ApiOperation({
-    summary: '上传图片',
+    description: '上传图片',
     operationId: 'uploadPicture',
     tags: ['user', 'file'],
   })

@@ -1,10 +1,9 @@
 import {
   CanActivate,
   ExecutionContext,
-  HttpException,
-  HttpStatus,
   Inject,
   Injectable,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { Reflector } from '@nestjs/core';
@@ -38,7 +37,7 @@ export class LoginGuard implements CanActivate {
 
     if (!authorization) {
       // throw new UnLoginException('用户未登录');
-      throw new HttpException('用户未登录', HttpStatus.BAD_REQUEST);
+      throw new UnauthorizedException();
     }
 
     try {
@@ -54,10 +53,7 @@ export class LoginGuard implements CanActivate {
       };
       return true;
     } catch (e) {
-      throw new HttpException(
-        'token 失效，请重新登录',
-        HttpStatus.UNAUTHORIZED,
-      );
+      throw new UnauthorizedException();
       // throw new UnLoginException('token 失效，请重新登录');
     }
   }

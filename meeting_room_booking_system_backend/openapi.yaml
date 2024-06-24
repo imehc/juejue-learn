@@ -24,7 +24,8 @@ paths:
   /user/check-token-expiration:
     get:
       operationId: check-token-expiration
-      summary: 验证token是否有效
+      summary: ''
+      description: 验证token是否有效
       tags:
         - auth
       parameters:
@@ -50,7 +51,8 @@ paths:
   /user/register-captcha:
     get:
       operationId: register-captcha
-      summary: 获取注册验证码
+      summary: ''
+      description: 获取注册验证码
       tags:
         - captcha
       parameters:
@@ -77,7 +79,8 @@ paths:
   /user/forgot-password-captcha:
     get:
       operationId: fotgot-captcha
-      summary: 获取找回密码验证码
+      summary: ''
+      description: 获取找回密码验证码
       tags:
         - captcha
       parameters:
@@ -98,7 +101,8 @@ paths:
   /user/update-password/captcha:
     get:
       operationId: update-password-captcha
-      summary: 获取更改密码验证码
+      summary: ''
+      description: 获取更改密码验证码
       tags:
         - captcha
       parameters: []
@@ -114,7 +118,8 @@ paths:
   /user/update/captcha:
     get:
       operationId: update-user-info-captcha
-      summary: 获取更新用户信息验证码
+      summary: ''
+      description: 获取更新用户信息验证码
       tags:
         - captcha
       parameters: []
@@ -130,7 +135,8 @@ paths:
   /user/register:
     post:
       operationId: user-register
-      summary: 注册用户
+      summary: ''
+      description: 注册用户
       tags:
         - user
       parameters: []
@@ -156,7 +162,8 @@ paths:
   /user/login:
     post:
       operationId: user-login
-      summary: 普通用户登录
+      summary: ''
+      description: 普通用户登录
       tags:
         - user
       parameters: []
@@ -182,7 +189,8 @@ paths:
   /user/admin/login:
     post:
       operationId: system-login
-      summary: 管理员登录
+      summary: ''
+      description: 管理员登录
       tags:
         - user
         - system
@@ -209,7 +217,8 @@ paths:
   /user/refresh:
     get:
       operationId: refresh-token
-      summary: 使用refreshToken换取新token
+      summary: ''
+      description: 使用refreshToken换取新token
       tags:
         - auth
       parameters:
@@ -236,7 +245,8 @@ paths:
   /user/info:
     get:
       operationId: get-user-info
-      summary: 获取用户/管理员信息
+      summary: ''
+      description: 获取用户/管理员信息
       tags:
         - user
         - system
@@ -260,7 +270,8 @@ paths:
   /user/forgot-password:
     post:
       operationId: forgot-password
-      summary: 用户忘记密码
+      summary: ''
+      description: 用户忘记密码
       tags:
         - user
       parameters: []
@@ -286,7 +297,8 @@ paths:
   /user/update-password:
     post:
       operationId: update-password
-      summary: 用户/管理员更新密码
+      summary: ''
+      description: 用户/管理员更新密码
       tags:
         - user
         - system
@@ -315,7 +327,8 @@ paths:
   /user/update:
     post:
       operationId: update-user-info
-      summary: 用户/管理员更新用户/管理员信息
+      summary: ''
+      description: 用户/管理员更新用户/管理员信息
       tags:
         - user
         - system
@@ -344,7 +357,8 @@ paths:
   /user/freeze/{id}:
     put:
       operationId: freeze-user
-      summary: 冻结用户
+      summary: ''
+      description: 冻结用户
       tags:
         - system
       parameters:
@@ -366,7 +380,8 @@ paths:
   /user/list:
     get:
       operationId: get-user-list
-      summary: 用户列表
+      summary: ''
+      description: 用户列表
       tags:
         - user
       parameters:
@@ -412,7 +427,8 @@ paths:
   /user/upload:
     post:
       operationId: uploadPicture
-      summary: 上传图片
+      summary: ''
+      description: 上传图片
       tags:
         - user
         - file
@@ -454,6 +470,147 @@ paths:
       responses:
         '200':
           description: ''
+  /meeting-room:
+    get:
+      operationId: find-all-metting-room
+      summary: ''
+      description: 会议室列表
+      tags:
+        - meeting-room
+      parameters:
+        - name: skip
+          required: true
+          in: query
+          description: 第几页
+          schema:
+            type: number
+        - name: limit
+          required: true
+          in: query
+          description: 每页多少条
+          schema:
+            type: number
+        - name: name
+          required: false
+          in: query
+          description: 会议室名称
+          schema:
+            type: string
+        - name: capacity
+          required: false
+          in: query
+          description: 会议室容量
+          schema:
+            type: number
+        - name: equipment
+          required: false
+          in: query
+          description: 设备
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 会议室列表
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MeetingRoomList'
+      security:
+        - bearer: []
+    post:
+      operationId: create-meeting-room
+      summary: ''
+      description: 会议室创建
+      tags:
+        - meeting-room
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateMeetingRoomDto'
+      responses:
+        '201':
+          description: 会议室创建成功
+          content:
+            application/json:
+              schema:
+                type: string
+      security:
+        - bearer: []
+  /meeting-room/{id}:
+    get:
+      operationId: find-one-meeting-room
+      summary: ''
+      description: 会议室详情
+      tags:
+        - meeting-room
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 查找会议室详情成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MeetingRoom'
+      security:
+        - bearer: []
+    patch:
+      operationId: update-meeting-room
+      summary: ''
+      description: 会议室更新
+      tags:
+        - meeting-room
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: 会议室id
+          schema:
+            type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateMeetingRoomDto'
+      responses:
+        '200':
+          description: 会议室更新成功
+          content:
+            application/json:
+              schema:
+                type: string
+      security:
+        - bearer: []
+    delete:
+      operationId: del-meeting-room
+      summary: ''
+      description: 删除会议室
+      tags:
+        - meeting-room
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: 会议室id
+          schema:
+            type: number
+      responses:
+        '204':
+          description: 删除会议室成功
+          content:
+            application/json:
+              schema:
+                type: string
+      security:
+        - bearer: []
 info:
   title: 会议室预订系统
   description: api 接口文档
@@ -699,3 +856,76 @@ components:
       required:
         - users
         - totalCount
+    MeetingRoom:
+      type: object
+      properties:
+        id:
+          type: number
+        name:
+          type: string
+        capacity:
+          type: number
+        location:
+          type: string
+        equipment:
+          type: string
+        description:
+          type: string
+        isBooked:
+          type: boolean
+        createAt:
+          format: date-time
+          type: string
+        updateAt:
+          format: date-time
+          type: string
+      required:
+        - id
+        - name
+        - capacity
+        - location
+        - isBooked
+        - createAt
+        - updateAt
+    MeetingRoomList:
+      type: object
+      properties:
+        meetingRooms:
+          type: array
+          items:
+            $ref: '#/components/schemas/MeetingRoom'
+        totalCount:
+          type: number
+      required:
+        - meetingRooms
+        - totalCount
+    CreateMeetingRoomDto:
+      type: object
+      properties:
+        name:
+          type: string
+        capacity:
+          type: number
+        location:
+          type: string
+        equipment:
+          type: string
+        description:
+          type: string
+      required:
+        - name
+        - capacity
+        - location
+    UpdateMeetingRoomDto:
+      type: object
+      properties:
+        name:
+          type: string
+        capacity:
+          type: number
+        location:
+          type: string
+        equipment:
+          type: string
+        description:
+          type: string

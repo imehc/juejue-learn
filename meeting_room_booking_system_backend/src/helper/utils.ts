@@ -13,6 +13,6 @@ export function generateParseIntPipe(name: string) {
   return new ParseIntPipe({
     exceptionFactory() {
       throw new BadRequestException(name + ' 应该为数字');
-    } 
-  })
+    },
+  });
 }
