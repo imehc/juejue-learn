@@ -40,21 +40,7 @@ const middleware: Middleware = {
         throw new Error("服务异常，请稍后重试");
 
       case 401: {
-        try {
-          //TODO: 待解决：由于不能同步更新设置新的cookie，所以这里直接跳转到登陆，否则当token过期后每次都要请求一变
-          // const auth = await refreshTokenAction();
-          // const headers: HeadersInit = {
-          //   Authorization: `Bearer ${auth?.accessToken}`,
-          // };
-
-          // context.init.headers = { ...context.init.headers, ...headers };
-
-          // return await context.fetch(context.url, context.init);
-
-          throw new Error();
-        } catch (error) {
-          return redirect("/login");
-        }
+        return redirect("/login");
       }
 
       case 400: {

@@ -7,12 +7,7 @@ import { loginSchema } from "./schema";
 
 import { apiInstance } from "@/helper/auth";
 import { ACCESS_TOKEN, EXPIRES_IN, REFRESH_TOKEN } from "@/helper/cookie";
-import {
-  Auth,
-  AuthApi,
-  ResponseError,
-  UserApi,
-} from "@/meeting-room-booking-api";
+import { Auth, ResponseError, UserApi } from "@/meeting-room-booking-api";
 
 interface State {
   message?: {
@@ -78,33 +73,7 @@ export async function clearCookie() {
   cookieStore.delete(REFRESH_TOKEN);
 }
 
-export async function refreshTokenAction() {
-  const authApi = new AuthApi();
-  const refreshToken = cookies().get(REFRESH_TOKEN)?.value;
-
-  if (!refreshToken) {
-    return;
-  }
-  try {
-    await authApi.checkTokenExpiration({ token: refreshToken });
-
-    const auth = await authApi.refreshToken({ refreshToken });
-
-    // Cookies can only be modified in a Server Action or Route Handler
-    //TODO: 待解决，目前延长token时间曲线救国。注释会当token过期后每次请求新的token，不注释会直接抛异常如上所示
-    // await setAuthCookie(auth);
-
-    return auth;
-  } catch (error) {
-    throw new Error("服务异常");
-  }
-}
-
-export async function setAuthCookie({
-  accessToken,
-  refreshToken,
-  expiresIn,
-}: Auth) {
+async function setAuthCookie({ accessToken, refreshToken, expiresIn }: Auth) {
   const cookieStore = cookies();
 
   const now = new Date().getTime() + expiresIn;
