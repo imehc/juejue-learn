@@ -16,7 +16,7 @@ export const sidebarOptionsWithUser = [
   {
     id: 1,
     name: "会议室管理",
-    href: "/system/conference",
+    href: "/system/meeting-room",
     icon: (
       <IconWrapper className="bg-success/10 text-success">
         <BugIcon className="text-lg " />
@@ -27,7 +27,7 @@ export const sidebarOptionsWithUser = [
   {
     id: 2,
     name: "预定管理",
-    href: "/system/reserve",
+    href: "/system/booking",
     icon: (
       <IconWrapper className="bg-primary/10 text-primary">
         <PullRequestIcon className="text-lg " />
