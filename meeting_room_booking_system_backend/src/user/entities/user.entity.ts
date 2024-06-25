@@ -8,15 +8,18 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Role } from './role.entity';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 /** 用户表实体 */
 @Entity({
   name: 'users',
 })
 export class User {
+  @ApiProperty()
   @PrimaryGeneratedColumn()
   id: number;
 
+  @ApiProperty()
   @Column({
     length: 50,
     comment: '用户名',
@@ -27,9 +30,11 @@ export class User {
   @Column({
     length: 50,
     comment: '密码',
+    select: false,
   })
   password: string;
 
+  @ApiPropertyOptional()
   @Column({
     name: 'nick_name',
     length: 50,
@@ -37,12 +42,14 @@ export class User {
   })
   nickName: string;
 
+  @ApiProperty()
   @Column({
     length: 50,
     comment: '邮箱',
   })
   email: string;
 
+  @ApiPropertyOptional()
   @Column({
     length: 100,
     name: 'head_pic',
@@ -51,6 +58,7 @@ export class User {
   })
   headPic: string;
 
+  @ApiPropertyOptional()
   @Column({
     length: 20,
     name: 'phone_number',
@@ -63,6 +71,7 @@ export class User {
     default: false,
     name: 'is_frozen',
     comment: '是否冻结',
+    select: false,
   })
   isFrozen: boolean;
 
@@ -70,6 +79,7 @@ export class User {
     default: false,
     name: 'is_admin',
     comment: '是否是管理员',
+    select: false,
   })
   isAdmin: boolean;
 

@@ -19,7 +19,6 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "repl": "nest start --watch --entryFile helper/repl"
-
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
@@ -32,6 +31,7 @@
     "@nestjs/typeorm": "^10.0.2",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
+    "date-fns": "^3.6.0",
     "js-yaml": "^4.1.0",
     "ms": "^2.1.3",
     "mysql2": "^3.10.0",

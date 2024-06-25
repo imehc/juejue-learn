@@ -521,7 +521,7 @@ paths:
                 type: string
       security:
         - bearer: []
-  /meeting-room/{id}:
+  /meeting-room/{meetingRoomId}:
     get:
       operationId: find-one-meeting-room
       summary: ''
@@ -529,11 +529,12 @@ paths:
       tags:
         - meeting-room
       parameters:
-        - name: id
+        - name: meetingRoomId
           required: true
           in: path
+          description: 会议室id
           schema:
-            type: string
+            type: number
       responses:
         '200':
           description: 查找会议室详情成功
@@ -550,7 +551,7 @@ paths:
       tags:
         - meeting-room
       parameters:
-        - name: id
+        - name: meetingRoomId
           required: true
           in: path
           description: 会议室id
@@ -578,7 +579,7 @@ paths:
       tags:
         - meeting-room
       parameters:
-        - name: id
+        - name: meetingRoomId
           required: true
           in: path
           description: 会议室id
@@ -587,6 +588,201 @@ paths:
       responses:
         '204':
           description: 删除会议室成功
+          content:
+            application/json:
+              schema:
+                type: string
+      security:
+        - bearer: []
+  /booking:
+    get:
+      operationId: find-all-booking
+      summary: ''
+      description: 预订列表
+      tags:
+        - booking
+      parameters:
+        - name: skip
+          required: true
+          in: query
+          description: 第几页
+          schema:
+            type: number
+        - name: limit
+          required: true
+          in: query
+          description: 每页多少条
+          schema:
+            type: number
+        - name: name
+          required: false
+          in: query
+          description: 会议室名称
+          schema:
+            type: string
+        - name: username
+          required: false
+          in: query
+          description: 预定人
+          schema:
+            type: string
+        - name: location
+          required: false
+          in: query
+          description: 会议室预定地址
+          schema:
+            type: string
+        - name: startAt
+          required: false
+          in: query
+          description: 开始时间
+          schema:
+            format: date-time
+            type: string
+        - name: endAt
+          required: false
+          in: query
+          description: 结束时间
+          schema:
+            format: date-time
+            type: string
+      responses:
+        '200':
+          description: 预订列表
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookingList'
+      security:
+        - bearer: []
+    post:
+      operationId: create-booking
+      summary: ''
+      description: 申请预订
+      tags:
+        - booking
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateBookingDto'
+      responses:
+        '201':
+          description: 申请预订成功
+          content:
+            application/json:
+              schema:
+                type: string
+      security:
+        - bearer: []
+  /booking/{bookingId}/apply:
+    patch:
+      operationId: apply-booking
+      summary: ''
+      description: 审批通过
+      tags:
+        - booking
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: number
+        - name: bookingId
+          required: true
+          in: path
+          description: 预定id
+          schema:
+            type: number
+      responses:
+        '201':
+          description: 审批通过成功
+          content:
+            application/json:
+              schema:
+                type: string
+      security:
+        - bearer: []
+  /booking/{bookingId}/reject:
+    patch:
+      operationId: reject-booking
+      summary: ''
+      description: 审批驳回
+      tags:
+        - booking
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: number
+        - name: bookingId
+          required: true
+          in: path
+          description: 预定id
+          schema:
+            type: number
+      responses:
+        '201':
+          description: 审批驳回成功
+          content:
+            application/json:
+              schema:
+                type: string
+      security:
+        - bearer: []
+  /booking/{bookingId}/unbind:
+    patch:
+      operationId: unbind-booking
+      summary: ''
+      description: 审批解除
+      tags:
+        - booking
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: number
+        - name: bookingId
+          required: true
+          in: path
+          description: 预定id
+          schema:
+            type: number
+      responses:
+        '201':
+          description: 审批解除成功
+          content:
+            application/json:
+              schema:
+                type: string
+      security:
+        - bearer: []
+  /booking/{id}/urge:
+    get:
+      operationId: urge-booking
+      summary: ''
+      description: 催办
+      tags:
+        - booking
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: number
+        - name: bookingId
+          required: true
+          in: path
+          description: 预定id
+          schema:
+            type: number
+      responses:
+        '201':
+          description: 催办成功
           content:
             application/json:
               schema:
@@ -911,3 +1107,78 @@ components:
           type: string
         description:
           type: string
+    Booking:
+      type: object
+      properties:
+        id:
+          type: number
+        startAt:
+          format: date-time
+          type: string
+        endAt:
+          format: date-time
+          type: string
+        status:
+          type: string
+          enum:
+            - apply
+            - pass
+            - reject
+            - unbind
+          default: apply
+          description: 状态（申请中、审批通过、审批驳回、已解除）
+        note:
+          type: string
+        user:
+          $ref: '#/components/schemas/User'
+        room:
+          $ref: '#/components/schemas/MeetingRoom'
+        createAt:
+          format: date-time
+          type: string
+        updateAt:
+          format: date-time
+          type: string
+      required:
+        - id
+        - startAt
+        - endAt
+        - status
+        - note
+        - user
+        - room
+        - createAt
+        - updateAt
+    BookingList:
+      type: object
+      properties:
+        bookings:
+          type: array
+          items:
+            $ref: '#/components/schemas/Booking'
+        totalCount:
+          type: number
+      required:
+        - bookings
+        - totalCount
+    CreateBookingDto:
+      type: object
+      properties:
+        meetingRoomId:
+          type: number
+          description: 会议室ID
+        startAt:
+          format: date-time
+          type: string
+          description: 开始时间
+        endAt:
+          format: date-time
+          type: string
+          description: 结束时间
+        remark:
+          type: string
+          description: 备注
+      required:
+        - meetingRoomId
+        - startAt
+        - endAt

@@ -87,6 +87,19 @@ export class UserService {
 
   async login(loginUserDto: LoginUserDto, isAdmin: boolean) {
     const user = await this.userRepository.findOne({
+      select: {
+        id: true,
+        username: true,
+        password: true,
+        isAdmin: true,
+        email: true,
+        nickName: true,
+        phoneNumber: true,
+        headPic: true,
+        createAt: true,
+        isFrozen: true,
+        roles: true,
+      },
       where: {
         username: loginUserDto.username,
         isAdmin,
@@ -118,6 +131,13 @@ export class UserService {
 
   async findUserById(userId: number /** , isAdmin: boolean */) {
     const user = await this.userRepository.findOne({
+      select: {
+        id: true,
+        username: true,
+        isAdmin: true,
+        email: true,
+        roles: true,
+      },
       where: {
         id: userId,
         // isAdmin,
@@ -211,6 +231,18 @@ export class UserService {
 
   async findUserDetailById(userId: number) {
     const user = await this.userRepository.findOne({
+      select: {
+        id: true,
+        username: true,
+        isAdmin: true,
+        email: true,
+        nickName: true,
+        phoneNumber: true,
+        headPic: true,
+        createAt: true,
+        isFrozen: true,
+        roles: true,
+      },
       where: {
         id: userId,
       },
@@ -272,7 +304,10 @@ export class UserService {
   }
 
   async freezeUserById(id: number, userId: number) {
-    const user = await this.userRepository.findOne({ where: { id: userId } });
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      select: { isAdmin: true },
+    });
     if (!user?.isAdmin) {
       throw new UnauthorizedException('你没有该权限冻结此用户');
     }

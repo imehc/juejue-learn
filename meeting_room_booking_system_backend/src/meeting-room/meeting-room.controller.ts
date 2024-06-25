@@ -24,10 +24,11 @@ import {
   ApiParam,
   ApiQuery,
 } from '@nestjs/swagger';
-import { MeetingRoomList } from './vo/meeting-room-list.dto';
+import { MeetingRoomList } from './vo/meeting-room-list.vo';
 import { MeetingRoom } from './entities/meeting-room.entity';
 import { RequireLogin } from 'src/helper/custom.decorator';
 
+@RequireLogin() // 这里都需要登录，直接添加到Controller
 @Controller('meeting-room')
 export class MeetingRoomController {
   constructor(private readonly meetingRoomService: MeetingRoomService) {}
@@ -44,7 +45,6 @@ export class MeetingRoomController {
     operationId: 'find-all-metting-room',
     tags: ['meeting-room'],
   })
-  @RequireLogin()
   @Get('')
   async list(
     @Query('skip', new DefaultValuePipe(1), generateParseIntPipe('skip'))
@@ -72,27 +72,26 @@ export class MeetingRoomController {
     operationId: 'create-meeting-room',
     tags: ['meeting-room'],
   })
-  @RequireLogin()
   @Post()
   async create(@Body() createMeetingRoomDto: CreateMeetingRoomDto) {
     return await this.meetingRoomService.create(createMeetingRoomDto);
   }
 
   @ApiBearerAuth()
+  @ApiParam({ name: 'meetingRoomId', description: '会议室id', type: Number })
   @ApiOkResponse({ description: '查找会议室详情成功', type: MeetingRoom })
   @ApiOperation({
     description: '会议室详情',
     operationId: 'find-one-meeting-room',
     tags: ['meeting-room'],
   })
-  @RequireLogin()
-  @Get(':id')
-  async findOne(@Param('id') id: string) {
+  @Get(':meetingRoomId')
+  async findOne(@Param('meetingRoomId') id: string) {
     return await this.meetingRoomService.findById(+id);
   }
 
   @ApiBearerAuth()
-  @ApiParam({ name: 'id', description: '会议室id', type: Number })
+  @ApiParam({ name: 'meetingRoomId', description: '会议室id', type: Number })
   @ApiBody({ type: UpdateMeetingRoomDto })
   @ApiOkResponse({ description: '会议室更新成功', type: String })
   @ApiOperation({
@@ -100,27 +99,25 @@ export class MeetingRoomController {
     operationId: 'update-meeting-room',
     tags: ['meeting-room'],
   })
-  @RequireLogin()
-  @Patch(':id')
+  @Patch(':meetingRoomId')
   update(
-    @Param('id') id: string,
+    @Param('meetingRoomId') id: string,
     @Body() updateMeetingRoomDto: UpdateMeetingRoomDto,
   ) {
     return this.meetingRoomService.update(+id, updateMeetingRoomDto);
   }
 
   @ApiBearerAuth()
-  @ApiParam({ name: 'id', description: '会议室id', type: Number })
+  @ApiParam({ name: 'meetingRoomId', description: '会议室id', type: Number })
   @ApiNoContentResponse({ description: '删除会议室成功', type: String })
   @ApiOperation({
     description: '删除会议室',
     operationId: 'del-meeting-room',
     tags: ['meeting-room'],
   })
-  @RequireLogin()
-  @Delete(':id')
+  @Delete(':meetingRoomId')
   @HttpCode(204)
-  async remove(@Param('id') id: string) {
+  async remove(@Param('meetingRoomId') id: string) {
     return await this.meetingRoomService.remove(+id);
   }
 }
