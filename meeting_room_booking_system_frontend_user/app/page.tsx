@@ -1,5 +1,15 @@
 import { redirect } from "next/navigation";
 
-export default function Home() {
-  return redirect("/users");
+import { apiInstance } from "@/helper/auth";
+import { UserApi } from "@/meeting-room-booking-api";
+
+export default async function Home() {
+  const userApi = apiInstance(UserApi);
+  const user = await userApi.getUserInfo();
+
+  if (user.isAdmin) {
+    return redirect("/system/meeting-room");
+  }
+
+  return redirect("/meeting-room");
 }

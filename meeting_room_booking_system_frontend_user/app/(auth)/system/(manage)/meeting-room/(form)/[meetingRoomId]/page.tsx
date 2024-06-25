@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { notFound } from "next/navigation";
 
-import { MeetingRoomForm } from "@/components/meeting-room-form";
+import { MeetingRoomForm } from "@/components/meeting-room/form";
 import { apiInstance } from "@/helper/auth";
 import { MeetingRoomApi } from "@/meeting-room-booking-api";
 

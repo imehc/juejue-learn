@@ -28,16 +28,35 @@ import { toast } from "sonner";
 import { Link } from "@nextui-org/link";
 
 import { meetingRoomListSchema } from "./schema";
-import { delMeetingRoom } from "./actions";
 
 import {
   MeetingRoom,
   MeetingRoomList as MeetingRoomListImpl,
 } from "@/meeting-room-booking-api";
 
+type SystemAction = {
+  type: "system";
+  delMeetingRoom: ({ id }: Pick<MeetingRoom, "id">) => Promise<{
+    data: string;
+  }>;
+};
+
+type NormalAction = {
+  type: "normal";
+  subscribeMeetingRoom: ({ id }: Pick<MeetingRoom, "id">) => Promise<{
+    data: string;
+  }>;
+};
+
 interface Props extends MeetingRoomListImpl {}
 
-export function MeetingRoomList({ meetingRooms, totalCount }: Props) {
+type IProps = (Props & SystemAction) | (Props & NormalAction);
+
+export function MeetingRoomList({
+  meetingRooms,
+  totalCount,
+  ...props
+}: IProps) {
   const [, startTransition] = useTransition();
   const [{ limit, skip, name, capacity, equipment }, setQueryState] =
     useQueryStates(
@@ -103,15 +122,17 @@ export function MeetingRoomList({ meetingRooms, totalCount }: Props) {
             });
           }}
         />
-        <Button
-          as={Link}
-          className="h-14 px-12"
-          color="primary"
-          href={`/system/meeting-room/new`}
-          variant="solid"
-        >
-          创建会议室
-        </Button>
+        {props.type === "system" && (
+          <Button
+            as={Link}
+            className="h-14 px-12"
+            color="primary"
+            href={`/system/meeting-room/new`}
+            variant="solid"
+          >
+            创建会议室
+          </Button>
+        )}
       </div>
       <Divider className="my-4" />
       <Table
@@ -156,7 +177,11 @@ export function MeetingRoomList({ meetingRooms, totalCount }: Props) {
             <TableRow key={item.id}>
               {(columnKey) => (
                 <TableCell>
-                  <TableItem columnKey={columnKey as string} item={item} />
+                  <TableItem
+                    columnKey={columnKey as string}
+                    item={item}
+                    {...props}
+                  />
                 </TableCell>
               )}
             </TableRow>
@@ -167,10 +192,9 @@ export function MeetingRoomList({ meetingRooms, totalCount }: Props) {
   );
 }
 
-const TableItem: FC<{ columnKey: string; item: MeetingRoom }> = ({
-  columnKey,
-  item,
-}) => {
+const TableItem: FC<
+  { columnKey: string; item: MeetingRoom } & (SystemAction | NormalAction)
+> = ({ columnKey, item, ...props }) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   switch (columnKey) {
@@ -180,7 +204,7 @@ const TableItem: FC<{ columnKey: string; item: MeetingRoom }> = ({
     case "isBooked":
       return item.isBooked ? "已预定" : "未预定";
     case "actions":
-      return (
+      return props.type === "system" ? (
         <>
           <Button color="danger" variant="light" onClick={onOpen}>
             删除
@@ -219,7 +243,9 @@ const TableItem: FC<{ columnKey: string; item: MeetingRoom }> = ({
                       color="primary"
                       onPress={async () => {
                         onClose();
-                        const { data } = await delMeetingRoom({ id: item.id });
+                        const { data } = await props.delMeetingRoom({
+                          id: item.id,
+                        });
 
                         if (data !== "fail") {
                           toast.success(data || "删除成功");
@@ -227,6 +253,57 @@ const TableItem: FC<{ columnKey: string; item: MeetingRoom }> = ({
                           return;
                         }
                         toast.success(data || "删除失败");
+                      }}
+                    >
+                      确定
+                    </Button>
+                  </ModalFooter>
+                </>
+              )}
+            </ModalContent>
+          </Modal>
+        </>
+      ) : (
+        <>
+          <Button color="danger" variant="light" onClick={onOpen}>
+            预约
+          </Button>{" "}
+          <Modal
+            backdrop="opaque"
+            classNames={{
+              backdrop:
+                "bg-gradient-to-t from-zinc-900 to-zinc-900/10 backdrop-opacity-20",
+            }}
+            isOpen={isOpen}
+            onOpenChange={onOpenChange}
+          >
+            <ModalContent>
+              {(onClose) => (
+                <>
+                  <ModalHeader className="flex flex-col gap-1">
+                    提示
+                  </ModalHeader>
+                  <ModalBody>
+                    <p>确定要预约：{item.name} 会议室吗？</p>
+                  </ModalBody>
+                  <ModalFooter>
+                    <Button color="danger" variant="light" onPress={onClose}>
+                      取消
+                    </Button>
+                    <Button
+                      color="primary"
+                      onPress={async () => {
+                        onClose();
+                        const { data } = await props.subscribeMeetingRoom({
+                          id: item.id,
+                        });
+
+                        if (data !== "fail") {
+                          toast.success(data || "预约成功");
+
+                          return;
+                        }
+                        toast.success(data || "预约失败");
                       }}
                     >
                       确定

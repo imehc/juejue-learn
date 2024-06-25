@@ -3,11 +3,12 @@
 import { Listbox, ListboxItem } from "@nextui-org/listbox";
 import { useRouter } from "next/navigation";
 
-import { sidebarOptionsWithUser } from "./system-user-options";
-import { renderSidebarOptionsWithSystemUpdate } from "./system-update-options";
+import { sidebarOptionsWithNormal } from "./normal-options";
+import { sidebarOptionsWithSystem } from "./system-options";
+import { renderSidebarOptionsWithUpdate } from "./update-options";
 
 interface Props {
-  type: "user" | "update";
+  type: "system" | "update" | "normal";
   isAdmin?: boolean;
 }
 
@@ -23,9 +24,11 @@ export function SlideBar({ type, isAdmin = false }: Props) {
       }}
       onAction={(key) => router.push(key as string)}
     >
-      {(type === "user"
-        ? sidebarOptionsWithUser
-        : renderSidebarOptionsWithSystemUpdate(isAdmin)
+      {(type === "normal"
+        ? sidebarOptionsWithNormal
+        : type === "system"
+          ? sidebarOptionsWithSystem
+          : renderSidebarOptionsWithUpdate(isAdmin)
       )
         .filter((item) => item.visible)
         .map((item) => (

@@ -1,4 +1,4 @@
-import { delMeetingRoom } from "./actions";
+import { subscribeMeetingRoom } from "./actions";
 
 import { MeetingRoomList } from "@/components/meeting-room/list";
 import { meetingRoomListSchema } from "@/components/meeting-room/list/schema";
@@ -28,8 +28,8 @@ export default async function MeetingRoomPage({
   return (
     <MeetingRoomList
       {...userList}
-      delMeetingRoom={delMeetingRoom}
-      type="system"
+      subscribeMeetingRoom={subscribeMeetingRoom}
+      type="normal"
     />
   );
 }

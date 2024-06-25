@@ -3,13 +3,11 @@ import { Card, CardBody } from "@nextui-org/card";
 
 import { SlideBar } from "@/components/sidebar";
 
-export default async function SystemManageLayout({
-  children,
-}: PropsWithChildren) {
+export default async function NormalLayout({ children }: PropsWithChildren) {
   return (
     <div className="flex justify-start w-full h-full">
       <div className="w-1/5 h-full min-w-36 max-w-56">
-        <SlideBar type="system" />
+        <SlideBar type="normal" />
       </div>
       <div className="w-4/5 h-full flex-1 ml-8 box-border">
         <Card className="h-full">

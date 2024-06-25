@@ -73,7 +73,11 @@ export async function clearCookie() {
   cookieStore.delete(REFRESH_TOKEN);
 }
 
-async function setAuthCookie({ accessToken, refreshToken, expiresIn }: Auth) {
+export async function setAuthCookie({
+  accessToken,
+  refreshToken,
+  expiresIn,
+}: Auth) {
   const cookieStore = cookies();
 
   const now = new Date().getTime() + expiresIn;
