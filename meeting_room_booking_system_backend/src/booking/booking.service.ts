@@ -66,10 +66,20 @@ export class BookingService {
     }
 
     if (startAt) {
+      if (!(startAt instanceof Date) && isNaN(new Date(startAt).getTime())) {
+        throw new BadRequestException('日期格式不正确');
+      }
+      if (
+        !!endAt &&
+        !(endAt instanceof Date) &&
+        isNaN(new Date(endAt).getTime())
+      ) {
+        throw new BadRequestException('日期格式不正确');
+      }
       if (!endAt) {
         endAt = addHours(startAt, 1);
       }
-      condition.startTime = Between(new Date(startAt), new Date(endAt));
+      condition.startAt = Between(new Date(startAt), new Date(endAt));
     }
 
     const [bookings, totalCount] = await this.entityManager.findAndCount(
@@ -129,7 +139,7 @@ export class BookingService {
     }
   }
 
-  async apply(id: number) {
+  async pass(id: number) {
     try {
       await this.entityManager.update(
         Booking,

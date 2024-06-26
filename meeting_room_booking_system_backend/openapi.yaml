@@ -677,19 +677,14 @@ paths:
                 type: string
       security:
         - bearer: []
-  /booking/{bookingId}/apply:
+  /booking/{bookingId}/pass:
     patch:
-      operationId: apply-booking
+      operationId: pass-booking
       summary: ''
       description: 审批通过
       tags:
         - booking
       parameters:
-        - name: id
-          required: true
-          in: path
-          schema:
-            type: number
         - name: bookingId
           required: true
           in: path
@@ -713,11 +708,6 @@ paths:
       tags:
         - booking
       parameters:
-        - name: id
-          required: true
-          in: path
-          schema:
-            type: number
         - name: bookingId
           required: true
           in: path
@@ -741,11 +731,6 @@ paths:
       tags:
         - booking
       parameters:
-        - name: id
-          required: true
-          in: path
-          schema:
-            type: number
         - name: bookingId
           required: true
           in: path
@@ -761,7 +746,7 @@ paths:
                 type: string
       security:
         - bearer: []
-  /booking/{id}/urge:
+  /booking/{bookingId}/urge:
     get:
       operationId: urge-booking
       summary: ''
@@ -769,11 +754,6 @@ paths:
       tags:
         - booking
       parameters:
-        - name: id
-          required: true
-          in: path
-          schema:
-            type: number
         - name: bookingId
           required: true
           in: path
@@ -1127,7 +1107,7 @@ components:
             - unbind
           default: apply
           description: 状态（申请中、审批通过、审批驳回、已解除）
-        note:
+        remark:
           type: string
         user:
           $ref: '#/components/schemas/User'
@@ -1144,7 +1124,7 @@ components:
         - startAt
         - endAt
         - status
-        - note
+        - remark
         - user
         - room
         - createAt

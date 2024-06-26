@@ -99,12 +99,12 @@ export class BookingController {
   @ApiCreatedResponse({ description: '审批通过成功', type: String })
   @ApiOperation({
     description: '审批通过',
-    operationId: 'apply-booking',
+    operationId: 'pass-booking',
     tags: ['booking'],
   })
-  @Patch(':bookingId/apply')
-  apply(@Param('id') id: number) {
-    return this.bookingService.apply(+id);
+  @Patch(':bookingId/pass')
+  pass(@Param('bookingId') id: number) {
+    return this.bookingService.pass(+id);
   }
 
   @ApiBearerAuth()
@@ -116,7 +116,7 @@ export class BookingController {
     tags: ['booking'],
   })
   @Patch(':bookingId/reject')
-  reject(@Param('id') id: number) {
+  reject(@Param('bookingId') id: number) {
     return this.bookingService.reject(+id);
   }
 
@@ -129,7 +129,7 @@ export class BookingController {
     tags: ['booking'],
   })
   @Patch(':bookingId/unbind')
-  unbind(@Param('id') id: number) {
+  unbind(@Param('bookingId') id: number) {
     return this.bookingService.unbind(+id);
   }
 
@@ -141,8 +141,8 @@ export class BookingController {
     operationId: 'urge-booking',
     tags: ['booking'],
   })
-  @Get(':id/urge')
-  async urge(@Param('id') id: number) {
+  @Get(':bookingId/urge')
+  async urge(@Param('bookingId') id: number) {
     return this.bookingService.urge(id);
   }
 }

@@ -16,7 +16,7 @@ async function bootstrap() {
   app.useStaticAssets('uploads', { prefix: '/uploads' }); // 设置目录为静态文件目录
 
   // 全局启用
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(new ValidationPipe({ transform: true }));
   app.useGlobalInterceptors(new FormatResponseInterceptor());
   app.useGlobalInterceptors(new InvokeRecordInterceptor());
   app.useGlobalFilters(new UnloginFilter());

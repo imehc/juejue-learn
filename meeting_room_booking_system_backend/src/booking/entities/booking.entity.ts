@@ -56,7 +56,7 @@ export class Booking {
     comment: '备注',
     default: '',
   })
-  note: string;
+  remark: string;
 
   @ApiProperty()
   @ManyToOne(() => User)
