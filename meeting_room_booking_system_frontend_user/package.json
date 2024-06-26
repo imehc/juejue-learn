@@ -10,10 +10,12 @@
 		"gen:apis": "openapi-generator generate -g typescript-fetch -c ./openapi-generator.config.yaml -o ./meeting-room-booking-api -i ../meeting_room_booking_system_backend/openapi.yaml"
 	},
 	"dependencies": {
+		"@internationalized/date": "^3.5.4",
 		"@nextui-org/avatar": "^2.0.30",
 		"@nextui-org/button": "2.0.33",
 		"@nextui-org/card": "^2.0.31",
 		"@nextui-org/code": "2.0.28",
+		"@nextui-org/date-picker": "^2.1.2",
 		"@nextui-org/input": "2.2.1",
 		"@nextui-org/kbd": "2.0.29",
 		"@nextui-org/link": "2.0.31",

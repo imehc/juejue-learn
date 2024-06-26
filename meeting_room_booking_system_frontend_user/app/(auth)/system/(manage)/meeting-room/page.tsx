@@ -1,7 +1,9 @@
 import { delMeetingRoom } from "./actions";
 
-import { MeetingRoomList } from "@/components/meeting-room/list";
-import { meetingRoomListSchema } from "@/components/meeting-room/list/schema";
+import {
+  MeetingRoomList,
+  meetingRoomListSchema,
+} from "@/components/meeting-room";
 import { apiInstance } from "@/helper/auth";
 import { MeetingRoomApi } from "@/meeting-room-booking-api";
 

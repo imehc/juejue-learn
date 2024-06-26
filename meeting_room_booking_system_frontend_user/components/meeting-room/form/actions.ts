@@ -72,7 +72,7 @@ export async function meetingRoomAction(
       };
     } else {
       const text = await meetingRoomApi.updateMeetingRoom({
-        id: +id,
+        meetingRoomId: +id,
         updateMeetingRoomDto: payload.data,
       });
 

@@ -1,13 +1,13 @@
 import { z } from "zod";
 import { notFound } from "next/navigation";
 
-import { MeetingRoomForm } from "@/components/meeting-room/form";
+import { MeetingRoomForm } from "@/components/meeting-room";
 import { apiInstance } from "@/helper/auth";
 import { MeetingRoomApi } from "@/meeting-room-booking-api";
 
 const schema = z.object({
   params: z.object({
-    meetingRoomId: z.string(),
+    meetingRoomId: z.coerce.number(),
   }),
 });
 
@@ -20,7 +20,7 @@ export default async function UpdateMeetingRoomPage(params: unknown) {
 
   const meetingRoomApi = apiInstance(MeetingRoomApi);
   const meetingRoom = await meetingRoomApi.findOneMeetingRoom({
-    id: payload.data.params.meetingRoomId,
+    meetingRoomId: payload.data.params.meetingRoomId,
   });
 
   return <MeetingRoomForm {...meetingRoom} />;

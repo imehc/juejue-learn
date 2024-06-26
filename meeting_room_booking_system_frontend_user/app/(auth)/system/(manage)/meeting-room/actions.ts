@@ -9,7 +9,7 @@ export async function delMeetingRoom({ id }: Pick<MeetingRoom, "id">) {
   const meetingRoomApi = apiInstance(MeetingRoomApi);
 
   try {
-    const text = await meetingRoomApi.delMeetingRoom({ id: id });
+    const text = await meetingRoomApi.delMeetingRoom({ meetingRoomId: id });
 
     revalidatePath("/system/meeting-room");
 
