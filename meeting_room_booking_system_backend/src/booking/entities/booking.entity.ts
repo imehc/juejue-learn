@@ -40,7 +40,7 @@ export class Booking {
   @ApiProperty({
     enum: BookingStatus,
     default: BookingStatus.APPLY,
-    description: '状态（申请中、审批通过、审批驳回、已解除）',
+    description: '审核状态',
   })
   @Column({
     type: 'enum',

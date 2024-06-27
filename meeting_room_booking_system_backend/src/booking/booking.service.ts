@@ -38,6 +38,7 @@ export class BookingService {
     username: string,
     name: string,
     location: string,
+    status: BookingStatus,
     startAt: Date,
     endAt: Date,
   ) {
@@ -63,6 +64,10 @@ export class BookingService {
         condition.room = {};
       }
       condition.room.location = Like(`%${location}%`);
+    }
+
+    if (status) {
+      condition.status = status;
     }
 
     if (startAt) {

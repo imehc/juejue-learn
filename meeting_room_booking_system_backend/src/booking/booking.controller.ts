@@ -22,6 +22,7 @@ import {
 import { generateParseIntPipe } from 'src/helper/utils';
 import { BookingList } from './vo/booking-list.vo';
 import { UserInfo } from 'src/helper/custom.decorator';
+import { BookingStatus } from './entities/booking.entity';
 
 @Controller('booking')
 export class BookingController {
@@ -32,6 +33,12 @@ export class BookingController {
   @ApiQuery({ name: 'limit', description: '每页多少条', type: Number })
   @ApiQuery({ name: 'username', description: '预定人', required: false })
   @ApiQuery({ name: 'name', description: '会议室名称', required: false })
+  @ApiQuery({
+    name: 'status',
+    description: '审核状态',
+    enum: BookingStatus,
+    required: false,
+  })
   @ApiQuery({
     name: 'location',
     description: '会议室预定地址',
@@ -64,6 +71,7 @@ export class BookingController {
     @Query('name') name: string,
     @Query('username') username: string,
     @Query('location') location: string,
+    @Query('status') status: BookingStatus,
     @Query('startAt') startAt: Date,
     @Query('endAt') endAt: Date,
   ) {
@@ -73,6 +81,7 @@ export class BookingController {
       username,
       name,
       location,
+      status,
       startAt,
       endAt,
     );
