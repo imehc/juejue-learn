@@ -99,6 +99,7 @@ export function UserList({ users, totalCount }: Props) {
       </div>
       <Divider className="my-4" />
       <Table
+        isStriped
         aria-label="Example table with client side pagination"
         bottomContent={
           <div className="flex w-full justify-center">
@@ -120,8 +121,9 @@ export function UserList({ users, totalCount }: Props) {
             />
           </div>
         }
+        bottomContentPlacement="outside"
         classNames={{
-          wrapper: "min-h-[222px]",
+          wrapper: "min-h-[222px] max-h-[580px]",
         }}
       >
         <TableHeader>
@@ -133,7 +135,7 @@ export function UserList({ users, totalCount }: Props) {
           <TableColumn key="isFrozen">状态</TableColumn>
           <TableColumn key="actions">操作</TableColumn>
         </TableHeader>
-        <TableBody items={users}>
+        <TableBody emptyContent={"No rows to display."} items={users}>
           {(item) => (
             <TableRow key={item.id}>
               {(columnKey) => (

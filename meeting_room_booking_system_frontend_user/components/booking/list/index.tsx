@@ -1,8 +1,6 @@
 "use client";
 
-import { Input } from "@nextui-org/input";
-import { Divider } from "@nextui-org/divider";
-import { DatePicker, useDatePicker } from "@nextui-org/date-picker";
+import { Chip } from "@nextui-org/chip";
 import {
   Table,
   TableHeader,
@@ -12,22 +10,18 @@ import {
   TableCell,
   getKeyValue,
 } from "@nextui-org/table";
-import { Pagination } from "@nextui-org/pagination";
+import { CheckboxGroup, Checkbox } from "@nextui-org/checkbox";
 import { useDisclosure } from "@nextui-org/modal";
+import { Tooltip } from "@nextui-org/tooltip";
 import { format } from "date-fns";
-import {
-  parseAsInteger,
-  parseAsIsoDateTime,
-  parseAsString,
-  useQueryStates,
-} from "nuqs";
-import { FC, useCallback, useMemo, useState, useTransition } from "react";
-import { Button } from "@nextui-org/button";
-import { CalendarDateTime } from "@internationalized/date";
-import { DateValue } from "@internationalized/date";
+import { FC, useMemo, useRef, useState } from "react";
+import { Button, ButtonGroup } from "@nextui-org/button";
 import { toast } from "sonner";
+import { Popover, PopoverContent, PopoverTrigger } from "@nextui-org/popover";
 
-import { bookingListSchema } from "./schema";
+import { BookingListTopContent, BookingListTopContentRef } from "./top-content";
+import { BookingListBottomContent } from "./bottom-content";
+import { BookingListStatus } from "./status";
 
 import {
   Booking,
@@ -35,6 +29,12 @@ import {
   BookingStatusEnum,
 } from "@/meeting-room-booking-api";
 import { ConfimModal } from "@/components/confirm-modal";
+import {
+  FilterIcon,
+  PassIcon,
+  RejectIcon,
+  UnbindIcon,
+} from "@/components/menu-icon";
 
 type SystemAction = {
   type: "system";
@@ -53,216 +53,113 @@ type NormalAction = {
   type: "normal";
 };
 
-interface Props extends BookingListImpl {}
+interface Props extends BookingListImpl {
+  status?: BookingStatusEnum;
+}
 
 type IProps = (Props & SystemAction) | (Props & NormalAction);
 
-export function BookingList({ bookings, totalCount, ...props }: IProps) {
-  const [, startTransition] = useTransition();
-  const [
-    { limit, skip, username, name, location, startAt, endAt },
-    setQueryState,
-  ] = useQueryStates(
-    {
-      limit: parseAsInteger.withDefault(10),
-      skip: parseAsInteger.withDefault(0),
-      username: parseAsString,
-      name: parseAsString,
-      location: parseAsString,
-      startAt: parseAsIsoDateTime,
-      endAt: parseAsIsoDateTime,
-    },
-    {
-      shallow: false,
-      startTransition,
-    },
-  );
-
-  const {} = useDatePicker({});
-
-  const parseDate = useCallback(
-    (date?: Date | null) => {
-      try {
-        if (!date) {
-          return null;
-        }
-
-        const year = date.getFullYear();
-        const month = date.getMonth() + 1;
-        const day = date.getDate();
-        const hour = date.getHours();
-        const minute = date.getMinutes();
-
-        return new CalendarDateTime(year, month, day, hour, minute);
-      } catch (error) {
-        return null;
-      }
-    },
-    [startAt, endAt],
-  );
+export function BookingList({
+  bookings,
+  totalCount,
+  status,
+  ...props
+}: IProps) {
+  const topContentRef = useRef<BookingListTopContentRef>(null);
 
   return (
-    <div className="h-full">
-      <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
-        <Input
-          label="预定人"
-          type="text"
-          value={username ?? ""}
-          onChange={(evt) => {
-            setQueryState((state) => {
-              return {
-                ...state,
-                username: bookingListSchema.shape.username.parse(
-                  evt.target.value,
-                ),
-                skip: 0,
-              };
-            });
-          }}
+    <Table
+      isHeaderSticky
+      isStriped
+      aria-label="Example table with client side pagination"
+      bottomContent={
+        <BookingListBottomContent
+          limit={topContentRef.current?.limit}
+          setQueryState={topContentRef.current?.setQueryState}
+          skip={topContentRef.current?.skip}
+          totalCount={totalCount}
         />
-        <Input
-          label="会议室名称"
-          type="text"
-          value={name ?? ""}
-          onChange={(evt) => {
-            setQueryState((state) => {
-              return {
-                ...state,
-                name: bookingListSchema.shape.name.parse(evt.target.value),
-                skip: 0,
-              };
-            });
-          }}
-        />
-        <Input
-          label="地址"
-          type="text"
-          value={location ?? ""}
-          onChange={(evt) => {
-            setQueryState((state) => {
-              return {
-                ...state,
-                location: bookingListSchema.shape.location.parse(
-                  evt.target.value,
-                ),
-                skip: 0,
-              };
-            });
-          }}
-        />
-        <DatePicker
-          showMonthAndYearPickers
-          className="max-w-[284px]"
-          granularity="minute"
-          label="开始时间"
-          maxValue={parseDate(endAt) as DateValue}
-          value={parseDate(startAt)}
-          onChange={(evt) => {
-            setQueryState((state) => {
-              return {
-                ...state,
-                startAt: bookingListSchema.shape.startAt.parse(
-                  new Date(evt.toString()),
-                ),
-                skip: 0,
-              };
-            });
-          }}
-        />
-        <DatePicker
-          showMonthAndYearPickers
-          className="max-w-[284px]"
-          granularity="minute"
-          label="结束时间"
-          minValue={parseDate(startAt) as DateValue}
-          value={parseDate(endAt)}
-          onChange={(evt) => {
-            setQueryState((state) => {
-              return {
-                ...state,
-                endAt: bookingListSchema.shape.endAt.parse(
-                  new Date(evt.toString()),
-                ),
-                skip: 0,
-              };
-            });
-          }}
-        />
-        <Button
-          className="h-14"
-          color="secondary"
-          onClick={() => {
-            setQueryState((state) => {
-              return {
-                ...state,
-                username: null,
-                name: null,
-                location: null,
-                startAt: null,
-                endAt: null,
-                skip: 0,
-              };
-            });
-          }}
-        >
-          重置
-        </Button>
-      </div>
-      <Divider className="my-4" />
-      <Table
-        aria-label="Example table with client side pagination"
-        bottomContent={
-          <div className="flex w-full justify-center">
-            <Pagination
-              isCompact
-              showControls
-              showShadow
-              color="secondary"
-              page={skip + 1}
-              total={Math.ceil(totalCount / limit)}
-              onChange={(page) => {
-                setQueryState((state) => {
-                  return {
-                    ...state,
-                    skip: page - 1,
-                  };
-                });
-              }}
-            />
-          </div>
-        }
-        classNames={{
-          wrapper: "min-h-[222px]",
-        }}
-      >
-        <TableHeader>
-          <TableColumn key="name">会议室名称</TableColumn>
-          <TableColumn key="location">会议室位置</TableColumn>
-          <TableColumn key="username">预定人</TableColumn>
-          <TableColumn key="startAt">开始时间</TableColumn>
-          <TableColumn key="endAt">结束时间</TableColumn>
-          <TableColumn key="status">审批状态</TableColumn>
-          <TableColumn key="createAt">预定时间</TableColumn>
-          <TableColumn key="remark">备注</TableColumn>
-          <TableColumn key="actions">操作</TableColumn>
-        </TableHeader>
-        <TableBody items={bookings}>
-          {(item) => (
-            <TableRow key={item.id}>
-              {(columnKey) => (
-                <TableCell>
-                  <TableItem
-                    columnKey={columnKey as string}
-                    item={item}
-                    {...props}
-                  />
-                </TableCell>
-              )}
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
-    </div>
+      }
+      bottomContentPlacement="outside"
+      classNames={{
+        wrapper: "min-h-[222px] max-h-[580px]",
+      }}
+      topContent={<BookingListTopContent ref={topContentRef} />}
+      topContentPlacement="outside"
+    >
+      <TableHeader>
+        <TableColumn key="name">会议室名称</TableColumn>
+        <TableColumn key="location">会议室位置</TableColumn>
+        <TableColumn key="username">预定人</TableColumn>
+        <TableColumn key="startAt">开始时间</TableColumn>
+        <TableColumn key="endAt">结束时间</TableColumn>
+        <TableColumn key="status">
+          <Chip
+            endContent={
+              <Popover showArrow offset={10} placement="bottom">
+                <PopoverTrigger>
+                  <Button isIconOnly color="default" size="sm" variant="light">
+                    <FilterIcon size={14} />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-[240px]">
+                  {() => (
+                    <div className="px-1 py-2 w-full">
+                      <CheckboxGroup
+                        value={[status || []].flat()}
+                        onChange={(keys) => {
+                          topContentRef.current?.setQueryState?.((state) => {
+                            return {
+                              ...state,
+                              // TODO: 暂时同时只支持选择一个状态
+                              status: keys.length ? keys.at(-1) : null,
+                              skip: 0,
+                            };
+                          });
+                        }}
+                      >
+                        {Object.values(BookingStatusEnum).map((item) => (
+                          <Checkbox key={item} value={item}>
+                            <BookingListStatus status={item} />
+                          </Checkbox>
+                        ))}
+                      </CheckboxGroup>
+                    </div>
+                  )}
+                </PopoverContent>
+              </Popover>
+            }
+            size="sm"
+            style={{
+              // 与其他表头一致
+              color:
+                "hsl(var(--nextui-foreground-500) / var(--nextui-foreground-500-opacity, var(--tw-text-opacity)))",
+            }}
+            variant="light"
+          >
+            <span className="font-semibold">审批状态</span>
+          </Chip>
+        </TableColumn>
+        <TableColumn key="createAt">预定时间</TableColumn>
+        <TableColumn key="remark">备注</TableColumn>
+        <TableColumn key="actions">操作</TableColumn>
+      </TableHeader>
+      <TableBody emptyContent={"No rows to display."} items={bookings}>
+        {(item) => (
+          <TableRow key={item.id}>
+            {(columnKey) => (
+              <TableCell>
+                <TableItem
+                  columnKey={columnKey as string}
+                  item={item}
+                  {...props}
+                />
+              </TableCell>
+            )}
+          </TableRow>
+        )}
+      </TableBody>
+    </Table>
   );
 }
 
@@ -299,52 +196,54 @@ const TableItem: FC<
     case "createAt":
       return format(item.createAt, "yyyy-MM-dd HH:mm:ss");
     case "status":
-      switch (item.status) {
-        case BookingStatusEnum.Unbind:
-          return <span className="text-danger">已解除</span>;
-        case BookingStatusEnum.Pass:
-          return <span className="text-success">申请通过</span>;
-        case BookingStatusEnum.Reject:
-          return <span className="text-warning">申请失败</span>;
-        default:
-          return <span className="text-blue-500">申请中</span>;
-      }
+      return <BookingListStatus status={item.status} />;
     case "actions":
       return props.type === "system" ? (
         <>
-          <Button
-            color="success"
-            isDisabled={item.status !== BookingStatusEnum.Apply}
-            variant="light"
-            onClick={() => {
-              setStatus(BookingStatusEnum.Pass);
-              onOpen();
-            }}
-          >
-            通过
-          </Button>
-          <Button
-            color="danger"
-            isDisabled={item.status !== BookingStatusEnum.Apply}
-            variant="light"
-            onClick={() => {
-              setStatus(BookingStatusEnum.Reject);
-              onOpen();
-            }}
-          >
-            驳回
-          </Button>
-          <Button
-            color="warning"
-            isDisabled={item.status !== BookingStatusEnum.Apply}
-            variant="light"
-            onClick={() => {
-              setStatus(BookingStatusEnum.Unbind);
-              onOpen();
-            }}
-          >
-            解除
-          </Button>
+          <ButtonGroup isDisabled={item.status !== BookingStatusEnum.Apply}>
+            <Tooltip showArrow color="success" content="通过申请">
+              <Button
+                isIconOnly
+                color="success"
+                size="sm"
+                variant="bordered"
+                onClick={() => {
+                  setStatus(BookingStatusEnum.Pass);
+                  onOpen();
+                }}
+              >
+                <PassIcon />
+              </Button>
+            </Tooltip>
+            <Tooltip showArrow color="danger" content="驳回申请">
+              <Button
+                isIconOnly
+                color="danger"
+                size="sm"
+                variant="bordered"
+                onClick={() => {
+                  setStatus(BookingStatusEnum.Reject);
+                  onOpen();
+                }}
+              >
+                <RejectIcon />
+              </Button>
+            </Tooltip>
+            <Tooltip showArrow color="warning" content="解除申请">
+              <Button
+                isIconOnly
+                color="warning"
+                size="sm"
+                variant="bordered"
+                onClick={() => {
+                  setStatus(BookingStatusEnum.Unbind);
+                  onOpen();
+                }}
+              >
+                <UnbindIcon />
+              </Button>
+            </Tooltip>
+          </ButtonGroup>
           <ConfimModal
             header={`${statusTxt}申请`}
             onCancel={() => {

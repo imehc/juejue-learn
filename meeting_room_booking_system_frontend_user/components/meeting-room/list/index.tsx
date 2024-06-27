@@ -136,6 +136,7 @@ export function MeetingRoomList({
       </div>
       <Divider className="my-4" />
       <Table
+        isStriped
         aria-label="Example table with client side pagination"
         bottomContent={
           <div className="flex w-full justify-center">
@@ -157,8 +158,9 @@ export function MeetingRoomList({
             />
           </div>
         }
+        bottomContentPlacement="outside"
         classNames={{
-          wrapper: "min-h-[222px]",
+          wrapper: "min-h-[222px] max-h-[580px]",
         }}
       >
         <TableHeader>
@@ -172,7 +174,7 @@ export function MeetingRoomList({
           <TableColumn key="isBooked">预定状态</TableColumn>
           <TableColumn key="actions">操作</TableColumn>
         </TableHeader>
-        <TableBody items={meetingRooms}>
+        <TableBody emptyContent={"No rows to display."} items={meetingRooms}>
           {(item) => (
             <TableRow key={item.id}>
               {(columnKey) => (

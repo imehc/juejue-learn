@@ -29,6 +29,7 @@ export default async function SystemBookingPage({
       {...bookingList}
       passBooking={passBooking}
       rejectBooking={rejectBooking}
+      status={payload.data.status}
       type="system"
       unbindBooking={unbindBooking}
     />
