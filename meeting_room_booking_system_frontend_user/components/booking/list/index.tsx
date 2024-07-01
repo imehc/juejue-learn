@@ -22,6 +22,7 @@ import { toast } from "sonner";
 import { BookingListTopContent, BookingListTopContentRef } from "./top-content";
 import { BookingListBottomContent } from "./bottom-content";
 import { BookingListStatus } from "./status";
+import { urgeBooking } from "./actions";
 
 import {
   Booking,
@@ -33,6 +34,7 @@ import {
   PassIcon,
   RejectIcon,
   UnbindIcon,
+  UrgeIcon,
 } from "@/components/menu-icon";
 import { ConfimModal } from "@/components/confirm-modal";
 
@@ -308,7 +310,7 @@ const TableItem: FC<
         </>
       ) : (
         <>
-          {item.status === BookingStatusEnum.Apply && (
+          <ButtonGroup isDisabled={item.status !== BookingStatusEnum.Apply}>
             <Tooltip showArrow color="warning" content="解除预定">
               <Button
                 isIconOnly
@@ -323,7 +325,27 @@ const TableItem: FC<
                 <UnbindIcon />
               </Button>
             </Tooltip>
-          )}
+            <Tooltip showArrow color="danger" content="催办">
+              <Button
+                isIconOnly
+                color="danger"
+                size="sm"
+                variant="bordered"
+                onClick={async () => {
+                  const res = await urgeBooking(item.id);
+
+                  if (res.success) {
+                    toast.success(res.success);
+                  }
+                  if (res.error) {
+                    toast.error(res.error);
+                  }
+                }}
+              >
+                <UrgeIcon />
+              </Button>
+            </Tooltip>
+          </ButtonGroup>
           <ConfimModal
             header="解除预定"
             onCancel={() => {

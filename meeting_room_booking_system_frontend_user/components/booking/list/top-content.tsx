@@ -1,6 +1,6 @@
 "use client";
 
-import { CalendarDateTime, DateValue } from "@internationalized/date";
+import { DateValue } from "@internationalized/date";
 import { Input } from "@nextui-org/input";
 import {
   parseAsInteger,
@@ -9,12 +9,7 @@ import {
   parseAsStringEnum,
   useQueryStates,
 } from "nuqs";
-import {
-  forwardRef,
-  useCallback,
-  useImperativeHandle,
-  useTransition,
-} from "react";
+import { forwardRef, useImperativeHandle, useTransition } from "react";
 import { DatePicker } from "@nextui-org/date-picker";
 import { Button } from "@nextui-org/button";
 import clsx from "clsx";
@@ -22,6 +17,7 @@ import clsx from "clsx";
 import { bookingListSchema } from "./schema";
 
 import { BookingStatusEnum } from "@/meeting-room-booking-api";
+import { parseDate } from "@/helper/parse-date";
 
 interface Props {
   type: "system" | "normal";
@@ -70,27 +66,6 @@ export const BookingListTopContent = forwardRef<
       setQueryState,
     }),
     [limit, skip, setQueryState],
-  );
-
-  const parseDate = useCallback(
-    (date?: Date | null) => {
-      try {
-        if (!date) {
-          return null;
-        }
-
-        const year = date.getFullYear();
-        const month = date.getMonth() + 1;
-        const day = date.getDate();
-        const hour = date.getHours();
-        const minute = date.getMinutes();
-
-        return new CalendarDateTime(year, month, day, hour, minute);
-      } catch (error) {
-        return null;
-      }
-    },
-    [startAt, endAt],
   );
 
   return (

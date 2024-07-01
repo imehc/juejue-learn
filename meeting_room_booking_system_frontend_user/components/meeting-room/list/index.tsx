@@ -23,9 +23,10 @@ import {
 import { format } from "date-fns";
 import { parseAsInteger, parseAsString, useQueryStates } from "nuqs";
 import { FC, useTransition } from "react";
-import { Button } from "@nextui-org/button";
+import { Button, ButtonGroup } from "@nextui-org/button";
 import { toast } from "sonner";
 import { Link } from "@nextui-org/link";
+import { Tooltip } from "@nextui-org/tooltip";
 
 import { meetingRoomListSchema } from "./schema";
 
@@ -33,6 +34,7 @@ import {
   MeetingRoom,
   MeetingRoomList as MeetingRoomListImpl,
 } from "@/meeting-room-booking-api";
+import { BookingIcon } from "@/components/menu-icon";
 
 type SystemAction = {
   type: "system";
@@ -204,21 +206,27 @@ const TableItem: FC<
     case "updateAt":
       return format(item.createAt, "yyyy-MM-dd HH:mm:ss");
     case "isBooked":
-      return item.isBooked ? "已预定" : "未预定";
+      return item.isBooked ? (
+        "已预定"
+      ) : (
+        <span>{props.type === "system" ? "未预定" : "可预定"}</span>
+      );
     case "actions":
       return props.type === "system" ? (
         <>
-          <Button color="danger" variant="light" onClick={onOpen}>
-            删除
-          </Button>
-          <Button
-            as={Link}
-            color="primary"
-            href={`/system/meeting-room/${item.id}`}
-            variant="light"
-          >
-            更新
-          </Button>
+          <ButtonGroup>
+            <Button color="danger" variant="light" onClick={onOpen}>
+              删除
+            </Button>
+            <Button
+              as={Link}
+              color="primary"
+              href={`/system/meeting-room/${item.id}`}
+              variant="light"
+            >
+              更新
+            </Button>
+          </ButtonGroup>
           <Modal
             backdrop="opaque"
             classNames={{
@@ -266,56 +274,18 @@ const TableItem: FC<
           </Modal>
         </>
       ) : (
-        <>
-          <Button color="danger" variant="light" onClick={onOpen}>
-            预约
-          </Button>{" "}
-          <Modal
-            backdrop="opaque"
-            classNames={{
-              backdrop:
-                "bg-gradient-to-t from-zinc-900 to-zinc-900/10 backdrop-opacity-20",
-            }}
-            isOpen={isOpen}
-            onOpenChange={onOpenChange}
+        <Tooltip showArrow color="success" content="预定">
+          <Button
+            isIconOnly
+            as={Link}
+            color="success"
+            href={`/meeting-room/booking/${item.id}`}
+            size="sm"
+            variant="bordered"
           >
-            <ModalContent>
-              {(onClose) => (
-                <>
-                  <ModalHeader className="flex flex-col gap-1">
-                    提示
-                  </ModalHeader>
-                  <ModalBody>
-                    <p>确定要预约：{item.name} 会议室吗？</p>
-                  </ModalBody>
-                  <ModalFooter>
-                    <Button color="danger" variant="light" onPress={onClose}>
-                      取消
-                    </Button>
-                    <Button
-                      color="primary"
-                      onPress={async () => {
-                        onClose();
-                        const { data } = await props.subscribeMeetingRoom({
-                          id: item.id,
-                        });
-
-                        if (data !== "fail") {
-                          toast.success(data || "预约成功");
-
-                          return;
-                        }
-                        toast.success(data || "预约失败");
-                      }}
-                    >
-                      确定
-                    </Button>
-                  </ModalFooter>
-                </>
-              )}
-            </ModalContent>
-          </Modal>
-        </>
+            <BookingIcon />
+          </Button>
+        </Tooltip>
       );
     default:
       return getKeyValue(item, columnKey);

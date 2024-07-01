@@ -62,7 +62,7 @@ export async function login(
     };
   }
   // TODO: 验证成功后跳转
-  redirect("/");
+  redirect("/meeting-room");
 }
 
 export async function clearCookie() {

@@ -65,5 +65,5 @@ export async function systemLogin(
     };
   }
   // TODO: 验证成功后跳转
-  redirect("/system/user");
+  redirect("/system/booking");
 }
