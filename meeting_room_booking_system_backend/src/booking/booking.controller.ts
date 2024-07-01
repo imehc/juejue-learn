@@ -21,9 +21,10 @@ import {
 } from '@nestjs/swagger';
 import { generateParseIntPipe } from 'src/helper/utils';
 import { BookingList } from './vo/booking-list.vo';
-import { UserInfo } from 'src/helper/custom.decorator';
+import { RequireLogin, UserInfo } from 'src/helper/custom.decorator';
 import { BookingStatus } from './entities/booking.entity';
 
+@RequireLogin()
 @Controller('booking')
 export class BookingController {
   constructor(private readonly bookingService: BookingService) {}

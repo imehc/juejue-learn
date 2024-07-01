@@ -1,5 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsNotEmpty, IsNumber } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsDate, IsNotEmpty, IsNumber } from 'class-validator';
 
 export class CreateBookingDto {
   @ApiProperty({ description: '会议室ID' })
@@ -7,16 +8,19 @@ export class CreateBookingDto {
   @IsNumber()
   meetingRoomId: number;
 
+  /** https://github.com/nestjs/nest/issues/631 */
   @ApiProperty({ description: '开始时间' })
   @IsNotEmpty({ message: '开始时间不能为空' })
-  @IsNumber()
+  @IsDate()
+  @Type(() => Date)
   startAt: Date;
 
   @ApiProperty({ description: '结束时间' })
   @IsNotEmpty({ message: '结束时间不能为空' })
-  @IsNumber()
+  @IsDate()
+  @Type(() => Date)
   endAt: Date;
 
   @ApiPropertyOptional({ description: '备注' })
-  remark: string;
+  remark?: string;
 }

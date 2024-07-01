@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  HttpException,
   Inject,
   Injectable,
   InternalServerErrorException,
@@ -123,6 +124,9 @@ export class BookingService {
       booking.user = user;
       booking.startAt = new Date(createBookingDto.startAt);
       booking.endAt = new Date(createBookingDto.endAt);
+      if (createBookingDto.remark) {
+        booking.remark = createBookingDto.remark;
+      }
       // 查询下已经预定的记录里有没有包含这段时间
       const res = await this.entityManager.findOneBy(Booking, {
         room: {
@@ -138,8 +142,11 @@ export class BookingService {
 
       await this.entityManager.insert(Booking, booking);
 
-      return 'Created';
+      return '创建成功';
     } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
       throw new InternalServerErrorException();
     }
   }
@@ -203,15 +210,15 @@ export class BookingService {
           },
         });
         email = admin.email;
-        await this.redisService.set(ADMIN_EMAIL, admin.email);
-        await this.emailService.sendMail({
-          to: email,
-          subject: '预定申请催办提醒',
-          html: `id 为 ${id} 的预定申请正在等待审批`,
-        });
-        await this.redisService.set(URGE(id.toString()), 1, 60 * 30);
-        return '催办成功';
       }
+      await this.redisService.set(ADMIN_EMAIL, email);
+      await this.emailService.sendMail({
+        to: email,
+        subject: '预定申请催办提醒',
+        html: `id 为 ${id} 的预定申请正在等待审批`,
+      });
+      await this.redisService.set(URGE(id.toString()), 1, 60 * 30);
+      return '催办成功';
     } catch (error) {
       throw new InternalServerErrorException();
     }
