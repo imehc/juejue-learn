@@ -780,6 +780,72 @@ paths:
                 type: string
       security:
         - bearer: []
+  /statistic/user-booking-count:
+    get:
+      operationId: find-user-booking-count
+      summary: ''
+      description: 用户预定次数统计
+      tags:
+        - statistic
+      parameters:
+        - name: startAt
+          required: false
+          in: query
+          description: 开始时间(默认最近10天)
+          schema:
+            format: date-time
+            type: string
+        - name: endAt
+          required: false
+          in: query
+          description: 结束时间(默认最近10天)
+          schema:
+            format: date-time
+            type: string
+      responses:
+        '200':
+          description: 用户预定次数
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StatisticCountVo'
+      security:
+        - bearer: []
+  /statistic/meeting-room-used-count:
+    get:
+      operationId: find-meeting-room-used-count
+      summary: ''
+      description: 会议室使用次数统计
+      tags:
+        - statistic
+      parameters:
+        - name: startAt
+          required: false
+          in: query
+          description: 开始时间(默认最近10天)
+          schema:
+            format: date-time
+            type: string
+        - name: endAt
+          required: false
+          in: query
+          description: 结束时间(默认最近10天)
+          schema:
+            format: date-time
+            type: string
+      responses:
+        '200':
+          description: 会议室使用统计
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StatisticCountVo'
+      security:
+        - bearer: []
 info:
   title: 会议室预订系统
   description: api 接口文档
@@ -1173,3 +1239,17 @@ components:
         - meetingRoomId
         - startAt
         - endAt
+    StatisticCountVo:
+      type: object
+      properties:
+        id:
+          type: number
+        name:
+          type: string
+        count:
+          type: number
+          description: 次数
+      required:
+        - id
+        - name
+        - count
