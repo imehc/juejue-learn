@@ -17,12 +17,15 @@ import {
 } from "react";
 import { DatePicker } from "@nextui-org/date-picker";
 import { Button } from "@nextui-org/button";
+import clsx from "clsx";
 
 import { bookingListSchema } from "./schema";
 
 import { BookingStatusEnum } from "@/meeting-room-booking-api";
 
-interface Props {}
+interface Props {
+  type: "system" | "normal";
+}
 
 export interface BookingListTopContentRef {
   skip: number;
@@ -34,7 +37,7 @@ export interface BookingListTopContentRef {
 export const BookingListTopContent = forwardRef<
   BookingListTopContentRef,
   Props
->(function Child(props, ref) {
+>(function Child({ type }, ref) {
   const [, startTransition] = useTransition();
   const [
     { limit, skip, username, name, location, startAt, endAt, status },
@@ -93,6 +96,7 @@ export const BookingListTopContent = forwardRef<
   return (
     <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
       <Input
+        className={clsx({ hidden: type === "normal" })}
         label="预定人"
         type="text"
         value={username ?? ""}

@@ -16,8 +16,8 @@ import { Tooltip } from "@nextui-org/tooltip";
 import { format } from "date-fns";
 import { FC, useMemo, useRef, useState } from "react";
 import { Button, ButtonGroup } from "@nextui-org/button";
-import { toast } from "sonner";
 import { Popover, PopoverContent, PopoverTrigger } from "@nextui-org/popover";
+import { toast } from "sonner";
 
 import { BookingListTopContent, BookingListTopContentRef } from "./top-content";
 import { BookingListBottomContent } from "./bottom-content";
@@ -28,13 +28,13 @@ import {
   BookingList as BookingListImpl,
   BookingStatusEnum,
 } from "@/meeting-room-booking-api";
-import { ConfimModal } from "@/components/confirm-modal";
 import {
   FilterIcon,
   PassIcon,
   RejectIcon,
   UnbindIcon,
 } from "@/components/menu-icon";
+import { ConfimModal } from "@/components/confirm-modal";
 
 type SystemAction = {
   type: "system";
@@ -51,6 +51,9 @@ type SystemAction = {
 
 type NormalAction = {
   type: "normal";
+  unbindBooking: ({ id }: Pick<Booking, "id">) => Promise<{
+    data: string;
+  }>;
 };
 
 interface Props extends BookingListImpl {
@@ -84,7 +87,9 @@ export function BookingList({
       classNames={{
         wrapper: "min-h-[222px] max-h-[580px]",
       }}
-      topContent={<BookingListTopContent ref={topContentRef} />}
+      topContent={
+        <BookingListTopContent ref={topContentRef} type={props.type} />
+      }
       topContentPlacement="outside"
     >
       <TableHeader>
@@ -295,12 +300,68 @@ const TableItem: FC<
           >
             <p>
               确定要
-              {statusTxt}：{item.user.username} 的预定申请吗？
+              {statusTxt}：
+              <span className="text-primary-500">{item.room?.name ?? "-"}</span>{" "}
+              的预定申请吗？
             </p>
           </ConfimModal>
         </>
       ) : (
-        <></>
+        <>
+          {item.status === BookingStatusEnum.Apply && (
+            <Tooltip showArrow color="warning" content="解除预定">
+              <Button
+                isIconOnly
+                color="warning"
+                size="sm"
+                variant="bordered"
+                onClick={() => {
+                  setStatus(BookingStatusEnum.Unbind);
+                  onOpen();
+                }}
+              >
+                <UnbindIcon />
+              </Button>
+            </Tooltip>
+          )}
+          <ConfimModal
+            header="解除预定"
+            onCancel={() => {
+              onClose();
+              setStatus(undefined);
+            }}
+            onClose={onClose}
+            onConfirm={async () => {
+              try {
+                switch (status) {
+                  case BookingStatusEnum.Unbind:
+                    {
+                      const { data } = await props.unbindBooking({
+                        id: item.id,
+                      });
+
+                      toast.success(data ?? "解除预定成功");
+                    }
+
+                    return;
+                }
+              } catch (error) {
+                toast.warning("解除预定失败");
+              } finally {
+                onClose();
+                setStatus(undefined);
+              }
+            }}
+            onOpen={onOpen}
+            {...attr}
+          >
+            <p>
+              确定要解除
+              <span className="text-primary-500">{item.room?.name ?? "-"}</span>
+              会议室预定吗？
+            </p>
+          </ConfimModal>
+        </>
       );
     default:
       return getKeyValue(item, columnKey);
