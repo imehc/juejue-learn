@@ -1,12 +1,10 @@
-import { subscribeMeetingRoom } from "./actions";
-
 import {
   MeetingRoomList,
   meetingRoomListSchema,
 } from "@/components/meeting-room";
 import { UnknownError } from "@/components/unknown-error";
 import { apiInstance } from "@/helper/auth";
-import { MeetingRoomApi } from "@/meeting-room-booking-api";
+import { MeetingRoomApi, UserApi } from "@/meeting-room-booking-api";
 
 export default async function MeetingRoomPage({
   searchParams,
@@ -19,16 +17,14 @@ export default async function MeetingRoomPage({
     return <UnknownError />;
   }
   const meetingRoomApi = apiInstance(MeetingRoomApi);
+  const userApi = apiInstance(UserApi);
+  const user = await userApi.getUserInfo();
   const userList = await meetingRoomApi.findAllMettingRoom({
     ...payload.data,
     skip: payload.data.skip + 1,
   });
 
   return (
-    <MeetingRoomList
-      {...userList}
-      subscribeMeetingRoom={subscribeMeetingRoom}
-      type="normal"
-    />
+    <MeetingRoomList {...userList} isFrozen={user.isFrozen} type="normal" />
   );
 }

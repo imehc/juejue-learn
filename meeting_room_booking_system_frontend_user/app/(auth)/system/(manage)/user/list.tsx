@@ -99,6 +99,7 @@ export function UserList({ users, totalCount }: Props) {
       </div>
       <Divider className="my-4" />
       <Table
+        isHeaderSticky
         isStriped
         aria-label="Example table with client side pagination"
         bottomContent={

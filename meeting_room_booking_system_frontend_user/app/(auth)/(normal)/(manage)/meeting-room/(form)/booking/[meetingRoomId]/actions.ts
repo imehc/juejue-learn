@@ -33,6 +33,7 @@ export async function addBookingAction(
     if (meetingRoomIdErr) {
       return { error: "未获取到会议室" };
     }
+
     const startAtErr = payload.error.errors.find(
       (err) => err.path[0] === "startAt",
     )?.message;
@@ -46,7 +47,7 @@ export async function addBookingAction(
     return {
       message: {
         startAt: startAtErr,
-        endAt: endAtErr,
+        endAt: endAtErr ?? payload.error.errors?.[0]?.message,
         remark: remarkErr,
       },
     };

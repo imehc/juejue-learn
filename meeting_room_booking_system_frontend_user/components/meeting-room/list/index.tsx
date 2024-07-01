@@ -45,9 +45,7 @@ type SystemAction = {
 
 type NormalAction = {
   type: "normal";
-  subscribeMeetingRoom: ({ id }: Pick<MeetingRoom, "id">) => Promise<{
-    data: string;
-  }>;
+  isFrozen: boolean;
 };
 
 interface Props extends MeetingRoomListImpl {}
@@ -280,6 +278,7 @@ const TableItem: FC<
             as={Link}
             color="success"
             href={`/meeting-room/booking/${item.id}`}
+            isDisabled={props.isFrozen}
             size="sm"
             variant="bordered"
           >
