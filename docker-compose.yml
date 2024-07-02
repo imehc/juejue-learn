@@ -3,12 +3,13 @@ services:
   nest-app:
     build:
       context: ./
-      dockerfile: ./Dockerfile
+      dockerfile: ./meeting_room_booking_system_backend/Dockerfile
     depends_on:
       - mysql-container
       - redis-container
     ports:
       - 6020:6020
+    restart: always
     networks:
       - common-network
   mysql-container:
@@ -22,12 +23,23 @@ services:
       - '3306:3306'
     networks:
       - common-network
+    restart: always
   redis-container:
     image: redis
     volumes:
       - /Users/tom/person/learning/redis-data:/data
     ports:
       - '6379:6379'
+    networks:
+      - common-network
+    restart: always
+  next-app:
+    build:
+      context: ./
+      dockerfile: ./meeting_room_booking_system_frontend/Dockerfile
+    ports:
+      - 6022:6022
+    restart: always
     networks:
       - common-network
 networks:
