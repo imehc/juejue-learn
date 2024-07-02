@@ -75,7 +75,7 @@ export async function profileModifyCaptcha(
 ): Promise<State> {
   try {
     const captchaApi = apiInstance(CaptchaApi);
-    const success = await captchaApi.updatePasswordCaptcha();
+    const success = await captchaApi.updateUserInfoCaptcha();
 
     return { success };
   } catch (error) {

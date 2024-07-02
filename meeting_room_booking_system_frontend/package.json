@@ -5,7 +5,7 @@
 	"scripts": {
 		"dev": "next dev -p 6021",
 		"build": "next build",
-		"start": "next start",
+		"start": "next start -p 6022",
 		"lint": "eslint . --ext .ts,.tsx -c .eslintrc.json --fix",
 		"gen:apis": "openapi-generator generate -g typescript-fetch -c ./openapi-generator.config.yaml -o ./meeting-room-booking-api -i ../meeting_room_booking_system_backend/openapi.yaml"
 	},
