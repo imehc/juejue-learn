@@ -12,6 +12,7 @@ export type AuthKey =
   | typeof REFRESH_TOKEN
   | typeof EXPIRES_IN;
 
+/** TODO: 如何在长时间不操作的情况下且refresh-token未过期处理优雅刷新access-token */
 export async function updateAuth(request: NextRequest) {
   const accessToken = request.cookies.get(ACCESS_TOKEN)?.value;
   const refreshToken = request.cookies.get(REFRESH_TOKEN)?.value;
