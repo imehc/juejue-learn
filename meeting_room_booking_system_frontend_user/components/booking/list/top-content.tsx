@@ -119,7 +119,7 @@ export const BookingListTopContent = forwardRef<
       />
       <DatePicker
         showMonthAndYearPickers
-        className="max-w-[284px]"
+        className="max-w-sm"
         granularity="minute"
         label="开始时间"
         maxValue={parseDate(endAt) as DateValue}
@@ -138,7 +138,7 @@ export const BookingListTopContent = forwardRef<
       />
       <DatePicker
         showMonthAndYearPickers
-        className="max-w-[284px]"
+        className="max-w-sm"
         granularity="minute"
         label="结束时间"
         minValue={parseDate(startAt) as DateValue}

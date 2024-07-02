@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { DatePicker } from "@nextui-org/date-picker";
 import { addHours } from "date-fns";
+import { DateValue } from "@internationalized/date";
 
 import { addBookingAction } from "./actions";
 
@@ -62,6 +63,7 @@ export function AddBookingForm({ id, name }: MeetingRoom) {
         granularity="minute"
         isInvalid={!!handleState?.message?.startAt}
         label="开始时间"
+        minValue={parseDate(new Date()) as DateValue}
         name="startAt"
       />
       <DatePicker
@@ -73,6 +75,7 @@ export function AddBookingForm({ id, name }: MeetingRoom) {
         granularity="minute"
         isInvalid={!!handleState?.message?.endAt}
         label="结束时间"
+        minValue={parseDate(new Date()) as DateValue}
         name="endAt"
       />
       <Textarea
