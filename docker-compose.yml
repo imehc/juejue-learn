@@ -1,5 +1,16 @@
 version: '3.8'
 services:
+  next-app:
+    build:
+      context: .
+      dockerfile: ./meeting_room_booking_system_frontend/Dockerfile
+    depends_on:
+      - nest-app
+    ports:
+      - 6022:6022
+    restart: always
+    networks:
+      - common-network
   nest-app:
     build:
       context: ./meeting_room_booking_system_backend
@@ -33,15 +44,6 @@ services:
     networks:
       - common-network
     restart: always
-  next-app:
-    build:
-      context: .
-      dockerfile: ./meeting_room_booking_system_frontend/Dockerfile
-    ports:
-      - 6022:6022
-    restart: always
-    networks:
-      - common-network
 networks:
   common-network:
     driver: bridge
