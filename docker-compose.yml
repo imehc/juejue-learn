@@ -1,25 +1,44 @@
 version: '3.8'
 services:
-  next-app:
+  nginx-proxy:
+    # 容器名称
+    container_name: nginx
+    depends_on: 
+      - client
+      - api
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    ports:
+      - 6022:80
+    restart: always
+
+  client:
+    container_name: next-app-client
     build:
       context: .
       dockerfile: ./meeting_room_booking_system_frontend/Dockerfile
     depends_on:
-      - nest-app
-    ports:
-      - 6022:6022
+      - api
+    # ports:
+    #   - 6022:6022
     restart: always
     networks:
       - common-network
-  nest-app:
+
+  api:
+    container_name: nest-app-api
     build:
       context: ./meeting_room_booking_system_backend
       dockerfile: ./Dockerfile
+    # TODO: 图片存放到主机
+    # volumes:
+      # - /Users/tom/person/learning/uploads:/uploads
     depends_on:
       - mysql-container
       - redis-container
-    ports:
-      - 6020:6020
+    # ports:
+    #   - 6020:6020
     restart: always
     networks:
       - common-network
@@ -30,8 +49,8 @@ services:
     environment:
       MYSQL_DATABASE: meeting_room_booking_system
       MYSQL_ROOT_PASSWORD: admin
-    ports:
-      - '3306:3306'
+    # ports:
+    #   - '3306:3306'
     networks:
       - common-network
     restart: always
@@ -39,11 +58,12 @@ services:
     image: redis
     volumes:
       - /Users/tom/person/learning/redis-data:/data
-    ports:
-      - '6379:6379'
+    # ports:
+    #   - '6379:6379'
     networks:
       - common-network
     restart: always
+
 networks:
   common-network:
     driver: bridge
