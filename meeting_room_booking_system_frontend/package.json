@@ -5,7 +5,7 @@
 	"scripts": {
 		"dev": "next dev -p 6021",
 		"build": "next build",
-		"start": "next start",
+		"start": "next start -p 6022",
 		"lint": "eslint . --ext .ts,.tsx -c .eslintrc.json --fix",
 		"gen:apis": "openapi-generator generate -g typescript-fetch -c ./openapi-generator.config.yaml -o ./meeting-room-booking-api -i ../meeting_room_booking_system_backend/openapi.yaml"
 	},
@@ -14,9 +14,11 @@
 		"@nextui-org/avatar": "^2.0.30",
 		"@nextui-org/button": "2.0.33",
 		"@nextui-org/card": "^2.0.31",
+		"@nextui-org/checkbox": "^2.1.2",
 		"@nextui-org/chip": "^2.0.30",
 		"@nextui-org/code": "2.0.28",
 		"@nextui-org/date-picker": "^2.1.2",
+		"@nextui-org/divider": "^2.0.28",
 		"@nextui-org/input": "2.2.1",
 		"@nextui-org/kbd": "2.0.29",
 		"@nextui-org/link": "2.0.31",

@@ -2,9 +2,10 @@
 const nextConfig = {
   logging: {
     fetches: {
-      fullUrl: true
-    }
-  }
-}
+      fullUrl: true,
+    },
+  },
+  output: "standalone",
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;

@@ -35,7 +35,7 @@ function initConfig(app: INestApplication<any>) {
     .setTitle('会议室预订系统')
     .setDescription('api 接口文档')
     .setVersion('1.0')
-    .addServer('http://localhost:6020')
+    .addServer('http://127.0.0.1:6020')
     .addBearerAuth({ type: 'http', description: '基于jwt的认证' })
     .build();
   const document = SwaggerModule.createDocument(app, config);

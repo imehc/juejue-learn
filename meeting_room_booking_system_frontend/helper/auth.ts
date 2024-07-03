@@ -40,6 +40,7 @@ const middleware: Middleware = {
         throw new Error("服务异常，请稍后重试");
 
       case 401: {
+        // process.env.__NEXT_PRIVATE_ORIGIN
         return redirect("/login");
       }
 

@@ -20,6 +20,9 @@ importers:
       '@nextui-org/card':
         specifier: ^2.0.31
         version: 2.0.31(@nextui-org/system@2.2.1(@nextui-org/theme@2.2.5(tailwindcss@3.4.3))(framer-motion@11.1.9(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@nextui-org/theme@2.2.5(tailwindcss@3.4.3))(framer-motion@11.1.9(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@nextui-org/checkbox':
+        specifier: ^2.1.2
+        version: 2.1.2(@nextui-org/system@2.2.1(@nextui-org/theme@2.2.5(tailwindcss@3.4.3))(framer-motion@11.1.9(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@nextui-org/theme@2.2.5(tailwindcss@3.4.3))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@nextui-org/chip':
         specifier: ^2.0.30
         version: 2.0.30(@nextui-org/system@2.2.1(@nextui-org/theme@2.2.5(tailwindcss@3.4.3))(framer-motion@11.1.9(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@nextui-org/theme@2.2.5(tailwindcss@3.4.3))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -29,6 +32,9 @@ importers:
       '@nextui-org/date-picker':
         specifier: ^2.1.2
         version: 2.1.2(@nextui-org/system@2.2.1(@nextui-org/theme@2.2.5(tailwindcss@3.4.3))(framer-motion@11.1.9(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@nextui-org/theme@2.2.5(tailwindcss@3.4.3))(@types/react@18.3.3)(framer-motion@11.1.9(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@nextui-org/divider':
+        specifier: ^2.0.28
+        version: 2.0.28(@nextui-org/theme@2.2.5(tailwindcss@3.4.3))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@nextui-org/input':
         specifier: 2.2.1
         version: 2.2.1(@nextui-org/system@2.2.1(@nextui-org/theme@2.2.5(tailwindcss@3.4.3))(framer-motion@11.1.9(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@nextui-org/theme@2.2.5(tailwindcss@3.4.3))(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -4481,7 +4487,7 @@ snapshots:
   '@react-aria/switch@3.6.2(react@18.3.1)':
     dependencies:
       '@react-aria/toggle': 3.10.4(react@18.3.1)
-      '@react-stately/toggle': 3.7.2(react@18.3.1)
+      '@react-stately/toggle': 3.7.4(react@18.3.1)
       '@react-types/switch': 3.5.3(react@18.3.1)
       '@swc/helpers': 0.5.11
       react: 18.3.1

@@ -5,7 +5,7 @@ export const loginSchema = z.object({
     .string({ required_error: "请填写用户名" })
     .trim()
     .refine((value) => /^[A-Za-z0-9]+$/.test(value), {
-      message: "密码格式不合法",
+      message: "用户名不合法",
     }),
   password: z
     .string({ required_error: "请填写密码" })
