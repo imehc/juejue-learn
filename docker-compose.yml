@@ -2,8 +2,8 @@ version: '3.8'
 services:
   nest-app:
     build:
-      context: ./
-      dockerfile: ./meeting_room_booking_system_backend/Dockerfile
+      context: ./meeting_room_booking_system_backend
+      dockerfile: ./Dockerfile
     depends_on:
       - mysql-container
       - redis-container
@@ -35,7 +35,7 @@ services:
     restart: always
   next-app:
     build:
-      context: ./
+      context: .
       dockerfile: ./meeting_room_booking_system_frontend/Dockerfile
     ports:
       - 6022:6022

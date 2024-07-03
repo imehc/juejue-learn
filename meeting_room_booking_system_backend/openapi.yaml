@@ -853,7 +853,7 @@ info:
   contact: {}
 tags: []
 servers:
-  - url: http://localhost:6020
+  - url: http://127.0.0.1:6020
 components:
   securitySchemes:
     bearer:

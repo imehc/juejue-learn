@@ -1,38 +1,90 @@
-# 使用包含 pnpm 的 Node.js 镜像作为构建阶段
-FROM node:22.3 as build-stage
+###################
+# BUILD FOR LOCAL DEVELOPMENT
+###################
 
-WORKDIR /app
+# https://www.tomray.dev/nestjs-docker-production
+FROM node:22-alpine As development
 
-# 复制 package.json 到工作目录
-COPY package.json .
-COPY pnpm-lock.yaml .
+# Create app directory
+WORKDIR /usr/src/app
 
-# 配置 pnpm 的 registry
-RUN npm install -g pnpm
-RUN pnpm config set registry https://registry.npmmirror.com/
+# Copy application dependency manifests to the container image.
+# A wildcard is used to ensure copying both package.json AND package-lock.json (when available).
+# Copying this first prevents re-running npm install on every code change.
+COPY --chown=node:node package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
 
-RUN pnpm install
+# Install app dependencies using the `npm ci` command instead of `npm install`
+RUN \
+  if [ -f yarn.lock ]; then yarn --frozen-lockfile; \
+  elif [ -f package-lock.json ]; then npm ci; \
+  elif [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm i --frozen-lockfile; \
+  else echo "Lockfile not found." && exit 1; \
+  fi
 
-# 复制所有源代码到工作目录
-COPY . .
+# Bundle app source
+COPY --chown=node:node . .
 
-RUN pnpm run build
+# Use the node user from the image (instead of the root user)
+USER node
 
-# 使用 Node.js 镜像作为生产阶段
-FROM node:22.3 as production-stage
-# 从构建阶段复制构建后的文件到生产阶段
-COPY --from=build-stage /app/dist /app
-COPY --from=build-stage /app/package.json /app/package.json
+###################
+# BUILD FOR PRODUCTION
+###################
 
-WORKDIR /app
+FROM node:22-alpine As build
 
-# 配置 pnpm 的 registry
-RUN npm install -g pnpm
-RUN pnpm config set registry https://registry.npmmirror.com/
+WORKDIR /usr/src/app
 
-# 使用 pnpm 安装生产环境依赖
-RUN pnpm install --production
+COPY --chown=node:node package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
+
+# In order to run `npm run build` we need access to the Nest CLI which is a dev dependency. In the previous development stage we ran `npm ci` which installed all dependencies, so we can copy over the node_modules directory from the development image
+COPY --chown=node:node --from=development /usr/src/app/node_modules ./node_modules
+
+COPY --chown=node:node . .
+
+# Run the build command which creates the production bundle
+RUN \
+  if [ -f yarn.lock ]; then yarn run build; \
+  elif [ -f package-lock.json ]; then npm run build; \
+  elif [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm run build; \
+  else echo "Lockfile not found." && exit 1; \
+  fi
+
+# Set NODE_ENV environment variable
+ENV NODE_ENV production
+
+# Running `npm ci` removes the existing node_modules directory and passing in --only=production ensures that only the production dependencies are installed. This ensures that the node_modules directory is as optimized as possible
+RUN \
+  if [ -f yarn.lock ]; then \
+    yarn install --frozen-lockfile --production && \
+    yarn cache clean; \
+  elif [ -f package-lock.json ]; then \
+    npm ci --only=production && \
+    npm cache clean --force; \
+  elif [ -f pnpm-lock.yaml ]; then \
+    corepack enable pnpm && \
+    pnpm install --prod && \
+    pnpm prune; \
+  else \
+    echo "Lockfile not found." && exit 1; \
+  fi
+
+
+USER node
+
+###################
+# PRODUCTION
+###################
+
+FROM node:22-alpine As production
+
+# Copy the bundled code from the build stage to the production image
+COPY --chown=node:node --from=build /usr/src/app/node_modules ./node_modules
+COPY --chown=node:node --from=build /usr/src/app/dist ./dist
 
 EXPOSE 6020
 
-CMD ["node", "/app/main.js"]
+ENV PORT 6020
+
+# Start the server using the production build
+CMD [ "node", "dist/main.js" ]
