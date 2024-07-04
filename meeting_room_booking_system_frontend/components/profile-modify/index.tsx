@@ -80,8 +80,13 @@ export function ProfileModifyForm({ headPic, nickName, email }: UserDetailVo) {
       if (headPic?.startsWith("http://") || headPic?.startsWith("https://")) {
         return headPic;
       }
+      // 由于未使用OSS对象存储，所以使用OSS对象存储后实际访问地址需要调整
+      // 这里使用nginx反向代理，需要添加api后缀
+      if (process.env.NODE_ENV === "development") {
+        return `${BASE_PATH}/${headPic}`;
+      }
 
-      return `${BASE_PATH}/${headPic}`;
+      return `http://localhost/api/${headPic}`;
     }
 
     return undefined;
