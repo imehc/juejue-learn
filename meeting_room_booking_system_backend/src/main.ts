@@ -10,10 +10,13 @@ import { CustomExceptionFilter } from './helper/custom-exception.filter';
 import { writeFileSync } from 'fs';
 import { dump } from 'js-yaml';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import * as path from 'path';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
-  app.useStaticAssets('uploads', { prefix: '/uploads' }); // 设置目录为静态文件目录
+  app.useStaticAssets(path.join(__dirname, '..', 'uploads'), {
+    prefix: '/uploads',
+  }); // 设置目录为静态文件目录
 
   // 全局启用
   app.useGlobalPipes(new ValidationPipe({ transform: true }));

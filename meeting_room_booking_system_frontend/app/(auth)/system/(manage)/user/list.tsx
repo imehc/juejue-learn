@@ -163,10 +163,17 @@ const TableItem: FC<{ columnKey: string; user: User }> = ({
       const checkHeadPic =
         user.headPic?.startsWith("http://") ||
         user.headPic?.startsWith("https://");
+      // 由于未使用OSS对象存储，所以使用OSS对象存储后实际访问地址需要调整
+      // 这里使用nginx反向代理，需要添加api后缀
+      const bashPath =
+        process.env.NODE_ENV === "development"
+          ? BASE_PATH
+          : "http://localhost/api/".replace(/\/+$/, "");
+
       const src = user.headPic
         ? checkHeadPic
           ? user.headPic
-          : `${BASE_PATH}/${user.headPic}`
+          : `${bashPath}/${user.headPic}`
         : undefined;
 
       return (

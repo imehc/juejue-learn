@@ -3,7 +3,7 @@
 ### 直接运行
 ``` bash
 # -d 后台运行
-docker compose up -d 
+docker compose up
 ``` 
 
 ### 单独运行`Dockerfile`文件
@@ -15,8 +15,9 @@ docker build -t meeting_room_booking_system_frontend .
 docker run -p 6022:6022 -d meeting_room_booking_system_frontend
 ```
 
-<!-- 配置nginx -->
+<!-- docker配置开发环境 -->
 <!-- https://levelup.gitconnected.com/setting-up-a-local-development-environment-with-next-js-0049cfd6d437 -->
+<!-- 配置nginx -->
 <!-- https://medium.com/@wwdhfernando/efficient-deployment-of-next-js-24fd2825d6b4 -->
 <!-- https://medium.com/@wwdhfernando/efficient-deployment-of-next-js-11a4e8947d9b -->
 

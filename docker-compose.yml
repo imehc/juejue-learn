@@ -1,49 +1,8 @@
 version: '3.8'
 services:
-  nginx-proxy:
-    # 容器名称
-    container_name: nginx
-    depends_on: 
-      - client
-      - api
-    build:
-      context: ./nginx
-      dockerfile: Dockerfile
-    ports:
-      - 6022:80
-    restart: always
-
-  client:
-    container_name: next-app-client
-    build:
-      context: .
-      dockerfile: ./meeting_room_booking_system_frontend/Dockerfile
-    depends_on:
-      - api
-    # ports:
-    #   - 6022:6022
-    restart: always
-    networks:
-      - common-network
-
-  api:
-    container_name: nest-app-api
-    build:
-      context: ./meeting_room_booking_system_backend
-      dockerfile: ./Dockerfile
-    # TODO: 图片存放到主机
-    # volumes:
-      # - /Users/tom/person/learning/uploads:/uploads
-    depends_on:
-      - mysql-container
-      - redis-container
-    # ports:
-    #   - 6020:6020
-    restart: always
-    networks:
-      - common-network
   mysql-container:
     image: mysql
+    # 本地映射 具体本地地址以主机路径为准
     volumes:
       - /Users/tom/person/learning/mysql-data:/var/lib/mysql
     environment:
@@ -56,6 +15,7 @@ services:
     restart: always
   redis-container:
     image: redis
+    # 本地映射 具体本地地址以主机路径为准
     volumes:
       - /Users/tom/person/learning/redis-data:/data
     # ports:
@@ -64,6 +24,52 @@ services:
       - common-network
     restart: always
 
+  api:
+    container_name: api
+    build:
+      context: ./meeting_room_booking_system_backend
+      dockerfile: ./Dockerfile
+    depends_on:
+      - mysql-container
+      - redis-container
+    # ports:
+    #   - 6020:6020
+    # 本地映射 具体本地地址以主机路径为准 一般文件使用OSS对象存储，这里图片存放到主机
+    volumes:
+      - /Users/tom/person/learning/uploads:/uploads
+    restart: always
+    networks:
+      - common-network
+
+  client:
+    container_name: client
+    build:
+      context: .
+      dockerfile: ./meeting_room_booking_system_frontend/Dockerfile
+    depends_on:
+      - api
+    # ports:
+    #   - 6022:6022
+    restart: always
+    networks:
+      - common-network
+
+  nginx:
+    # 容器名称
+    container_name: nginx
+    image: nginx:alpine
+    depends_on:
+      - api
+      - client
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - 80:80
+    restart: always
+    networks:
+      - common-network
+
+# 需要保证容器网络处于同一网络，否则容器之间无法访问
 networks:
   common-network:
     driver: bridge
