@@ -24,9 +24,6 @@ export default new DataSource({
   poolSize: 10,
   migrations: ['src/migrations/**.ts'],
   connectorPackage: 'mysql2',
-  extra: {
-    authPlugin: 'sha256_password',
-  },
 });
 
 // 生成了 create table 的 migration

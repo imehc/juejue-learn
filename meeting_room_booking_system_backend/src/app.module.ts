@@ -55,10 +55,6 @@ import * as path from 'path';
           entities: [User, Role, Permission, MeetingRoom, Booking],
           poolSize: 10,
           connectorPackage: 'mysql2',
-          extra: {
-            // TODO: 控制台警告提示： Ignoring invalid configuration option passed to Connection: authPlugin. This is currently a warning, but in future versions of MySQL2, an error will be thrown if you pass an invalid configuration option to a Connection
-            authPlugin: 'sha256_password',
-          },
         };
       },
       inject: [ConfigService],
