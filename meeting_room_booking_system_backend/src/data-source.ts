@@ -27,7 +27,7 @@ export default new DataSource({
 });
 
 // 生成了 create table 的 migration
-// pnpm migration:generate src/migrations/init
+// pnpm migration:generate ./src/migrations/init
 // 迁移
 // pnpm migration:run
 // 执行 create 生成 migration 类 生成了空的 migration，填入了导出的 inert 语句

@@ -21,9 +21,9 @@
     "repl": "nest start --watch --entryFile helper/repl",
     "typeorm": "ts-node ./node_modules/typeorm/cli",
     "migration:create": "npm run typeorm -- migration:create",
-    "migration:generate": "npm run typeorm -- migration:generate -- -d ./src/data-source.ts",
-    "migration:run": "npm run typeorm -- migration:run -- -d ./src/data-source.ts",
-    "migration:revert": "npm run typeorm -- migration:revert -- -d ./src/data-source.ts"
+    "migration:generate": "npm run typeorm -- migration:generate -d ./src/data-source.ts",
+    "migration:run": "npm run typeorm -- migration:run -d ./src/data-source.ts",
+    "migration:revert": "npm run typeorm -- migration:revert -d ./src/data-source.ts"
   },
   "dependencies": {
     "@faker-js/faker": "^8.4.1",
