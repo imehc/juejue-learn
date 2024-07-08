@@ -1,5 +1,10 @@
 ## Usage
 
+### 首次运行
+``` bash
+make init-data
+```
+
 ### 直接运行
 ``` bash
 # -d 后台运行

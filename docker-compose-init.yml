@@ -1,0 +1,21 @@
+version: '3.8'
+services:
+  mysql-container:
+    container_name: mysql-container
+    image: mysql
+    # 本地映射 具体本地地址以主机路径为准
+    volumes:
+      - /Users/tom/person/learning/mysql-data:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: meeting_room_booking_system
+      MYSQL_ROOT_PASSWORD: admin
+    ports:
+      - '3306:3306'
+    networks:
+      - common-network
+    restart: always
+  
+# 需要保证容器网络处于同一网络，否则容器之间无法访问
+networks:
+  common-network:
+    driver: bridge
