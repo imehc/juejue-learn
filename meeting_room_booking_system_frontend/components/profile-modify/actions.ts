@@ -5,7 +5,9 @@ import { revalidatePath } from "next/cache";
 import { profileModifySchema } from "./schema";
 
 import { apiInstance } from "@/helper/auth";
-import { CaptchaApi, ResponseError, UserApi } from "@/meeting-room-booking-api";
+import { CaptchaApi, FileApi, ResponseError, UserApi } from "@/meeting-room-booking-api";
+
+import { URL } from "url";
 
 interface State {
   message?: {
@@ -41,10 +43,29 @@ export async function profileModify(
 
   try {
     const userApi = apiInstance(UserApi);
+    const fileApi = apiInstance(FileApi);
 
     if (file?.size) {
-      headPic = await userApi.uploadPicture({ file: file });
+      // 上传搭配静态文件夹
+      // headPic = await fileApi.uploadPicture({ file: file });
+      
+      // 使用OSS对象存储
+      const { presignedPutUrl } = await fileApi.getPresignedUrl();
+      const payload = new Blob([file as File], {
+        type: "application/octet-stream",
+      });
+      await fetch(presignedPutUrl,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": file.type
+          },
+          body: payload
+        })
+      const parsedUrl = new URL(presignedPutUrl);
+      headPic = parsedUrl.pathname
     }
+
 
     const success = await userApi.updateUserInfo({
       updateUserDto: { ...payload.data, headPic },

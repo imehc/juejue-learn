@@ -82,10 +82,17 @@ export function ProfileModifyForm({ headPic, nickName, email }: UserDetailVo) {
       }
       // 由于未使用OSS对象存储，所以使用OSS对象存储后实际访问地址需要调整
       // 这里使用nginx反向代理，需要添加api后缀
-      if (process.env.NODE_ENV === "development") {
-        return `${BASE_PATH}/${headPic}`;
+      // if (process.env.NODE_ENV === "development") {
+      //   return `${BASE_PATH}/${headPic}`;
+      // }
+      // return `http://localhost/api/${headPic}`;
+
+      // 使用minio OSS对象存储 基本地址可能随minio配置变化而变化
+      // 由于没通过nginx反向代理，且暴露了端口，所以直接使用端口
+       if (process.env.NODE_ENV === "development") {
+        return `http://localhost:9000${headPic}`;
       }
-      return `http://localhost/api/${headPic}`;
+      return `http://localhost/oss${headPic}`
     }
 
     return undefined;
@@ -106,7 +113,7 @@ export function ProfileModifyForm({ headPic, nickName, email }: UserDetailVo) {
           src={src}
         />
         <input
-          accept=".png,.jpg,.gif"
+          accept=".png,.jpg,.gif,.jpeg"
           className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 w-20 h-20 rounded-full opacity-0 cursor-pointer"
           name="picture"
           type="file"
