@@ -85,7 +85,6 @@ export function ProfileModifyForm({ headPic, nickName, email }: UserDetailVo) {
       if (process.env.NODE_ENV === "development") {
         return `${BASE_PATH}/${headPic}`;
       }
-
       return `http://localhost/api/${headPic}`;
     }
 

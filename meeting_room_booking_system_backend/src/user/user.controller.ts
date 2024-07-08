@@ -424,6 +424,9 @@ export class UserController {
     );
   }
 
+  /**
+   * @deprecated 请使用presignedPutObject
+   */
   @ApiBearerAuth()
   @ApiConsumes('multipart/form-data')
   @ApiBody({
@@ -442,7 +445,8 @@ export class UserController {
   @ApiOperation({
     description: '上传图片',
     operationId: 'uploadPicture',
-    tags: ['user', 'file'],
+    tags: ['file'],
+    deprecated: true,
   })
   @Post('upload')
   @UseInterceptors(
