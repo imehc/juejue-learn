@@ -5,8 +5,6 @@ WORKDIR /app
 
 COPY meeting_room_booking_system_frontend/openapi-generator.config.yaml .
 COPY meeting_room_booking_system_backend/openapi.yaml ./openapi.yaml
-# 生产环境修改为容器的地址，否则请求不到，图片问题待解决
-RUN sed -i 's|http://127.0.0.1:6020|http://nginx/api|g' ./openapi.yaml
 
 # https://stackoverflow.com/questions/71931716/dockerfile-openapi-generator
 RUN bash /usr/local/bin/docker-entrypoint.sh generate -g typescript-fetch -c ./openapi-generator.config.yaml -o ./meeting-room-booking-api -i ./openapi.yaml
