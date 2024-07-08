@@ -10,7 +10,7 @@ import { useCountDown } from "ahooks";
 
 import { profileModify, profileModifyCaptcha } from "./actions";
 
-import { BASE_PATH, UserDetailVo } from "@/meeting-room-booking-api";
+import { UserDetailVo } from "@/meeting-room-booking-api";
 
 export function ProfileModifyForm({ headPic, nickName, email }: UserDetailVo) {
   const [profileModifyState, profileModifyFormAction] = useFormState(
@@ -88,11 +88,11 @@ export function ProfileModifyForm({ headPic, nickName, email }: UserDetailVo) {
       // return `http://localhost/api/${headPic}`;
 
       // 使用minio OSS对象存储 基本地址可能随minio配置变化而变化
-      // 由于没通过nginx反向代理，且暴露了端口，所以直接使用端口
-       if (process.env.NODE_ENV === "development") {
+      if (process.env.NODE_ENV === "development") {
         return `http://localhost:9000${headPic}`;
       }
-      return `http://localhost/oss${headPic}`
+
+      return `http://localhost/oss${headPic}`;
     }
 
     return undefined;
