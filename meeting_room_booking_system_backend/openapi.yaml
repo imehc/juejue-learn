@@ -430,8 +430,8 @@ paths:
       summary: ''
       description: 上传图片
       tags:
-        - user
         - file
+      deprecated: true
       parameters: []
       requestBody:
         required: true
@@ -846,6 +846,23 @@ paths:
                   $ref: '#/components/schemas/StatisticCountVo'
       security:
         - bearer: []
+  /minio/presigned-url:
+    get:
+      operationId: get-presigned-url
+      summary: ''
+      description: 上传文件到OSS
+      tags:
+        - file
+      parameters: []
+      responses:
+        '200':
+          description: 预设上传链接
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PresignedUrlVo'
+      security:
+        - bearer: []
 info:
   title: 会议室预订系统
   description: api 接口文档
@@ -1253,3 +1270,10 @@ components:
         - id
         - name
         - count
+    PresignedUrlVo:
+      type: object
+      properties:
+        presignedPutUrl:
+          type: string
+      required:
+        - presignedPutUrl

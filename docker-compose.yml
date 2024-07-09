@@ -26,6 +26,20 @@ services:
       - common-network
     restart: always
 
+  minio-container:
+    container_name: minio-container
+    image: "bitnami/minio:latest"
+    ports:
+      # - "9000:9000"
+      - "9001:9001"
+    environment:
+      - MINIO_ROOT_USER=admin # 账号必须大于等于5位
+      - MINIO_ROOT_PASSWORD=12345678 # 密码必须大于等于8位
+    volumes:
+      - /Users/tom/person/learning/minio-data:/bitnami/minio/data
+    networks:
+      - common-network
+
   nest-api:
     container_name: nest-api
     build:
@@ -34,6 +48,7 @@ services:
     depends_on:
       - mysql-container
       - redis-container
+      - minio-container
     # ports:
     #   - 6020:6020
     # 本地映射 具体本地地址以主机路径为准 一般文件使用OSS对象存储，这里图片存放到主机

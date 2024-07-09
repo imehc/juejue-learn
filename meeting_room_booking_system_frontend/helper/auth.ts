@@ -17,8 +17,12 @@ export function apiInstance<T extends new (conf?: Configuration) => any>(
 ): InstanceType<T> {
   const accessToken = cookies().get(ACCESS_TOKEN)?.value;
 
+  // 生产环境修改为容器的地址，否则请求不到
+  const basePath =
+    process.env.NODE_ENV === "production" ? "http://nginx/api" : BASE_PATH;
+
   const _conf = new Configuration({
-    basePath: process.env.API_SERVER || BASE_PATH,
+    basePath: process.env.API_SERVER || basePath,
     accessToken,
     headers: conf?.headers,
     middleware: [middleware],
