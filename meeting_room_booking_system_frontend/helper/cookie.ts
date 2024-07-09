@@ -1,11 +1,15 @@
 import { differenceInMinutes } from "date-fns";
 import { NextRequest, NextResponse } from "next/server";
 
-import { AuthApi } from "@/meeting-room-booking-api";
+import { AuthApi, BASE_PATH } from "@/meeting-room-booking-api";
 
 export const ACCESS_TOKEN = "access-token";
 export const REFRESH_TOKEN = "refresh-token";
 export const EXPIRES_IN = "expires-in";
+
+// 生产环境修改为容器的地址，否则请求不到
+export const basePath =
+  process.env.NODE_ENV === "production" ? "http://nginx/api" : BASE_PATH;
 
 export type AuthKey =
   | typeof ACCESS_TOKEN

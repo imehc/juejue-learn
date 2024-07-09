@@ -10,6 +10,9 @@ import { toast } from "sonner";
 
 import { login } from "./actions";
 
+import { GoogleIcon } from "@/components/icons";
+import { basePath } from "@/helper/cookie";
+
 export function LoginForm() {
   const [loginState, loginFormAction] = useFormState(login, { message: null });
 
@@ -50,6 +53,18 @@ export function LoginForm() {
       </div>
       <Divider className="mb-4" />
       <SubmitButton formAction={loginFormAction} />
+      {/* 使用next可以使用next-auth来进行第三方登录 */}
+      <Button
+        fullWidth
+        as={Link}
+        className="my-4"
+        color="default"
+        href={`${basePath}/user/google`}
+        startContent={<GoogleIcon />}
+        variant="bordered"
+      >
+        Signin with Google
+      </Button>
     </form>
   );
 }

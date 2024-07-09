@@ -1,13 +1,18 @@
 "use server";
 
+import { URL } from "url";
+
 import { revalidatePath } from "next/cache";
 
 import { profileModifySchema } from "./schema";
 
 import { apiInstance } from "@/helper/auth";
-import { CaptchaApi, FileApi, ResponseError, UserApi } from "@/meeting-room-booking-api";
-
-import { URL } from "url";
+import {
+  CaptchaApi,
+  FileApi,
+  ResponseError,
+  UserApi,
+} from "@/meeting-room-booking-api";
 
 interface State {
   message?: {
@@ -48,24 +53,24 @@ export async function profileModify(
     if (file?.size) {
       // 上传搭配静态文件夹
       // headPic = await fileApi.uploadPicture({ file: file });
-      
+
       // 使用OSS对象存储
       const { presignedPutUrl } = await fileApi.getPresignedUrl();
       const payload = new Blob([file as File], {
         type: "application/octet-stream",
       });
-      await fetch(presignedPutUrl,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": file.type
-          },
-          body: payload
-        })
-      const parsedUrl = new URL(presignedPutUrl);
-      headPic = parsedUrl.pathname
-    }
 
+      await fetch(presignedPutUrl, {
+        method: "PUT",
+        headers: {
+          "Content-Type": file.type,
+        },
+        body: payload,
+      });
+      const parsedUrl = new URL(presignedPutUrl);
+
+      headPic = parsedUrl.pathname;
+    }
 
     const success = await userApi.updateUserInfo({
       updateUserDto: { ...payload.data, headPic },
