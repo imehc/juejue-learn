@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
-import { Strategy } from 'passport-google-oauth20';
+import { Profile, Strategy } from 'passport-google-oauth20';
 import { SocksProxyAgent } from 'socks-proxy-agent';
 
 /** 配置代理 */
@@ -24,7 +24,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     this._oauth2.setAgent(Agent);
   }
 
-  validate(accessToken: string, refreshToken: string, profile: any) {
+  validate(accessToken: string, refreshToken: string, profile: Profile) {
     const { name, emails, photos } = profile;
     const user = {
       email: emails[0].value,

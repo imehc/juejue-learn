@@ -344,7 +344,57 @@ export class UserController {
       res.cookie(REFRESH_TOKEN, auth.refreshToken);
       res.cookie(EXPIRES_IN, auth.expiresIn);
     }
-    res.redirect('http://localhost:6021/');
+    res.redirect('http://localhost:6021/'); // 注意部署的时候需要修改为服务器地址
+  }
+
+  @ApiExcludeEndpoint()
+  @Get('github')
+  @UseGuards(AuthGuard('github'))
+  async githubAuth() {}
+
+  @ApiExcludeEndpoint()
+  @Get('callback/github')
+  @UseGuards(AuthGuard('github'))
+  async githubAuthRedirect(@Req() req, @Res() res) {
+    if (!req.user) {
+      throw new BadRequestException('github 登录失败');
+    }
+
+    const foundUser = await this.userService.findUserByUsername(
+      req.user.username,
+    );
+    if (foundUser) {
+      const auth = this.handleJwt({
+        userId: foundUser.id,
+        username: foundUser.username,
+        email: foundUser.email,
+        roles: foundUser.roles,
+        permissions: foundUser.permissions,
+      });
+      res.cookie(ACCESS_TOKEN, auth.accessToken);
+      res.cookie(REFRESH_TOKEN, auth.refreshToken);
+      res.cookie(EXPIRES_IN, auth.expiresIn);
+    } else {
+      const info = await this.userService.registerByGithub({
+        username: req.user.username,
+        nickName: req.user.displayName,
+        headPic: req.user.photos?.[0].value ?? '',
+        email: req.user.email,
+        // TODO: 由于没获取到email，可以重定向新的页面绑定邮箱
+      });
+
+      const auth = this.handleJwt({
+        userId: info.id,
+        username: info.username,
+        email: info.email,
+        roles: info.roles,
+        permissions: info.permissions,
+      });
+      res.cookie(ACCESS_TOKEN, auth.accessToken);
+      res.cookie(REFRESH_TOKEN, auth.refreshToken);
+      res.cookie(EXPIRES_IN, auth.expiresIn);
+    }
+    res.redirect('http://localhost:6021/'); // 注意部署的时候需要修改为服务器地址
   }
 
   @ApiBearerAuth() // 需要登录标识

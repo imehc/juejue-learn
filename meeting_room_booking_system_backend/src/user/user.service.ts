@@ -112,6 +112,35 @@ export class UserService {
     return info;
   }
 
+  async registerByGithub({
+    username,
+    headPic,
+    nickName,
+    email,
+  }: Pick<RegisterUserDto, 'username' | 'email'> & {
+    headPic: string;
+    nickName: string;
+  }) {
+    const user = new User();
+    user.email = email ?? '';
+    user.nickName = nickName;
+    user.headPic = headPic;
+    user.password = '';
+    user.username = username;
+    user.loginType = LoginType.GITHUB;
+    user.isAdmin = false;
+
+    const u = await this.userRepository.save(user);
+
+    const info = new UserInfo();
+    info.id = u.id;
+    info.username = u.username;
+    info.email = u.email;
+    info.roles = [];
+    info.permissions = [];
+    return info;
+  }
+
   async login(loginUserDto: LoginUserDto, isAdmin: boolean) {
     const user = await this.userRepository.findOne({
       select: {
@@ -194,6 +223,26 @@ export class UserService {
     const user = await this.userRepository.findOne({
       where: {
         email: email,
+        isAdmin: false,
+      },
+      relations: ['roles', 'roles.permissions'],
+    });
+    if (user) {
+      // TODO: 通过email查询默认都是普通用户，所以不需要判断角色信息
+      const info = new UserInfo();
+      info.id = user.id;
+      info.username = user.username;
+      info.email = user.email;
+      info.roles = [];
+      info.permissions = [];
+      return info;
+    }
+  }
+
+  async findUserByUsername(username: string): Promise<UserInfo | undefined> {
+    const user = await this.userRepository.findOne({
+      where: {
+        username: username,
         isAdmin: false,
       },
       relations: ['roles', 'roles.permissions'],
