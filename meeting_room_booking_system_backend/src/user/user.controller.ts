@@ -50,6 +50,7 @@ import {
   ApiBearerAuth,
   ApiBody,
   ApiConsumes,
+  ApiExcludeEndpoint,
   ApiExtraModels,
   ApiInternalServerErrorResponse,
   ApiOkResponse,
@@ -300,20 +301,12 @@ export class UserController {
     }
   }
 
-  @ApiOperation({
-    description: 'google登录',
-    operationId: 'signin-with-google',
-    tags: ['auth'],
-  })
+  @ApiExcludeEndpoint()
   @Get('google')
   @UseGuards(AuthGuard('google'))
   async googleAuth() {}
 
-  @ApiOperation({
-    description: 'google登录回调(不需要调用改接口)',
-    operationId: 'signin-with-google-callback',
-    tags: ['auth'],
-  })
+  @ApiExcludeEndpoint()
   @Get('callback/google')
   @UseGuards(AuthGuard('google'))
   async googleAuthRedirect(@Req() req, @Res() res) {

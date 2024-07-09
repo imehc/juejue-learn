@@ -1,26 +1,5 @@
 openapi: 3.0.0
 paths:
-  /:
-    get:
-      operationId: AppController_getHello
-      parameters: []
-      responses:
-        '200':
-          description: ''
-  /aaa:
-    get:
-      operationId: AppController_aaaa
-      parameters: []
-      responses:
-        '200':
-          description: ''
-  /bbb:
-    get:
-      operationId: AppController_bbb
-      parameters: []
-      responses:
-        '200':
-          description: ''
   /user/check-token-expiration:
     get:
       operationId: check-token-expiration
@@ -242,28 +221,6 @@ paths:
             application/json:
               schema:
                 type: string
-  /user/google:
-    get:
-      operationId: signin-with-google
-      summary: ''
-      description: google登录
-      tags:
-        - auth
-      parameters: []
-      responses:
-        '200':
-          description: ''
-  /user/callback/google:
-    get:
-      operationId: signin-with-google-callback
-      summary: ''
-      description: google登录回调(不需要调用改接口)
-      tags:
-        - auth
-      parameters: []
-      responses:
-        '200':
-          description: ''
   /user/info:
     get:
       operationId: get-user-info

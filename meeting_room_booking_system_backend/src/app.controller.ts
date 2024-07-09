@@ -6,16 +6,19 @@ import {
   UserInfo,
 } from './helper/custom.decorator';
 import { JwtUserData } from './helper';
+import { ApiExcludeEndpoint } from '@nestjs/swagger';
 
 @Controller()
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
+  @ApiExcludeEndpoint() // 不生成swagger文档
   @Get()
   getHello(): string {
     return this.appService.getHello();
   }
 
+  @ApiExcludeEndpoint()
   @Get('aaa')
   // @SetMetadata(LOGIN_METADATA, true)
   // @SetMetadata(PERMISSION_METADATA, ['ddd'])
@@ -31,6 +34,7 @@ export class AppController {
     return 'aaa';
   }
 
+  @ApiExcludeEndpoint()
   @Get('bbb')
   bbb() {
     return 'bbb';
