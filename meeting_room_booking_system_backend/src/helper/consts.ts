@@ -18,3 +18,7 @@ export const UPDATE_USER_CAPTCHA = (key: string) =>
   `update_user_captcha_${key}`;
 /** 催办 */
 export const URGE = (key: string) => `urge_${key}`;
+
+export const ACCESS_TOKEN = 'access-token';
+export const REFRESH_TOKEN = 'refresh-token';
+export const EXPIRES_IN = 'expires-in';

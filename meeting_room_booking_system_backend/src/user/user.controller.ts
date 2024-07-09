@@ -4,7 +4,6 @@ import {
   Controller,
   DefaultValuePipe,
   Get,
-  HttpCode,
   HttpException,
   HttpStatus,
   Inject,
@@ -12,8 +11,11 @@ import {
   Post,
   Put,
   Query,
+  Req,
+  Res,
   UnauthorizedException,
   UploadedFile,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
@@ -33,7 +35,10 @@ import {
 import { RequireLogin, UserInfo } from 'src/helper/custom.decorator';
 import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
 import {
+  ACCESS_TOKEN,
+  EXPIRES_IN,
   FORGOT_PASSWORD_CAPTCHA,
+  REFRESH_TOKEN,
   REGISTER_CAPTCHA,
   UPDATE_PASSWORD_CAPTCHA,
   UPDATE_USER_CAPTCHA,
@@ -62,6 +67,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import path from 'path';
 import { storage } from 'src/helper/file-storage';
 import { UserServiceMock } from './user.server.mock';
+import { AuthGuard } from '@nestjs/passport';
 
 // @ApiTags('用户管理模块') // 注意：使用这个会导致使用openAPI generate失败
 @Controller('user')
@@ -207,7 +213,6 @@ export class UserController {
     tags: ['user'],
   })
   @Post('register')
-  @HttpCode(HttpStatus.OK)
   async register(@Body() registerUser: RegisterUserDto) {
     return await this.userService.register(registerUser);
   }
@@ -220,10 +225,9 @@ export class UserController {
     operationId: 'user-login',
     tags: ['user'],
   })
+  @UseGuards(AuthGuard('local'))
   @Post('login')
-  @HttpCode(HttpStatus.OK)
-  async userLogin(@Body() loginUser: LoginUserDto) {
-    const info = await this.userService.login(loginUser, false);
+  async userLogin(@UserInfo() info: UserInfoVo) {
     const vo = new LoginUserVo();
     vo.userInfo = info;
     vo.auth = this.handleJwt({
@@ -245,7 +249,6 @@ export class UserController {
     tags: ['user', 'system'],
   })
   @Post('admin/login')
-  @HttpCode(HttpStatus.OK)
   async adminLogin(@Body() loginUser: LoginUserDto) {
     const info = await this.userService.login(loginUser, true);
     const vo = new LoginUserVo();
@@ -295,6 +298,60 @@ export class UserController {
     } catch (e) {
       throw new UnauthorizedException('token 已失效，请重新登录');
     }
+  }
+
+  @ApiOperation({
+    description: 'google登录',
+    operationId: 'signin-with-google',
+    tags: ['auth'],
+  })
+  @Get('google')
+  @UseGuards(AuthGuard('google'))
+  async googleAuth() {}
+
+  @ApiOperation({
+    description: 'google登录回调(不需要调用改接口)',
+    operationId: 'signin-with-google-callback',
+    tags: ['auth'],
+  })
+  @Get('callback/google')
+  @UseGuards(AuthGuard('google'))
+  async googleAuthRedirect(@Req() req, @Res() res) {
+    if (!req.user) {
+      throw new BadRequestException('google 登录失败');
+    }
+
+    const foundUser = await this.userService.findUserByEmail(req.user.email);
+    if (foundUser) {
+      const auth = this.handleJwt({
+        userId: foundUser.id,
+        username: foundUser.username,
+        email: foundUser.email,
+        roles: foundUser.roles,
+        permissions: foundUser.permissions,
+      });
+      res.cookie(ACCESS_TOKEN, auth.accessToken);
+      res.cookie(REFRESH_TOKEN, auth.refreshToken);
+      res.cookie(EXPIRES_IN, auth.expiresIn);
+    } else {
+      const info = await this.userService.registerByGoogle({
+        email: req.user.email,
+        nickName: req.user.firstName + ' ' + req.user.lastName,
+        headPic: req.user.picture,
+      });
+
+      const auth = this.handleJwt({
+        userId: info.id,
+        username: info.username,
+        email: info.email,
+        roles: info.roles,
+        permissions: info.permissions,
+      });
+      res.cookie(ACCESS_TOKEN, auth.accessToken);
+      res.cookie(REFRESH_TOKEN, auth.refreshToken);
+      res.cookie(EXPIRES_IN, auth.expiresIn);
+    }
+    res.redirect('http://localhost:6021/');
   }
 
   @ApiBearerAuth() // 需要登录标识

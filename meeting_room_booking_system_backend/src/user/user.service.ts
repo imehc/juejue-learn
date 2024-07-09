@@ -7,7 +7,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { Like, Repository } from 'typeorm';
-import { User } from './entities/user.entity';
+import { LoginType, User } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { RedisService } from 'src/redis/redis.service';
@@ -85,6 +85,33 @@ export class UserService {
     }
   }
 
+  async registerByGoogle({
+    email,
+    nickName,
+    headPic,
+  }: Pick<RegisterUserDto, 'email' | 'nickName'> & {
+    headPic: string;
+  }) {
+    const user = new User();
+    user.email = email;
+    user.nickName = nickName;
+    user.headPic = headPic;
+    user.password = '';
+    user.username = email + Math.random().toString().slice(2, 10);
+    user.loginType = LoginType.GOOGLE;
+    user.isAdmin = false;
+
+    const u = await this.userRepository.save(user);
+
+    const info = new UserInfo();
+    info.id = u.id;
+    info.username = u.username;
+    info.email = u.email;
+    info.roles = [];
+    info.permissions = [];
+    return info;
+  }
+
   async login(loginUserDto: LoginUserDto, isAdmin: boolean) {
     const user = await this.userRepository.findOne({
       select: {
@@ -102,6 +129,7 @@ export class UserService {
       },
       where: {
         username: loginUserDto.username,
+        loginType: LoginType.USERNAME_PASSWORD,
         isAdmin,
       },
       // 级联查询 指示应该加载实体的哪些关系(简化左连接形式)。
@@ -160,6 +188,26 @@ export class UserService {
         return arr;
       }, []),
     };
+  }
+
+  async findUserByEmail(email: string): Promise<UserInfo | undefined> {
+    const user = await this.userRepository.findOne({
+      where: {
+        email: email,
+        isAdmin: false,
+      },
+      relations: ['roles', 'roles.permissions'],
+    });
+    if (user) {
+      // TODO: 通过email查询默认都是普通用户，所以不需要判断角色信息
+      const info = new UserInfo();
+      info.id = user.id;
+      info.username = user.username;
+      info.email = user.email;
+      info.roles = [];
+      info.permissions = [];
+      return info;
+    }
   }
 
   async forgotPassword(passwordDto: ForgotUserPasswordDto) {

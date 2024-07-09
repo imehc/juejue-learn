@@ -11,6 +11,7 @@ import { writeFileSync } from 'fs';
 import { dump } from 'js-yaml';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import * as path from 'path';
+import cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -24,6 +25,8 @@ async function bootstrap() {
   app.useGlobalInterceptors(new InvokeRecordInterceptor());
   app.useGlobalFilters(new UnloginFilter());
   app.useGlobalFilters(new CustomExceptionFilter());
+
+  app.use(cookieParser());
 
   initConfig(app);
 

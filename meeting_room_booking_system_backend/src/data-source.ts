@@ -27,10 +27,14 @@ export default new DataSource({
 });
 
 // 生成了 create table 的 migration
+// entry 有变化需执行 pnpm migration:generate 存放地址
 // pnpm migration:generate ./src/migrations/init
+
 // 迁移
 // pnpm migration:run
+
 // 执行 create 生成 migration 类 生成了空的 migration，填入了导出的 inert 语句
 // pnpm migration:create src/migrations/data
+
 // 编写完成后执行
 // pnpm migration:run

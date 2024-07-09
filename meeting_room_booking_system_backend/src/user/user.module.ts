@@ -11,5 +11,6 @@ import { UserServiceMock } from './user.server.mock';
   imports: [TypeOrmModule.forFeature([User, Role, Permission])],
   controllers: [UserController],
   providers: [UserService, UserServiceMock],
+  exports: [UserService],
 })
 export class UserModule {}

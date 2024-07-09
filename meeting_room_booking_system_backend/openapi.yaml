@@ -242,6 +242,28 @@ paths:
             application/json:
               schema:
                 type: string
+  /user/google:
+    get:
+      operationId: signin-with-google
+      summary: ''
+      description: google登录
+      tags:
+        - auth
+      parameters: []
+      responses:
+        '200':
+          description: ''
+  /user/callback/google:
+    get:
+      operationId: signin-with-google-callback
+      summary: ''
+      description: google登录回调(不需要调用改接口)
+      tags:
+        - auth
+      parameters: []
+      responses:
+        '200':
+          description: ''
   /user/info:
     get:
       operationId: get-user-info
