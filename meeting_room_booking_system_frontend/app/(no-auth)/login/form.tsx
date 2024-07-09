@@ -10,7 +10,7 @@ import { toast } from "sonner";
 
 import { login } from "./actions";
 
-import { GoogleIcon } from "@/components/icons";
+import { GithubIcon, GoogleIcon } from "@/components/icons";
 import { basePath } from "@/helper/cookie";
 
 export function LoginForm() {
@@ -57,13 +57,24 @@ export function LoginForm() {
       <Button
         fullWidth
         as={Link}
-        className="my-4"
+        className="mt-4"
         color="default"
         href={`${basePath}/user/google`}
         startContent={<GoogleIcon />}
         variant="bordered"
       >
         Signin with Google
+      </Button>
+      <Button
+        fullWidth
+        as={Link}
+        className="mt-4"
+        color="default"
+        href={`${basePath}/user/github`}
+        startContent={<GithubIcon />}
+        variant="bordered"
+      >
+        Signin with Github
       </Button>
     </form>
   );
