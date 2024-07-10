@@ -24,10 +24,12 @@ export interface ConfigurationImpl {
   ['google.login.client-id']: string;
   ['google.login.client-secret']: string;
   ['google.login.callback-url']: string;
+  ['google.login.redirect-url']: string;
 
   ['github.login.client-id']: string;
   ['github.login.client-secret']: string;
   ['github.login.callback-url']: string;
+  ['github.login.redirect-url']: string;
 
   ['jwt.secret']: string;
   ['jwt.access-token-expires-time']: string;

@@ -345,7 +345,7 @@ export class UserController {
       res.cookie(REFRESH_TOKEN, auth.refreshToken);
       res.cookie(EXPIRES_IN, auth.expiresIn);
     }
-    res.redirect('http://localhost:6021/'); // 注意部署的时候需要修改为服务器地址
+    res.redirect(this.configService.get('google.login.redirect-url')); // 注意部署的时候需要修改为服务器地址
   }
 
   @ApiExcludeEndpoint()
@@ -395,7 +395,7 @@ export class UserController {
       res.cookie(REFRESH_TOKEN, auth.refreshToken);
       res.cookie(EXPIRES_IN, auth.expiresIn);
     }
-    res.redirect('http://localhost:6021/'); // 注意部署的时候需要修改为服务器地址
+    res.redirect(this.configService.get('github.login.redirect-url')); // 注意部署的时候需要修改为服务器地址
   }
 
   @ApiBearerAuth() // 需要登录标识

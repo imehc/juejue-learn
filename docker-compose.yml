@@ -53,8 +53,9 @@ services:
       - mysql-container
       - redis-container
       - minio-container
-    # ports:
-    #   - 6020:6020
+    # 没有固定ip地址或域名之前，暂时先暴露改端口以支持第三方登录
+    ports:
+      - 6020:6020
     # 本地映射 具体本地地址以主机路径为准 一般文件使用OSS对象存储，这里图片存放到主机
     environment:
       - NODE_ENVIRONMENT=production

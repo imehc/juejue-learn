@@ -11,7 +11,6 @@ import { toast } from "sonner";
 import { login } from "./actions";
 
 import { GithubIcon, GoogleIcon } from "@/components/icons";
-import { basePath } from "@/helper/cookie";
 
 export function LoginForm() {
   const [loginState, loginFormAction] = useFormState(login, { message: null });
@@ -59,7 +58,8 @@ export function LoginForm() {
         as={Link}
         className="mt-4"
         color="default"
-        href={`${basePath}/user/google`}
+        // 没有固定ip地址或域名之前，暂时先暴露改端口以支持第三方登录
+        href="http://localhost:6020/user/google"
         startContent={<GoogleIcon />}
         variant="bordered"
       >
@@ -70,7 +70,8 @@ export function LoginForm() {
         as={Link}
         className="mt-4"
         color="default"
-        href={`${basePath}/user/github`}
+        // 没有固定ip地址或域名之前，暂时先暴露改端口以支持第三方登录
+        href="http://localhost:6020/user/github"
         startContent={<GithubIcon />}
         variant="bordered"
       >
