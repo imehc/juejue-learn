@@ -863,9 +863,9 @@ components:
       properties:
         username:
           type: string
-        nickName:
-          type: string
         password:
+          type: string
+        nickName:
           type: string
         email:
           type: string
@@ -873,8 +873,8 @@ components:
           type: number
       required:
         - username
-        - nickName
         - password
+        - nickName
         - email
         - captcha
     LoginUserDto:
@@ -1038,12 +1038,12 @@ components:
     UpdateUserDto:
       type: object
       properties:
+        captcha:
+          type: number
         headPic:
           type: string
         nickName:
           type: string
-        captcha:
-          type: number
       required:
         - captcha
     User:

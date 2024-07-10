@@ -5,6 +5,7 @@ import { Client } from 'minio';
 import { PresignedUrlVo } from './vo/presigned-url.vo';
 import { v4 as uuidv4 } from 'uuid';
 import { RequireLogin } from 'src/helper/custom.decorator';
+import { ConfigurationImpl } from 'src/config/configuration-impl';
 
 @RequireLogin()
 @Controller('minio')
@@ -13,7 +14,7 @@ export class MinioController {
   private minioClient: Client;
 
   @Inject(ConfigService)
-  private configService: ConfigService;
+  private configService: ConfigService<ConfigurationImpl>;
 
   @ApiBearerAuth()
   @ApiOkResponse({ description: '预设上传链接', type: PresignedUrlVo })
@@ -25,9 +26,9 @@ export class MinioController {
   @Get('presigned-url')
   async presignedPutObject() {
     const presignedPutUrl = await this.minioClient.presignedPutObject(
-      this.configService.get('minio_bucket_name'),
+      this.configService.get('minio-server.bucket-name'),
       uuidv4(),
-      +(this.configService.get('minio_expires') ?? 60 * 60),
+      +(this.configService.get('minio-server.expires') ?? 60 * 60),
     );
     return { presignedPutUrl };
   }

@@ -12,6 +12,7 @@ import { dump } from 'js-yaml';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import * as path from 'path';
 import cookieParser from 'cookie-parser';
+import { ConfigurationImpl } from './config/configuration-impl';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -28,20 +29,23 @@ async function bootstrap() {
 
   app.use(cookieParser());
 
-  initConfig(app);
+  const configService = app.get(ConfigService<ConfigurationImpl>);
+  initConfig(app, configService);
 
-  const configService = app.get(ConfigService);
-  await app.listen(configService.get('nest_server_port'));
+  await app.listen(configService.get('nest-server.port'));
 }
 bootstrap();
 
-function initConfig(app: INestApplication<any>) {
+function initConfig(
+  app: INestApplication<any>,
+  cs: ConfigService<ConfigurationImpl, false>,
+) {
   // 减少模版代码参考 https://docs.nestjs.com/openapi/cli-plugin#using-the-cli-plugin
   const config = new DocumentBuilder()
     .setTitle('会议室预订系统')
     .setDescription('api 接口文档')
     .setVersion('1.0')
-    .addServer('http://127.0.0.1:6020')
+    .addServer(cs.get('nest-server.doc-url'))
     .addBearerAuth({ type: 'http', description: '基于jwt的认证' })
     .build();
   const document = SwaggerModule.createDocument(app, config);

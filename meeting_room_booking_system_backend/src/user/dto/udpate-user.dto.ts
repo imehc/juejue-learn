@@ -1,16 +1,10 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsNotEmpty } from 'class-validator';
+import { ApiPropertyOptional, PickType } from '@nestjs/swagger';
+import { RegisterUserDto } from './register-user.dto';
 
-export class UpdateUserDto {
+export class UpdateUserDto extends PickType(RegisterUserDto, ['captcha']) {
   @ApiPropertyOptional()
   headPic?: string;
 
   @ApiPropertyOptional()
-  nickName?: string;
-
-  @IsNotEmpty({
-    message: '验证码不能为空',
-  })
-  @ApiProperty()
-  captcha: number;
+  nickName: string;
 }

@@ -1,6 +1,7 @@
 CONTAINER_NAME=mysql-container # 请替换为你的实际容器名称
 WAIT_TIME=20 # 等待时间，可根据实际情况调整
 
+# 数据库有变动，请执行
 # 如果执行失败就分开执行命令
 init-data: check_docker_init
 	cd meeting_room_booking_system_backend && \

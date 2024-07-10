@@ -69,6 +69,7 @@ import path from 'path';
 import { storage } from 'src/helper/file-storage';
 import { UserServiceMock } from './user.server.mock';
 import { AuthGuard } from '@nestjs/passport';
+import { ConfigurationImpl } from 'src/config/configuration-impl';
 
 // @ApiTags('用户管理模块') // 注意：使用这个会导致使用openAPI generate失败
 @Controller('user')
@@ -88,7 +89,7 @@ export class UserController {
   private jwtService: JwtService;
 
   @Inject(ConfigService)
-  private configService: ConfigService;
+  private configService: ConfigService<ConfigurationImpl>;
 
   @ApiQuery({
     name: 'token',
@@ -588,7 +589,7 @@ export class UserController {
   }): LoginUserVo['auth'] {
     // TODO: 使用refreshToken获取新的token时 不能通过accessToken重新获取新的token
     const expiresIn: string =
-      this.configService.get('jwt_access_token_expires_time') || '30m';
+      this.configService.get('jwt.access-token-expires-time') || '30m';
     const accessToken = this.jwtService.sign(
       {
         userId,
@@ -600,7 +601,7 @@ export class UserController {
       { expiresIn: expiresIn },
     );
     const refeshExpiresIn: string =
-      this.configService.get('jwt_refresh_token_expres_time') || '7d';
+      this.configService.get('jwt.access-refresh-expires-time') || '7d';
     const refreshToken = this.jwtService.sign(
       { userId },
       { expiresIn: refeshExpiresIn },

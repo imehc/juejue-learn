@@ -6,14 +6,17 @@ services:
     # 本地映射 具体本地地址以主机路径为准
     volumes:
       - /Users/tom/person/learning/mysql-data:/var/lib/mysql
+    # 启动时执行的命令
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_general_ci # 设置默认字符集
     environment:
       MYSQL_DATABASE: meeting_room_booking_system
       MYSQL_ROOT_PASSWORD: admin
     # ports:
     #   - '3306:3306'
+    restart: always
     networks:
       - common-network
-    restart: always
+
   redis-container:
     container_name: redis-container
     image: redis
@@ -22,9 +25,9 @@ services:
       - /Users/tom/person/learning/redis-data:/data
     # ports:
     #   - '6379:6379'
+    restart: always
     networks:
       - common-network
-    restart: always
 
   minio-container:
     container_name: minio-container
@@ -37,6 +40,7 @@ services:
       - MINIO_ROOT_PASSWORD=12345678 # 密码必须大于等于8位
     volumes:
       - /Users/tom/person/learning/minio-data:/bitnami/minio/data
+    restart: always
     networks:
       - common-network
 
@@ -52,6 +56,8 @@ services:
     # ports:
     #   - 6020:6020
     # 本地映射 具体本地地址以主机路径为准 一般文件使用OSS对象存储，这里图片存放到主机
+    environment:
+      - NODE_ENVIRONMENT=production
     volumes:
       - /Users/tom/person/learning/uploads:/uploads
     restart: always

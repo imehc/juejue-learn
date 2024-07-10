@@ -1,29 +1,22 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsNotEmpty, MaxLength, MinLength } from 'class-validator';
+import { ApiProperty, PickType } from '@nestjs/swagger';
+import { IsEmail, IsNotEmpty } from 'class-validator';
+import { LoginUserDto } from './login-user.dto';
 
-export class RegisterUserDto {
-  @IsNotEmpty({
-    message: '用户名不能为空',
-  })
-  @MinLength(2)
-  @MaxLength(16)
-  @ApiProperty() // api文档查看具体的字段信息
-  username: string;
-
+// 可以用 @nestjs/mapped-types 的 PartialType、PickType、OmitType、IntersectionType 来灵活创建 dto
+// PickType 是从已有 dto 类型中取某个字段
+// OmitType 是从已有 dto 类型中去掉某个字段
+// PartialType 是把 dto 类型变为可选
+// 要想swagger正确识别 需要从 @nestjs/swagger 导入
+// https://github.com/nestjs/swagger/issues/1074
+export class RegisterUserDto extends PickType(LoginUserDto, [
+  'username',
+  'password',
+]) {
   @IsNotEmpty({
     message: '昵称不能为空',
   })
   @ApiProperty()
   nickName: string;
-
-  @IsNotEmpty({
-    message: '密码不能为空',
-  })
-  @MinLength(6, {
-    message: '密码不能少于 6 位',
-  })
-  @ApiProperty()
-  password: string;
 
   @IsNotEmpty({
     message: '邮箱不能为空',

@@ -2,6 +2,7 @@ import { Global, Module } from '@nestjs/common';
 import { RedisService } from './redis.service';
 import { createClient } from 'redis';
 import { ConfigService } from '@nestjs/config';
+import { ConfigurationImpl } from 'src/config/configuration-impl';
 
 // 声明为全局模块, 这样只需要在 AppModule 里引入，别的模块不用引入也可以注入 RedisService
 @Global()
@@ -10,13 +11,13 @@ import { ConfigService } from '@nestjs/config';
     RedisService,
     {
       provide: 'REDIS_CLIENT',
-      async useFactory(configService: ConfigService) {
+      async useFactory(configService: ConfigService<ConfigurationImpl>) {
         const client = createClient({
           socket: {
-            host: configService.get('redis_server_host'),
-            port: configService.get('redis_server_port'),
+            host: configService.get('redis-server.host'),
+            port: configService.get('redis-server.port'),
           },
-          database: configService.get('redis_server_db'),
+          database: configService.get('redis-server.db'),
         });
         await client.connect();
         return client;

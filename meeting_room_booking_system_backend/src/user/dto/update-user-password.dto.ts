@@ -1,19 +1,7 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, MinLength } from 'class-validator';
+import { PickType } from '@nestjs/swagger';
+import { RegisterUserDto } from './register-user.dto';
 
-export class UpdateUserPasswordDto {
-  @IsNotEmpty({
-    message: '密码不能为空',
-  })
-  @MinLength(6, {
-    message: '密码不能少于 6 位',
-  })
-  @ApiProperty()
-  password: string;
-
-  @IsNotEmpty({
-    message: '验证码不能为空',
-  })
-  @ApiProperty()
-  captcha: number;
-}
+export class UpdateUserPasswordDto extends PickType(RegisterUserDto, [
+  'password',
+  'captcha',
+]) {}

@@ -20,18 +20,19 @@ import { Booking } from './booking/entities/booking.entity';
 import { StatisticModule } from './statistic/statistic.module';
 import { MinioModule } from './minio/minio.module';
 import { AuthModule } from './auth/auth.module';
-import * as path from 'path';
+import configuration from './config/configuration';
+import { ConfigurationImpl } from './config/configuration-impl';
 
 @Module({
   imports: [
     JwtModule.registerAsync({
       global: true,
-      useFactory(configService: ConfigService) {
+      useFactory(configService: ConfigService<ConfigurationImpl>) {
         return {
-          secret: configService.get('jwt_secret'),
+          secret: configService.get('jwt.secret'),
           signOptions: {
             // https://github.com/vercel/ms?tab=readme-ov-file#examples
-            expiresIn: '30m', // 默认30分钟
+            expiresIn: configService.get('jwt.access-token-expires-time'), // 默认30分钟
           },
         };
       },
@@ -39,19 +40,20 @@ import * as path from 'path';
     }),
     UserModule,
     ConfigModule.forRoot({
+      load: [configuration],
       isGlobal: true,
       //  envFilePath: 'src/.env'
-      envFilePath: path.join(__dirname, '.env'),
+      // envFilePath: path.join(__dirname, '.env'),
     }),
     TypeOrmModule.forRootAsync({
-      useFactory: (configService: ConfigService) => {
+      useFactory: (configService: ConfigService<ConfigurationImpl>) => {
         return {
           type: 'mysql',
-          host: configService.get('mysql_server_host'),
-          port: configService.get('mysql_server_port'),
-          username: configService.get('mysql_server_username'),
-          password: configService.get('mysql_server_password'),
-          database: configService.get('mysql_server_database'),
+          host: configService.get('mysql-server.host'),
+          port: configService.get('mysql-server.host'),
+          username: configService.get('mysql-server.username'),
+          password: configService.get('mysql-server.password'),
+          database: configService.get('mysql-server.database'),
           synchronize: false,
           // logging: true,
           entities: [User, Role, Permission, MeetingRoom, Booking],

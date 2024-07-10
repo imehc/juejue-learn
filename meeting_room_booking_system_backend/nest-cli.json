@@ -8,6 +8,9 @@
   "compilerOptions": {
     "deleteOutDir": true,
     "watchAssets": true,
-    "assets": ["**/*.env"]
+    "assets": [
+      "**/*.env",
+      ".env.*.yaml"
+    ]
   }
 }
