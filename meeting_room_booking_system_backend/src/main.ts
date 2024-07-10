@@ -13,6 +13,7 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import * as path from 'path';
 import cookieParser from 'cookie-parser';
 import { ConfigurationImpl } from './config/configuration-impl';
+import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -31,6 +32,9 @@ async function bootstrap() {
 
   const configService = app.get(ConfigService<ConfigurationImpl>);
   initConfig(app, configService);
+
+  // winston 的 logger 设置为 Nest 的默认 Logger
+  app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
 
   await app.listen(configService.get('nest-server.port'));
 }

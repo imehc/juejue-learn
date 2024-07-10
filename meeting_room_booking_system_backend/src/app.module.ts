@@ -22,6 +22,11 @@ import { MinioModule } from './minio/minio.module';
 import { AuthModule } from './auth/auth.module';
 import configuration from './config/configuration';
 import { ConfigurationImpl } from './config/configuration-impl';
+import { WinstonModule, utilities } from 'nest-winston';
+import winston from 'winston';
+import { CustomTypeormLogger } from './helper/custom-typeorm-logger';
+import { WinstonLogger, WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
+import 'winston-daily-rotate-file';
 
 @Module({
   imports: [
@@ -46,7 +51,10 @@ import { ConfigurationImpl } from './config/configuration-impl';
       // envFilePath: path.join(__dirname, '.env'),
     }),
     TypeOrmModule.forRootAsync({
-      useFactory: (configService: ConfigService<ConfigurationImpl>) => {
+      useFactory: (
+        configService: ConfigService<ConfigurationImpl>,
+        logger: WinstonLogger,
+      ) => {
         return {
           type: 'mysql',
           host: configService.get('mysql-server.host'),
@@ -55,12 +63,44 @@ import { ConfigurationImpl } from './config/configuration-impl';
           password: configService.get('mysql-server.password'),
           database: configService.get('mysql-server.database'),
           synchronize: false,
-          // logging: true,
+          logging: true,
+          logger: new CustomTypeormLogger(logger),
           entities: [User, Role, Permission, MeetingRoom, Booking],
           poolSize: 10,
           connectorPackage: 'mysql2',
         };
       },
+      inject: [ConfigService, WINSTON_MODULE_NEST_PROVIDER],
+    }),
+    WinstonModule.forRootAsync({
+      useFactory: (configService: ConfigService<ConfigurationImpl>) => ({
+        level: 'debug', // 指定日志输出级别 debug
+        // 输出到的 transport 包括 console 和 file
+        transports: [
+          // new winston.transports.File({
+          //   filename: `${process.cwd()}/log`,
+          // }), // 存放到单个文件
+          new winston.transports.DailyRotateFile({
+            level: configService.get('winston.log-level'),
+            dirname: configService.get('winston.log-dirname'),
+            filename: configService.get('winston.log-filename'),
+            datePattern: configService.get('winston.log-date-pattern'),
+            maxSize: configService.get('winston.log-max-size'),
+          }),
+          new winston.transports.Console({
+            format: winston.format.combine(
+              winston.format.timestamp(),
+              utilities.format.nestLike(),
+            ),
+          }),
+          // new winston.transports.Http({
+          // host: 'localhost',
+          // port: 3002,
+          // path: '/log',
+          // TODO: 接收日志服务的服务器
+          // }),
+        ],
+      }),
       inject: [ConfigService],
     }),
     RedisModule,

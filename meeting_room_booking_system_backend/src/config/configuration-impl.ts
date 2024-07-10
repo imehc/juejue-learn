@@ -21,6 +21,12 @@ export interface ConfigurationImpl {
   ['nodemailer-server.user']: string;
   ['nodemailer-server.pass']: string;
 
+  ['winston.log-level']: string;
+  ['winston.log-dirname']: string;
+  ['winston.log-filename']: string;
+  ['winston.log-date-pattern']: string;
+  ['winston.log-max-size']: string;
+
   ['google.login.client-id']: string;
   ['google.login.client-secret']: string;
   ['google.login.callback-url']: string;
