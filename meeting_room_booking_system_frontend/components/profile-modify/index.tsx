@@ -1,26 +1,27 @@
 "use client";
 
-import { Input } from "@nextui-org/input";
 import { useFormState, useFormStatus } from "react-dom";
 import { Button, ButtonProps } from "@nextui-org/button";
 import { Avatar } from "@nextui-org/avatar";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { useCountDown } from "ahooks";
+import { Input } from "@nextui-org/input";
+import { useRouter } from "next/navigation";
 
-import { profileModify, profileModifyCaptcha } from "./actions";
+import { profileModifyAction, profileModifyCaptchaAction } from "./actions";
 
-import { UserDetailVo } from "@/meeting-room-booking-api";
+import { BASE_PATH, UserDetailVo } from "@/meeting-room-booking-api";
 
 export function ProfileModifyForm({ headPic, nickName, email }: UserDetailVo) {
   const [profileModifyState, profileModifyFormAction] = useFormState(
-    profileModify,
-    {
-      message: null,
-    },
+    profileModifyAction,
+    {},
   );
   const [profileModifyCaptchaState, profileModifyCaptchaFormAction] =
-    useFormState(profileModifyCaptcha, { message: null });
+    useFormState(profileModifyCaptchaAction, {});
+
+  const router = useRouter();
 
   const [targetDate, setTargetDate] = useState<number>();
   const [countDown] = useCountDown({
@@ -31,25 +32,29 @@ export function ProfileModifyForm({ headPic, nickName, email }: UserDetailVo) {
   });
 
   useEffect(() => {
-    if (!profileModifyState?.error) return;
-    toast.error(profileModifyState.error);
-  }, [profileModifyState]);
+    if (profileModifyState.data?.message) {
+      toast.success(profileModifyState.data.message);
+      router.refresh();
 
-  useEffect(() => {
-    if (!profileModifyState?.success) return;
-    toast.success(profileModifyState.success);
-  }, [profileModifyState]);
+      return;
+    }
+    if (profileModifyState?.serverError) {
+      toast.error(profileModifyState.serverError);
 
-  useEffect(() => {
-    if (!profileModifyCaptchaState?.error) return;
-    toast.error(profileModifyCaptchaState.error);
-  }, [profileModifyCaptchaState]);
+      return;
+    }
+    if (profileModifyCaptchaState?.serverError) {
+      toast.error(profileModifyCaptchaState.serverError);
 
-  useEffect(() => {
-    if (!profileModifyCaptchaState?.success) return;
-    setTargetDate(Date.now() + 60 * 1000);
-    toast.success(profileModifyCaptchaState.success);
-  }, [profileModifyCaptchaState]);
+      return;
+    }
+    if (profileModifyCaptchaState.data?.message) {
+      setTargetDate(Date.now() + 60 * 1000);
+      toast.success(profileModifyCaptchaState.data.message);
+
+      return;
+    }
+  }, [profileModifyState, profileModifyCaptchaState]);
 
   const [file, setFile] = useState<File>();
   const [tempLink, setTempLink] = useState<string>();
@@ -89,7 +94,9 @@ export function ProfileModifyForm({ headPic, nickName, email }: UserDetailVo) {
 
       // 使用minio OSS对象存储 基本地址可能随minio配置变化而变化
       if (process.env.NODE_ENV === "development") {
-        return `http://localhost:9000${headPic}`;
+        return headPic.startsWith("uploads/")
+          ? BASE_PATH + "/" + headPic
+          : `http://localhost:9000/${headPic}`;
       }
 
       return `http://localhost/oss${headPic}`;
@@ -102,11 +109,16 @@ export function ProfileModifyForm({ headPic, nickName, email }: UserDetailVo) {
     <form
       action=""
       autoComplete="off"
-      className="w-full h-full flex flex-col justify-center items-center"
+      className="flex flex-col items-center justify-center w-full h-full"
     >
-      <div className="flex justify-center items-center relative mb-4">
+      <div className="relative flex items-center justify-center mb-4">
+        <input
+          className="hidden opacity-0"
+          defaultValue={headPic}
+          name="headPic"
+        />
         <Avatar
-          className="w-20 h-20 text-large text-center"
+          className="w-20 h-20 text-center text-large"
           disableAnimation={false}
           name={nickName?.slice(0, 2)}
           // src="https://i.pravatar.cc/150?u=a04258114e29026302d"
@@ -114,7 +126,7 @@ export function ProfileModifyForm({ headPic, nickName, email }: UserDetailVo) {
         />
         <input
           accept=".png,.jpg,.gif,.jpeg"
-          className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 w-20 h-20 rounded-full opacity-0 cursor-pointer"
+          className="absolute w-20 h-20 -translate-x-1/2 -translate-y-1/2 rounded-full opacity-0 cursor-pointer left-1/2 top-1/2"
           name="picture"
           type="file"
           onChange={(e) => setFile(e.target.files?.[0])}
@@ -123,6 +135,8 @@ export function ProfileModifyForm({ headPic, nickName, email }: UserDetailVo) {
       <Input
         className="max-w-sm mb-4"
         defaultValue={nickName}
+        errorMessage={profileModifyState.validationErrors?.nickName?.join(" ")}
+        isInvalid={!!profileModifyState.validationErrors?.nickName?.length}
         label="昵称"
         name="nickName"
         type="text"
@@ -137,13 +151,15 @@ export function ProfileModifyForm({ headPic, nickName, email }: UserDetailVo) {
         name="email"
         type="email"
       />
-      <div className="max-w-sm w-full grid grid-cols-6 gap-4 mb-4">
+      <div className="grid w-full max-w-sm grid-cols-6 gap-4 mb-4">
         <Input
           fullWidth
           isRequired
           className="col-span-4"
-          errorMessage={profileModifyState?.message?.captcha}
-          isInvalid={!!profileModifyState?.message?.captcha}
+          errorMessage={profileModifyState?.validationErrors?.captcha?.join(
+            " ",
+          )}
+          isInvalid={!!profileModifyState?.validationErrors?.captcha?.length}
           label="验证码"
           name="captcha"
           type="number"
