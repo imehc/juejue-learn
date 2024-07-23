@@ -1,9 +1,8 @@
-import { z } from "zod";
-
 import { AddBookingForm } from "../../../../../(form)/booking/[meetingRoomId]/form";
 
 import { UnknownError } from "@/components/unknown-error";
 import { apiInstance } from "@/helper/auth";
+import { z } from "@/helper/zod";
 import { MeetingRoomApi } from "@/meeting-room-booking-api";
 
 const schema = z.object({

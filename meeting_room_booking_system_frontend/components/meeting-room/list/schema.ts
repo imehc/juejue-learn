@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "@/helper/zod";
 
 export const meetingRoomListSchema = z.object({
   skip: z.coerce.number().optional().default(0).catch(0),

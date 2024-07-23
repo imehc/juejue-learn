@@ -1,5 +1,4 @@
-import { z } from "zod";
-
+import { z } from "@/helper/zod";
 import { BookingStatusEnum } from "@/meeting-room-booking-api";
 
 export const bookingListSchema = z.object({

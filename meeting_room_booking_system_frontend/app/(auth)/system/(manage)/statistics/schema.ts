@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "@/helper/zod";
 
 export const chartTypes = [
   { key: "pie", label: "饼图" },

@@ -1,11 +1,11 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { z } from "zod";
 
 import { apiInstance } from "@/helper/auth";
 import { BookingApi } from "@/meeting-room-booking-api";
 import { actionClient } from "@/helper/safe-action";
+import { z } from "@/helper/zod";
 
 const unbindBookingschema = z.object({
   id: z.coerce.number({ invalid_type_error: "id不合法" }),

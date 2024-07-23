@@ -1,9 +1,9 @@
-import { z } from "zod";
 import { notFound } from "next/navigation";
 
 import { MeetingRoomForm } from "@/components/meeting-room";
 import { apiInstance } from "@/helper/auth";
 import { MeetingRoomApi } from "@/meeting-room-booking-api";
+import { z } from "@/helper/zod";
 
 const schema = z.object({
   params: z.object({

@@ -1,6 +1,7 @@
 import { isBefore } from "date-fns";
-import { z } from "zod";
 import { zfd } from "zod-form-data";
+
+import { z } from "@/helper/zod";
 
 // 服务器输入定义操作
 export const addBookingSchema = zfd

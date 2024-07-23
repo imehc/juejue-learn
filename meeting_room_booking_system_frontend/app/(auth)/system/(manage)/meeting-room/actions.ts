@@ -1,11 +1,11 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { z } from "zod";
 
 import { apiInstance } from "@/helper/auth";
 import { MeetingRoomApi } from "@/meeting-room-booking-api";
 import { actionClient } from "@/helper/safe-action";
+import { z } from "@/helper/zod";
 
 const schema = z.object({
   id: z.coerce.number({ required_error: "未选择会议室" }),

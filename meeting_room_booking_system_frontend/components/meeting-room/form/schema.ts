@@ -1,5 +1,6 @@
-import { z } from "zod";
 import { zfd } from "zod-form-data";
+
+import { z } from "@/helper/zod";
 
 export const meetingRoomFormSchema = zfd.formData({
   id: zfd.numeric(z.coerce.number().optional().catch(undefined)),
