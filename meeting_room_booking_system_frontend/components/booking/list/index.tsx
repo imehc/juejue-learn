@@ -3,8 +3,9 @@
 import type {
   PassBookingAction,
   RejectBookingAction,
-  UnbindBookingAction,
+  UnbindBookingAction as UnbindBookingActionWithSystem,
 } from "@/app/(auth)/system/(manage)/booking/actions";
+import type { UnbindBookingAction } from "@/app/(auth)/(normal)/(manage)/booking-history/actions";
 
 import { Chip } from "@nextui-org/chip";
 import {
@@ -50,7 +51,7 @@ type SystemAction = {
   type: "system";
   passBooking: PassBookingAction;
   rejectBooking: RejectBookingAction;
-  unbindBooking: UnbindBookingAction;
+  unbindBooking: UnbindBookingActionWithSystem;
 };
 
 type NormalAction = {
