@@ -57,7 +57,7 @@ export class MeetingRoomService {
     }
     try {
       await this.repository.insert(createMeetingRoomDto);
-      return 'Created';
+      return '创建会议室成功';
     } catch (error) {
       throw new InternalServerErrorException();
     }
@@ -103,7 +103,7 @@ export class MeetingRoomService {
     }
     try {
       await this.repository.delete({ id });
-      return 'Deleted';
+      return '删除会议室成功';
     } catch (error) {
       throw new InternalServerErrorException();
     }
