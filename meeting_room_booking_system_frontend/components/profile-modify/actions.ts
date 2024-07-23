@@ -1,6 +1,5 @@
 "use server";
 
-import { z } from "zod";
 import { flattenValidationErrors } from "next-safe-action";
 
 import { profileModifySchema } from "./schema";
@@ -48,11 +47,9 @@ export const profileModifyAction = actionClient
     return { message: success ?? "更新个人资料成功" };
   });
 
-export const profileModifyCaptchaAction = actionClient
-  .schema(z.object({}))
-  .stateAction(async () => {
-    const captchaApi = apiInstance(CaptchaApi);
-    const text = await captchaApi.updateUserInfoCaptcha();
+export const profileModifyCaptchaAction = actionClient.stateAction(async () => {
+  const captchaApi = apiInstance(CaptchaApi);
+  const text = await captchaApi.updateUserInfoCaptcha();
 
-    return { message: text ?? "获取更新用户信息验证码成功" };
-  });
+  return { message: text ?? "获取更新用户信息验证码成功" };
+});

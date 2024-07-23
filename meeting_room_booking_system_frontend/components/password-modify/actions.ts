@@ -1,6 +1,5 @@
 "use server";
 
-import { z } from "zod";
 import { flattenValidationErrors } from "next-safe-action";
 
 import { passwordModifySchema } from "./schema";
@@ -27,11 +26,11 @@ export const passwordModifyAction = actionClient
     return { message: text ?? "修改成功" };
   });
 
-export const passwordModifyCaptchaAction = actionClient
-  .schema(z.object({}))
-  .stateAction(async () => {
+export const passwordModifyCaptchaAction = actionClient.stateAction(
+  async () => {
     const captchaApi = apiInstance(CaptchaApi);
     const text = await captchaApi.updatePasswordCaptcha();
 
     return { message: text ?? "获取更改密码验证码成功" };
-  });
+  },
+);
