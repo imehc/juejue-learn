@@ -6,20 +6,19 @@ import { Link } from "@nextui-org/link";
 import { Button, ButtonProps } from "@nextui-org/button";
 import { Divider } from "@nextui-org/divider";
 import { useEffect, useState } from "react";
-import { toast } from "sonner";
 import { useCountDown } from "ahooks";
 import { useRouter } from "next/navigation";
 
-import { register, registerCaptcha } from "./actions";
+import { registerAction, registerCaptchaAction } from "./actions";
+
+import { parseResult } from "@/helper/parse-result";
 
 export function RegisterForm() {
   const router = useRouter();
-  const [registerState, registerFormAction] = useFormState(register, {
-    message: null,
-  });
+  const [registerState, registerFormAction] = useFormState(registerAction, {});
   const [registerCaptchaState, registerCaptchaFormAction] = useFormState(
-    registerCaptcha,
-    { message: null },
+    registerCaptchaAction,
+    {},
   );
 
   const [targetDate, setTargetDate] = useState<number>();
@@ -31,25 +30,15 @@ export function RegisterForm() {
   });
 
   useEffect(() => {
-    if (!registerState?.error) return;
-    toast.error(registerState.error);
+    parseResult(registerState, () => {
+      router.replace("/login");
+    });
   }, [registerState]);
 
   useEffect(() => {
-    if (!registerState?.success) return;
-    toast.success(registerState.success);
-    router.replace("/login");
-  }, [registerState]);
-
-  useEffect(() => {
-    if (!registerCaptchaState?.error) return;
-    toast.error(registerCaptchaState.error);
-  }, [registerCaptchaState]);
-
-  useEffect(() => {
-    if (!registerCaptchaState?.success) return;
-    setTargetDate(Date.now() + 60 * 1000);
-    toast.success(registerCaptchaState.success);
+    parseResult(registerCaptchaState, () => {
+      setTargetDate(Date.now() + 60 * 1000);
+    });
   }, [registerCaptchaState]);
 
   return (
@@ -57,8 +46,8 @@ export function RegisterForm() {
       <Input
         isRequired
         className="max-w-sm mb-4"
-        errorMessage={registerState?.message?.username}
-        isInvalid={!!registerState?.message?.username}
+        errorMessage={registerState?.validationErrors?.username?.join(" ")}
+        isInvalid={!!registerState?.validationErrors?.username?.length}
         label="用户名"
         name="username"
         type="text"
@@ -66,8 +55,8 @@ export function RegisterForm() {
       <Input
         isRequired
         className="max-w-sm mb-4"
-        errorMessage={registerState?.message?.nickName}
-        isInvalid={!!registerState?.message?.nickName}
+        errorMessage={registerState?.validationErrors?.nickName?.join(" ")}
+        isInvalid={!!registerState?.validationErrors?.nickName?.length}
         label="昵称"
         name="nickName"
         type="text"
@@ -75,8 +64,8 @@ export function RegisterForm() {
       <Input
         isRequired
         className="max-w-sm mb-4"
-        errorMessage={registerState?.message?.password}
-        isInvalid={!!registerState?.message?.password}
+        errorMessage={registerState?.validationErrors?.password?.join(" ")}
+        isInvalid={!!registerState?.validationErrors?.password?.length}
         label="密码"
         name="password"
         type="password"
@@ -84,8 +73,10 @@ export function RegisterForm() {
       <Input
         isRequired
         className="max-w-sm mb-4"
-        errorMessage={registerState?.message?.confirmPassword}
-        isInvalid={!!registerState?.message?.confirmPassword}
+        errorMessage={registerState?.validationErrors?.confirmPassword?.join(
+          " ",
+        )}
+        isInvalid={!!registerState?.validationErrors?.confirmPassword?.length}
         label="确认密码"
         name="confirmPassword"
         type="password"
@@ -93,19 +84,25 @@ export function RegisterForm() {
       <Input
         isRequired
         className="max-w-sm mb-4"
-        errorMessage={registerState?.message?.email}
-        isInvalid={!!registerState?.message?.email}
+        errorMessage={
+          registerState?.validationErrors?.email?.join(" ") ||
+          registerCaptchaState.validationErrors?.email?.join(" ")
+        }
+        isInvalid={
+          !!registerState?.validationErrors?.email?.length ||
+          !!registerCaptchaState.validationErrors?.email?.length
+        }
         label="邮箱"
         name="email"
         type="email"
       />
-      <div className="max-w-sm grid grid-cols-6 gap-4 mb-4">
+      <div className="grid max-w-sm grid-cols-6 gap-4 mb-4">
         <Input
           fullWidth
           isRequired
           className="col-span-4"
-          errorMessage={registerState?.message?.captcha}
-          isInvalid={!!registerState?.message?.captcha}
+          errorMessage={registerState?.validationErrors?.captcha?.join(" ")}
+          isInvalid={!!registerState?.validationErrors?.captcha?.length}
           label="验证码"
           name="captcha"
           type="number"
@@ -115,7 +112,7 @@ export function RegisterForm() {
           formAction={registerCaptchaFormAction}
         />
       </div>
-      <div className="w-full text-end mb-4">
+      <div className="w-full mb-4 text-end">
         <span>已有账号？去</span>
         <Link href="/login" underline="hover">
           登录

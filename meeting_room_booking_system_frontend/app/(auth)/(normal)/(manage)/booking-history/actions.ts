@@ -5,7 +5,7 @@ import { z } from "zod";
 import { flattenValidationErrors } from "next-safe-action";
 
 import { apiInstance } from "@/helper/auth";
-import { BookingApi, MeetingRoom } from "@/meeting-room-booking-api";
+import { BookingApi } from "@/meeting-room-booking-api";
 import { actionClient } from "@/helper/safe-action";
 
 const unbindBookingschema = z.object({
@@ -29,18 +29,4 @@ export const unbindBookingAction = actionClient
     return { message: text ?? "解除预定成功" };
   });
 
-export async function unbindBooking({ id }: Pick<MeetingRoom, "id">) {
-  const bookingApi = apiInstance(BookingApi);
-
-  try {
-    const text = await bookingApi.unbindBooking({
-      bookingId: id,
-    });
-
-    revalidatePath("/booking-history");
-
-    return { data: text };
-  } catch (error) {
-    return { data: "fail" };
-  }
-}
+export type UnbindBookingAction = typeof unbindBookingAction;

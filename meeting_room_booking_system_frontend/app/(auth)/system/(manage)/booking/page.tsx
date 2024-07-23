@@ -1,4 +1,8 @@
-import { passBooking, rejectBooking, unbindBooking } from "./actions";
+import {
+  passBookingAction,
+  rejectBookingAction,
+  unbindBookingAction,
+} from "./actions";
 
 import { BookingList, bookingListSchema } from "@/components/booking";
 import { UnknownError } from "@/components/unknown-error";
@@ -24,11 +28,11 @@ export default async function SystemBookingPage({
   return (
     <BookingList
       {...bookingList}
-      passBooking={passBooking}
-      rejectBooking={rejectBooking}
+      passBooking={passBookingAction}
+      rejectBooking={rejectBookingAction}
       status={payload.data.status}
       type="system"
-      unbindBooking={unbindBooking}
+      unbindBooking={unbindBookingAction}
     />
   );
 }

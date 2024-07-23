@@ -1,5 +1,11 @@
 "use client";
 
+import type {
+  PassBookingAction,
+  RejectBookingAction,
+  UnbindBookingAction,
+} from "@/app/(auth)/system/(manage)/booking/actions";
+
 import { Chip } from "@nextui-org/chip";
 import {
   Table,
@@ -23,7 +29,7 @@ import { useAction } from "next-safe-action/hooks";
 import { BookingListTopContent, BookingListTopContentRef } from "./top-content";
 import { BookingListBottomContent } from "./bottom-content";
 import { BookingListStatus } from "./status";
-import { urgeBooking } from "./actions";
+import { urgeBookingAction } from "./actions";
 
 import {
   Booking,
@@ -38,24 +44,18 @@ import {
   UrgeIcon,
 } from "@/components/menu-icon";
 import { ConfimModal } from "@/components/confirm-modal";
-import { unbindBookingAction } from "@/app/(auth)/(normal)/(manage)/booking-history/actions";
+import { parseResult } from "@/helper/parse-result";
 
 type SystemAction = {
   type: "system";
-  passBooking: ({ id }: Pick<Booking, "id">) => Promise<{
-    data: string;
-  }>;
-  rejectBooking: ({ id }: Pick<Booking, "id">) => Promise<{
-    data: string;
-  }>;
-  unbindBooking: ({ id }: Pick<Booking, "id">) => Promise<{
-    data: string;
-  }>;
+  passBooking: PassBookingAction;
+  rejectBooking: RejectBookingAction;
+  unbindBooking: UnbindBookingAction;
 };
 
 type NormalAction = {
   type: "normal";
-  unbindBooking: typeof unbindBookingAction;
+  unbindBooking: UnbindBookingAction;
 };
 
 interface Props extends BookingListImpl {
@@ -111,7 +111,7 @@ export function BookingList({
                 </PopoverTrigger>
                 <PopoverContent className="w-[240px]">
                   {() => (
-                    <div className="px-1 py-2 w-full">
+                    <div className="w-full px-1 py-2">
                       <CheckboxGroup
                         value={[status || []].flat()}
                         onChange={(keys) => {
@@ -239,18 +239,14 @@ const NormalAction: React.FC<NormalActionProps> = ({
   unbindBooking,
 }) => {
   const { execute, result } = useAction(unbindBooking);
+  const { execute: urgeExecute, result: urgeResult } =
+    useAction(urgeBookingAction);
 
   useEffect(() => {
-    if (result.data?.message) {
-      toast.success(result.data?.message ?? "解除预定成功");
-
-      return;
-    }
-    if (result.serverError) {
-      toast.error(result.serverError ?? "解除预定失败");
-
-      return;
-    }
+    parseResult(urgeResult);
+  }, [urgeResult]);
+  useEffect(() => {
+    parseResult(result);
   }, [result]);
 
   return (
@@ -276,15 +272,8 @@ const NormalAction: React.FC<NormalActionProps> = ({
             color="danger"
             size="sm"
             variant="bordered"
-            onClick={async () => {
-              const res = await urgeBooking(item.id);
-
-              if (res.success) {
-                toast.success(res.success);
-              }
-              if (res.error) {
-                toast.error(res.error);
-              }
+            onClick={() => {
+              urgeExecute({ bookingId: item.id });
             }}
           >
             <UrgeIcon />
@@ -309,7 +298,7 @@ const NormalAction: React.FC<NormalActionProps> = ({
                 return;
             }
           } catch (error) {
-            toast.warning("解除预定失败");
+            toast.error("解除预定失败");
           } finally {
             onClose();
             setStatus(undefined);
@@ -338,8 +327,16 @@ const SystemAction: FC<SystemActionProps> = ({
   onClose,
   onOpen,
   attr,
-  ...props
+  passBooking,
+  rejectBooking,
+  unbindBooking,
 }) => {
+  const { result: passResult, execute: passExecute } = useAction(passBooking);
+  const { result: rejectResult, execute: rejectExecute } =
+    useAction(rejectBooking);
+  const { result: unbindResult, execute: unbindExecute } =
+    useAction(unbindBooking);
+
   const statusTxt = useMemo(() => {
     switch (status) {
       case BookingStatusEnum.Pass:
@@ -353,9 +350,19 @@ const SystemAction: FC<SystemActionProps> = ({
     }
   }, [status]);
 
+  useEffect(() => {
+    parseResult(passResult);
+  }, [passResult]);
+  useEffect(() => {
+    parseResult(rejectResult);
+  }, [rejectResult]);
+  useEffect(() => {
+    parseResult(unbindResult);
+  }, [unbindResult]);
+
   return (
     <>
-      <ButtonGroup isDisabled={item.status !== BookingStatusEnum.Apply}>
+      <ButtonGroup>
         <Tooltip showArrow color="success" content="通过申请">
           <Button
             isIconOnly
@@ -411,29 +418,19 @@ const SystemAction: FC<SystemActionProps> = ({
             switch (status) {
               case BookingStatusEnum.Pass:
                 {
-                  const { data } = await props.passBooking({ id: item.id });
-
-                  toast.success(data ?? "通过成功");
+                  passExecute({ id: item.id });
                 }
 
                 return;
               case BookingStatusEnum.Reject:
                 {
-                  const { data } = await props.rejectBooking({
-                    id: item.id,
-                  });
-
-                  toast.success(data ?? "驳回成功");
+                  rejectExecute({ id: item.id });
                 }
 
                 return;
               case BookingStatusEnum.Unbind:
                 {
-                  const { data } = await props.unbindBooking({
-                    id: item.id,
-                  });
-
-                  toast.success(data ?? "解除成功");
+                  unbindExecute({ id: item.id });
                 }
 
                 return;

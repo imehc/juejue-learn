@@ -1,20 +1,25 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { z } from "zod";
 
 import { apiInstance } from "@/helper/auth";
-import { MeetingRoom, MeetingRoomApi } from "@/meeting-room-booking-api";
+import { MeetingRoomApi } from "@/meeting-room-booking-api";
+import { actionClient } from "@/helper/safe-action";
 
-export async function delMeetingRoom({ id }: Pick<MeetingRoom, "id">) {
-  const meetingRoomApi = apiInstance(MeetingRoomApi);
+const schema = z.object({
+  id: z.coerce.number({ required_error: "未选择会议室" }),
+});
 
-  try {
+export const delMeetingRoomAction = actionClient
+  .schema(schema)
+  .action(async ({ parsedInput: { id } }) => {
+    const meetingRoomApi = apiInstance(MeetingRoomApi);
     const text = await meetingRoomApi.delMeetingRoom({ meetingRoomId: id });
 
     revalidatePath("/system/meeting-room");
 
-    return { data: text };
-  } catch (error) {
-    return { data: "fail" };
-  }
-}
+    return { message: text ?? "删除会议室成功" };
+  });
+
+export type DelMeetingRoomAction = typeof delMeetingRoomAction;

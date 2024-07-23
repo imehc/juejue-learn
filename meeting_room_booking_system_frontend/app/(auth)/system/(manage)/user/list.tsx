@@ -22,15 +22,16 @@ import {
 } from "@nextui-org/modal";
 import { format } from "date-fns";
 import { parseAsInteger, parseAsString, useQueryStates } from "nuqs";
-import { FC, useTransition } from "react";
+import { FC, useEffect, useTransition } from "react";
 import { Button } from "@nextui-org/button";
-import { toast } from "sonner";
 import { Avatar } from "@nextui-org/avatar";
+import { useAction } from "next-safe-action/hooks";
 
 import { userListSchema } from "./schema";
-import { frozenUser } from "./actions";
+import { frozenUserAction } from "./actions";
 
 import { BASE_PATH, User, UserListVo } from "@/meeting-room-booking-api";
+import { parseResult } from "@/helper/parse-result";
 
 interface Props extends UserListVo {}
 
@@ -53,7 +54,7 @@ export function UserList({ users, totalCount }: Props) {
 
   return (
     <div className="h-full">
-      <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
+      <div className="flex flex-wrap w-full gap-4 md:flex-nowrap">
         <Input
           defaultValue={username ?? undefined}
           label="用户名"
@@ -103,7 +104,7 @@ export function UserList({ users, totalCount }: Props) {
         isStriped
         aria-label="Example table with client side pagination"
         bottomContent={
-          <div className="flex w-full justify-center">
+          <div className="flex justify-center w-full">
             <Pagination
               isCompact
               showControls
@@ -157,6 +158,11 @@ const TableItem: FC<{ columnKey: string; user: User }> = ({
   user,
 }) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const { result, execute } = useAction(frozenUserAction);
+
+  useEffect(() => {
+    parseResult(result);
+  }, [result]);
 
   switch (columnKey) {
     case "headPic": {
@@ -223,16 +229,9 @@ const TableItem: FC<{ columnKey: string; user: User }> = ({
                     </Button>
                     <Button
                       color="primary"
-                      onPress={async () => {
+                      onPress={() => {
                         onClose();
-                        const { data } = await frozenUser({ id: user.id });
-
-                        if (data !== "fail") {
-                          toast.success(data || "冻结成功");
-
-                          return;
-                        }
-                        toast.success(data || "冻结失败");
+                        execute({ id: user.id });
                       }}
                     >
                       确定

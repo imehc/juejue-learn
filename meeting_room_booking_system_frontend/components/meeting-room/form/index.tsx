@@ -4,12 +4,12 @@ import { Button, ButtonProps } from "@nextui-org/button";
 import { Input } from "@nextui-org/input";
 import { useFormState, useFormStatus } from "react-dom";
 import { useEffect } from "react";
-import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
 import { meetingRoomAction } from "./actions";
 
 import { MeetingRoom } from "@/meeting-room-booking-api";
+import { parseResult } from "@/helper/parse-result";
 
 export function MeetingRoomForm({
   id,
@@ -20,33 +20,25 @@ export function MeetingRoomForm({
   description,
 }: Partial<MeetingRoom>) {
   const router = useRouter();
-  const [handleState, handleFormAction] = useFormState(meetingRoomAction, {
-    message: null,
-  });
+  const [handleState, handleFormAction] = useFormState(meetingRoomAction, {});
 
   useEffect(() => {
-    if (handleState?.error) {
-      toast.error(handleState.error);
-    }
-    if (handleState?.success) {
-      toast.success(handleState.success);
-      router.back();
-    }
+    parseResult(handleState, router.back);
   }, [handleState]);
 
   return (
     <form
       action=""
       autoComplete="off"
-      className="w-full h-full flex justify-center items-center flex-col"
+      className="flex flex-col items-center justify-center w-full h-full"
     >
-      {/* <h1 className="flex justify-start items-center font-bold text-2xl gap-1 mb-2">
+      {/* <h1 className="flex items-center justify-start gap-1 mb-2 text-2xl font-bold">
         {!!id ? "更新会议室" : "创建会议室"}
       </h1> */}
       <Input
         // isDisabled //设置该选项formData无法读取
         isReadOnly
-        className="max-w-sm mb-4 hidden"
+        className="hidden max-w-sm mb-4"
         defaultValue={id?.toString()}
         label="会议室ID"
         name="id"
@@ -56,8 +48,8 @@ export function MeetingRoomForm({
         isRequired
         className="max-w-sm mb-4"
         defaultValue={name}
-        errorMessage={handleState?.message?.name}
-        isInvalid={!!handleState?.message?.name}
+        errorMessage={handleState?.validationErrors?.name?.join(" ")}
+        isInvalid={!!handleState?.validationErrors?.name?.length}
         label="会议室名称"
         name="name"
         type="text"
@@ -66,8 +58,8 @@ export function MeetingRoomForm({
         isRequired
         className="max-w-sm mb-4"
         defaultValue={capacity?.toString()}
-        errorMessage={handleState?.message?.capacity}
-        isInvalid={!!handleState?.message?.capacity}
+        errorMessage={handleState?.validationErrors?.capacity?.join(" ")}
+        isInvalid={!!handleState?.validationErrors?.capacity?.length}
         label="容纳人数"
         name="capacity"
         type="number"
@@ -76,8 +68,8 @@ export function MeetingRoomForm({
         isRequired
         className="max-w-sm mb-4"
         defaultValue={location}
-        errorMessage={handleState?.message?.location}
-        isInvalid={!!handleState?.message?.location}
+        errorMessage={handleState?.validationErrors?.location?.join(" ")}
+        isInvalid={!!handleState?.validationErrors?.location?.length}
         label="地址"
         name="location"
         type="text"
@@ -85,8 +77,8 @@ export function MeetingRoomForm({
       <Input
         className="max-w-sm mb-4"
         defaultValue={equipment}
-        errorMessage={handleState?.message?.equipment}
-        isInvalid={!!handleState?.message?.equipment}
+        errorMessage={handleState?.validationErrors?.equipment?.join(" ")}
+        isInvalid={!!handleState?.validationErrors?.equipment?.length}
         label="设备名称"
         name="equipment"
         type="text"
@@ -94,8 +86,8 @@ export function MeetingRoomForm({
       <Input
         className="max-w-sm mb-4"
         defaultValue={description}
-        errorMessage={handleState?.message?.description}
-        isInvalid={!!handleState?.message?.description}
+        errorMessage={handleState?.validationErrors?.description?.join(" ")}
+        isInvalid={!!handleState?.validationErrors?.description?.length}
         label="描述"
         name="description"
         type="text"

@@ -4,7 +4,6 @@ import { useFormState, useFormStatus } from "react-dom";
 import { Button, ButtonProps } from "@nextui-org/button";
 import { Avatar } from "@nextui-org/avatar";
 import { useEffect, useMemo, useState } from "react";
-import { toast } from "sonner";
 import { useCountDown } from "ahooks";
 import { Input } from "@nextui-org/input";
 import { useRouter } from "next/navigation";
@@ -12,6 +11,7 @@ import { useRouter } from "next/navigation";
 import { profileModifyAction, profileModifyCaptchaAction } from "./actions";
 
 import { BASE_PATH, UserDetailVo } from "@/meeting-room-booking-api";
+import { parseResult } from "@/helper/parse-result";
 
 export function ProfileModifyForm({ headPic, nickName, email }: UserDetailVo) {
   const [profileModifyState, profileModifyFormAction] = useFormState(
@@ -32,29 +32,14 @@ export function ProfileModifyForm({ headPic, nickName, email }: UserDetailVo) {
   });
 
   useEffect(() => {
-    if (profileModifyState.data?.message) {
-      toast.success(profileModifyState.data.message);
-      router.refresh();
+    parseResult(profileModifyState, router.refresh);
+  }, [profileModifyState]);
 
-      return;
-    }
-    if (profileModifyState?.serverError) {
-      toast.error(profileModifyState.serverError);
-
-      return;
-    }
-    if (profileModifyCaptchaState?.serverError) {
-      toast.error(profileModifyCaptchaState.serverError);
-
-      return;
-    }
-    if (profileModifyCaptchaState.data?.message) {
+  useEffect(() => {
+    parseResult(profileModifyCaptchaState, () => {
       setTargetDate(Date.now() + 60 * 1000);
-      toast.success(profileModifyCaptchaState.data.message);
-
-      return;
-    }
-  }, [profileModifyState, profileModifyCaptchaState]);
+    });
+  }, [profileModifyCaptchaState]);
 
   const [file, setFile] = useState<File>();
   const [tempLink, setTempLink] = useState<string>();

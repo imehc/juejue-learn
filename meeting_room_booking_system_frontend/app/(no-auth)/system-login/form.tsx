@@ -5,18 +5,16 @@ import { useFormState, useFormStatus } from "react-dom";
 import { Button, ButtonProps } from "@nextui-org/button";
 import { Divider } from "@nextui-org/divider";
 import { useEffect } from "react";
-import { toast } from "sonner";
 
-import { systemLogin } from "./actions";
+import { systemLoginAction } from "./actions";
+
+import { parseResult } from "@/helper/parse-result";
 
 export function SystemLoginForm() {
-  const [loginState, loginFormAction] = useFormState(systemLogin, {
-    message: null,
-  });
+  const [loginState, loginFormAction] = useFormState(systemLoginAction, {});
 
   useEffect(() => {
-    if (!loginState?.error) return;
-    toast.error(loginState.error);
+    parseResult(loginState);
   }, [loginState]);
 
   return (
@@ -25,8 +23,8 @@ export function SystemLoginForm() {
         isRequired
         required
         className="max-w-sm mb-4"
-        errorMessage={loginState?.message?.username}
-        isInvalid={!!loginState?.message?.username}
+        errorMessage={loginState?.validationErrors?.username?.join(" ")}
+        isInvalid={!!loginState?.validationErrors?.username?.length}
         label="用户名"
         name="username"
         type="text"
@@ -35,8 +33,8 @@ export function SystemLoginForm() {
         isRequired
         required
         className="max-w-sm mb-4"
-        errorMessage={loginState?.message?.password}
-        isInvalid={!!loginState?.message?.password}
+        errorMessage={loginState?.validationErrors?.password?.join(" ")}
+        isInvalid={!!loginState?.validationErrors?.password?.length}
         label="密码"
         name="password"
         type="password"

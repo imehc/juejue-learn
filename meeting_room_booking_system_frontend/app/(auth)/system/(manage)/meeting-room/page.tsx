@@ -1,4 +1,4 @@
-import { delMeetingRoom } from "./actions";
+import { delMeetingRoomAction } from "./actions";
 
 import {
   MeetingRoomList,
@@ -27,7 +27,7 @@ export default async function MeetingRoomPage({
   return (
     <MeetingRoomList
       {...userList}
-      delMeetingRoom={delMeetingRoom}
+      delMeetingRoom={delMeetingRoomAction}
       type="system"
     />
   );

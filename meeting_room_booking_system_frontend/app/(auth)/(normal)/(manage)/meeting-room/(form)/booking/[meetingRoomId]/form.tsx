@@ -8,12 +8,12 @@ import { useEffect } from "react";
 import { DatePicker } from "@nextui-org/date-picker";
 import { addHours } from "date-fns";
 import { DateValue } from "@internationalized/date";
-import { toast } from "sonner";
 
 import { addBookingAction } from "./actions";
 
 import { MeetingRoom } from "@/meeting-room-booking-api";
 import { parseDate } from "@/helper/parse-date";
+import { parseResult } from "@/helper/parse-result";
 
 export function AddBookingForm({ id, name }: MeetingRoom) {
   // const { execute } = useStateAction(addBookingAction, {
@@ -23,28 +23,18 @@ export function AddBookingForm({ id, name }: MeetingRoom) {
   const [handleState, handleFormAction] = useFormState(addBookingAction, {});
 
   useEffect(() => {
-    if (handleState.data?.message) {
-      toast.success(handleState.data.message);
-      router.back();
-
-      return;
-    }
-    if (handleState.serverError) {
-      toast.error(handleState.serverError);
-
-      return;
-    }
+    parseResult(handleState, router.back);
   }, [handleState]);
 
   return (
     <form
       action=""
       autoComplete="off"
-      className="w-full h-full flex justify-center items-center flex-col"
+      className="flex flex-col items-center justify-center w-full h-full"
     >
       <Input
         isReadOnly
-        className="max-w-sm mb-4 hidden"
+        className="hidden max-w-sm mb-4"
         defaultValue={id?.toString()}
         label="会议室ID"
         name="meetingRoomId"

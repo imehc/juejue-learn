@@ -1,27 +1,23 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { z } from "zod";
 
 import { apiInstance } from "@/helper/auth";
 import { BookingApi } from "@/meeting-room-booking-api";
+import { actionClient } from "@/helper/safe-action";
 
-export async function urgeBooking(bookingId: number) {
-  const bookingApi = apiInstance(BookingApi);
+const schema = z.object({
+  bookingId: z.coerce.number(),
+});
 
-  revalidatePath("/meeting-room");
-  try {
-    const res = await bookingApi.urgeBooking({ bookingId });
+export const urgeBookingAction = actionClient
+  .schema(schema)
+  .action(async ({ parsedInput: { bookingId } }) => {
+    const bookingApi = apiInstance(BookingApi);
+    const text = await bookingApi.urgeBooking({ bookingId });
 
-    return { success: res };
-  } catch (error) {
-    if (error instanceof Error) {
-      return {
-        error: error.message ?? "催办失败",
-      };
-    }
+    revalidatePath("/meeting-room");
 
-    return {
-      error: "催办失败",
-    };
-  }
-}
+    return { message: text ?? "催办成功" };
+  });

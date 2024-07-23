@@ -1,5 +1,7 @@
 "use client";
 
+import type { DelMeetingRoomAction } from "@/app/(auth)/system/(manage)/meeting-room/actions";
+
 import { Input } from "@nextui-org/input";
 import { Divider } from "@nextui-org/divider";
 import {
@@ -22,11 +24,11 @@ import {
 } from "@nextui-org/modal";
 import { format } from "date-fns";
 import { parseAsInteger, parseAsString, useQueryStates } from "nuqs";
-import { FC, useTransition } from "react";
+import { type FC, useEffect, useTransition } from "react";
 import { Button, ButtonGroup } from "@nextui-org/button";
-import { toast } from "sonner";
 import { Link } from "@nextui-org/link";
 import { Tooltip } from "@nextui-org/tooltip";
+import { useAction } from "next-safe-action/hooks";
 
 import { meetingRoomListSchema } from "./schema";
 
@@ -35,12 +37,11 @@ import {
   MeetingRoomList as MeetingRoomListImpl,
 } from "@/meeting-room-booking-api";
 import { BookingIcon } from "@/components/menu-icon";
+import { parseResult } from "@/helper/parse-result";
 
 type SystemAction = {
   type: "system";
-  delMeetingRoom: ({ id }: Pick<MeetingRoom, "id">) => Promise<{
-    data: string;
-  }>;
+  delMeetingRoom: DelMeetingRoomAction;
 };
 
 type NormalAction = {
@@ -75,7 +76,7 @@ export function MeetingRoomList({
 
   return (
     <div className="h-full">
-      <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
+      <div className="flex flex-wrap w-full gap-4 md:flex-nowrap">
         <Input
           defaultValue={name ?? undefined}
           label="会议室名称"
@@ -125,7 +126,7 @@ export function MeetingRoomList({
         {props.type === "system" && (
           <Button
             as={Link}
-            className="h-14 px-12"
+            className="px-12 h-14"
             color="primary"
             href={`/system/meeting-room/new`}
             variant="solid"
@@ -139,7 +140,7 @@ export function MeetingRoomList({
         isStriped
         aria-label="Example table with client side pagination"
         bottomContent={
-          <div className="flex w-full justify-center">
+          <div className="flex justify-center w-full">
             <Pagination
               isCompact
               showControls
@@ -211,66 +212,13 @@ const TableItem: FC<
       );
     case "actions":
       return props.type === "system" ? (
-        <>
-          <ButtonGroup>
-            <Button color="danger" variant="light" onClick={onOpen}>
-              删除
-            </Button>
-            <Button
-              as={Link}
-              color="primary"
-              href={`/system/meeting-room/${item.id}`}
-              variant="light"
-            >
-              更新
-            </Button>
-          </ButtonGroup>
-          <Modal
-            backdrop="opaque"
-            classNames={{
-              backdrop:
-                "bg-gradient-to-t from-zinc-900 to-zinc-900/10 backdrop-opacity-20",
-            }}
-            isOpen={isOpen}
-            onOpenChange={onOpenChange}
-          >
-            <ModalContent>
-              {(onClose) => (
-                <>
-                  <ModalHeader className="flex flex-col gap-1">
-                    提示
-                  </ModalHeader>
-                  <ModalBody>
-                    <p>确定要删除：{item.name} 会议室吗？</p>
-                  </ModalBody>
-                  <ModalFooter>
-                    <Button color="danger" variant="light" onPress={onClose}>
-                      取消
-                    </Button>
-                    <Button
-                      color="primary"
-                      onPress={async () => {
-                        onClose();
-                        const { data } = await props.delMeetingRoom({
-                          id: item.id,
-                        });
-
-                        if (data !== "fail") {
-                          toast.success(data || "删除成功");
-
-                          return;
-                        }
-                        toast.success(data || "删除失败");
-                      }}
-                    >
-                      确定
-                    </Button>
-                  </ModalFooter>
-                </>
-              )}
-            </ModalContent>
-          </Modal>
-        </>
+        <SystemMeetingRoomOption
+          delMeetingRoom={props.delMeetingRoom}
+          isOpen={isOpen}
+          item={item}
+          onOpen={onOpen}
+          onOpenChange={onOpenChange}
+        />
       ) : (
         <Tooltip showArrow color="success" content="预定">
           <Button
@@ -289,4 +237,75 @@ const TableItem: FC<
     default:
       return getKeyValue(item, columnKey);
   }
+};
+
+interface SystemMeetingRoomOptionProps extends Omit<SystemAction, "type"> {
+  item: MeetingRoom;
+  isOpen: boolean;
+  onOpen(): void;
+  onOpenChange(): void;
+}
+
+const SystemMeetingRoomOption: React.FC<SystemMeetingRoomOptionProps> = ({
+  isOpen,
+  onOpen,
+  onOpenChange,
+  item,
+  delMeetingRoom,
+}) => {
+  const { execute, result } = useAction(delMeetingRoom);
+
+  useEffect(() => parseResult(result), [result]);
+
+  return (
+    <>
+      <ButtonGroup>
+        <Button color="danger" variant="light" onClick={onOpen}>
+          删除
+        </Button>
+        <Button
+          as={Link}
+          color="primary"
+          href={`/system/meeting-room/${item.id}`}
+          variant="light"
+        >
+          更新
+        </Button>
+      </ButtonGroup>
+      <Modal
+        backdrop="opaque"
+        classNames={{
+          backdrop:
+            "bg-gradient-to-t from-zinc-900 to-zinc-900/10 backdrop-opacity-20",
+        }}
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+      >
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">提示</ModalHeader>
+              <ModalBody>
+                <p>确定要删除：{item.name} 会议室吗？</p>
+              </ModalBody>
+              <ModalFooter>
+                <Button color="danger" variant="light" onPress={onClose}>
+                  取消
+                </Button>
+                <Button
+                  color="primary"
+                  onPress={async () => {
+                    execute({ id: item.id });
+                    onClose();
+                  }}
+                >
+                  确定
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
+    </>
+  );
 };

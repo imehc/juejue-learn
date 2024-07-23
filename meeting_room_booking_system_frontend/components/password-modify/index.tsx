@@ -4,12 +4,12 @@ import { Input } from "@nextui-org/input";
 import { useFormState, useFormStatus } from "react-dom";
 import { Button, ButtonProps } from "@nextui-org/button";
 import { useEffect, useState } from "react";
-import { toast } from "sonner";
 import { useCountDown } from "ahooks";
 
 import { passwordModifyAction, passwordModifyCaptchaAction } from "./actions";
 
 import { UserDetailVo } from "@/meeting-room-booking-api";
+import { parseResult } from "@/helper/parse-result";
 
 export function PasswordModifyForm({ email }: UserDetailVo) {
   const [passwordModifyState, passwordModifyFormAction] = useFormState(
@@ -28,30 +28,14 @@ export function PasswordModifyForm({ email }: UserDetailVo) {
   });
 
   useEffect(() => {
-    if (passwordModifyCaptchaState?.serverError) {
-      toast.error(passwordModifyCaptchaState.serverError);
-
-      return;
-    }
-
-    if (passwordModifyCaptchaState.data?.message) {
+    parseResult(passwordModifyCaptchaState, () => {
       setTargetDate(Date.now() + 60 * 1000);
-      toast.success(passwordModifyCaptchaState.data.message);
+    });
+  }, [passwordModifyCaptchaState]);
 
-      return;
-    }
-
-    if (passwordModifyState.serverError) {
-      toast.error(passwordModifyState.serverError);
-
-      return;
-    }
-    if (passwordModifyState.data?.message) {
-      toast.success(passwordModifyState.data.message);
-
-      return;
-    }
-  }, [passwordModifyCaptchaState, passwordModifyState]);
+  useEffect(() => {
+    parseResult(passwordModifyState);
+  }, [passwordModifyState]);
 
   return (
     <form
