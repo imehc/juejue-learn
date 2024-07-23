@@ -1,5 +1,11 @@
 "use client";
 
+import type {
+  PassBookingAction,
+  RejectBookingAction,
+  UnbindBookingAction,
+} from "@/app/(auth)/system/(manage)/booking/actions";
+
 import { Chip } from "@nextui-org/chip";
 import {
   Table,
@@ -14,15 +20,16 @@ import { CheckboxGroup, Checkbox } from "@nextui-org/checkbox";
 import { useDisclosure } from "@nextui-org/modal";
 import { Tooltip } from "@nextui-org/tooltip";
 import { format } from "date-fns";
-import { FC, useMemo, useRef, useState } from "react";
+import { FC, useEffect, useMemo, useRef, useState } from "react";
 import { Button, ButtonGroup } from "@nextui-org/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@nextui-org/popover";
 import { toast } from "sonner";
+import { useAction } from "next-safe-action/hooks";
 
 import { BookingListTopContent, BookingListTopContentRef } from "./top-content";
 import { BookingListBottomContent } from "./bottom-content";
 import { BookingListStatus } from "./status";
-import { urgeBooking } from "./actions";
+import { urgeBookingAction } from "./actions";
 
 import {
   Booking,
@@ -37,25 +44,18 @@ import {
   UrgeIcon,
 } from "@/components/menu-icon";
 import { ConfimModal } from "@/components/confirm-modal";
+import { parseResult } from "@/helper/parse-result";
 
 type SystemAction = {
   type: "system";
-  passBooking: ({ id }: Pick<Booking, "id">) => Promise<{
-    data: string;
-  }>;
-  rejectBooking: ({ id }: Pick<Booking, "id">) => Promise<{
-    data: string;
-  }>;
-  unbindBooking: ({ id }: Pick<Booking, "id">) => Promise<{
-    data: string;
-  }>;
+  passBooking: PassBookingAction;
+  rejectBooking: RejectBookingAction;
+  unbindBooking: UnbindBookingAction;
 };
 
 type NormalAction = {
   type: "normal";
-  unbindBooking: ({ id }: Pick<Booking, "id">) => Promise<{
-    data: string;
-  }>;
+  unbindBooking: UnbindBookingAction;
 };
 
 interface Props extends BookingListImpl {
@@ -111,7 +111,7 @@ export function BookingList({
                 </PopoverTrigger>
                 <PopoverContent className="w-[240px]">
                   {() => (
-                    <div className="px-1 py-2 w-full">
+                    <div className="w-full px-1 py-2">
                       <CheckboxGroup
                         value={[status || []].flat()}
                         onChange={(keys) => {
@@ -176,19 +176,6 @@ const TableItem: FC<
   const { onOpen, onClose, ...attr } = useDisclosure();
   const [status, setStatus] = useState<BookingStatusEnum>();
 
-  const statusTxt = useMemo(() => {
-    switch (status) {
-      case BookingStatusEnum.Pass:
-        return "通过";
-      case BookingStatusEnum.Reject:
-        return "驳回";
-      case BookingStatusEnum.Unbind:
-        return "解除";
-      default:
-        return;
-    }
-  }, [status]);
-
   switch (columnKey) {
     case "name":
       return item.room?.name ?? "-";
@@ -206,186 +193,265 @@ const TableItem: FC<
       return <BookingListStatus status={item.status} />;
     case "actions":
       return props.type === "system" ? (
-        <>
-          <ButtonGroup isDisabled={item.status !== BookingStatusEnum.Apply}>
-            <Tooltip showArrow color="success" content="通过申请">
-              <Button
-                isIconOnly
-                color="success"
-                size="sm"
-                variant="bordered"
-                onClick={() => {
-                  setStatus(BookingStatusEnum.Pass);
-                  onOpen();
-                }}
-              >
-                <PassIcon />
-              </Button>
-            </Tooltip>
-            <Tooltip showArrow color="danger" content="驳回申请">
-              <Button
-                isIconOnly
-                color="danger"
-                size="sm"
-                variant="bordered"
-                onClick={() => {
-                  setStatus(BookingStatusEnum.Reject);
-                  onOpen();
-                }}
-              >
-                <RejectIcon />
-              </Button>
-            </Tooltip>
-            <Tooltip showArrow color="warning" content="解除申请">
-              <Button
-                isIconOnly
-                color="warning"
-                size="sm"
-                variant="bordered"
-                onClick={() => {
-                  setStatus(BookingStatusEnum.Unbind);
-                  onOpen();
-                }}
-              >
-                <UnbindIcon />
-              </Button>
-            </Tooltip>
-          </ButtonGroup>
-          <ConfimModal
-            header={`${statusTxt}申请`}
-            onCancel={() => {
-              onClose();
-              setStatus(undefined);
-            }}
-            onClose={onClose}
-            onConfirm={async () => {
-              try {
-                switch (status) {
-                  case BookingStatusEnum.Pass:
-                    {
-                      const { data } = await props.passBooking({ id: item.id });
-
-                      toast.success(data ?? "通过成功");
-                    }
-
-                    return;
-                  case BookingStatusEnum.Reject:
-                    {
-                      const { data } = await props.rejectBooking({
-                        id: item.id,
-                      });
-
-                      toast.success(data ?? "驳回成功");
-                    }
-
-                    return;
-                  case BookingStatusEnum.Unbind:
-                    {
-                      const { data } = await props.unbindBooking({
-                        id: item.id,
-                      });
-
-                      toast.success(data ?? "解除成功");
-                    }
-
-                    return;
-                }
-              } catch (error) {
-                toast.warning(`${statusTxt}失败`);
-              } finally {
-                onClose();
-                setStatus(undefined);
-              }
-            }}
-            onOpen={onOpen}
-            {...attr}
-          >
-            <p>
-              确定要
-              {statusTxt}：
-              <span className="text-primary-500">{item.room?.name ?? "-"}</span>{" "}
-              的预定申请吗？
-            </p>
-          </ConfimModal>
-        </>
+        <SystemAction
+          attr={attr}
+          item={item}
+          passBooking={props.passBooking}
+          rejectBooking={props.rejectBooking}
+          setStatus={setStatus}
+          status={status}
+          unbindBooking={props.unbindBooking}
+          onClose={onClose}
+          onOpen={onOpen}
+        />
       ) : (
-        <>
-          <ButtonGroup isDisabled={item.status !== BookingStatusEnum.Apply}>
-            <Tooltip showArrow color="warning" content="解除预定">
-              <Button
-                isIconOnly
-                color="warning"
-                size="sm"
-                variant="bordered"
-                onClick={() => {
-                  setStatus(BookingStatusEnum.Unbind);
-                  onOpen();
-                }}
-              >
-                <UnbindIcon />
-              </Button>
-            </Tooltip>
-            <Tooltip showArrow color="danger" content="催办">
-              <Button
-                isIconOnly
-                color="danger"
-                size="sm"
-                variant="bordered"
-                onClick={async () => {
-                  const res = await urgeBooking(item.id);
-
-                  if (res.success) {
-                    toast.success(res.success);
-                  }
-                  if (res.error) {
-                    toast.error(res.error);
-                  }
-                }}
-              >
-                <UrgeIcon />
-              </Button>
-            </Tooltip>
-          </ButtonGroup>
-          <ConfimModal
-            header="解除预定"
-            onCancel={() => {
-              onClose();
-              setStatus(undefined);
-            }}
-            onClose={onClose}
-            onConfirm={async () => {
-              try {
-                switch (status) {
-                  case BookingStatusEnum.Unbind:
-                    {
-                      const { data } = await props.unbindBooking({
-                        id: item.id,
-                      });
-
-                      toast.success(data ?? "解除预定成功");
-                    }
-
-                    return;
-                }
-              } catch (error) {
-                toast.warning("解除预定失败");
-              } finally {
-                onClose();
-                setStatus(undefined);
-              }
-            }}
-            onOpen={onOpen}
-            {...attr}
-          >
-            <p>
-              确定要解除
-              <span className="text-primary-500">{item.room?.name ?? "-"}</span>
-              会议室预定吗？
-            </p>
-          </ConfimModal>
-        </>
+        <NormalAction
+          attr={attr}
+          item={item}
+          setStatus={setStatus}
+          status={status}
+          unbindBooking={props.unbindBooking}
+          onClose={onClose}
+          onOpen={onOpen}
+        />
       );
     default:
       return getKeyValue(item, columnKey);
   }
+};
+
+type NormalActionProps = {
+  item: Booking;
+  onOpen(): void;
+  onClose(): void;
+  status?: BookingStatusEnum;
+  setStatus(status?: BookingStatusEnum): void;
+  attr: Omit<ReturnType<typeof useDisclosure>, "onOpen" | "onClose">;
+} & Omit<NormalAction, "type">;
+
+const NormalAction: React.FC<NormalActionProps> = ({
+  item,
+  status,
+  onOpen,
+  onClose,
+  setStatus,
+  attr,
+  unbindBooking,
+}) => {
+  const { execute, result } = useAction(unbindBooking);
+  const { execute: urgeExecute, result: urgeResult } =
+    useAction(urgeBookingAction);
+
+  useEffect(() => {
+    parseResult(urgeResult);
+  }, [urgeResult]);
+  useEffect(() => {
+    parseResult(result);
+  }, [result]);
+
+  return (
+    <>
+      <ButtonGroup isDisabled={item.status !== BookingStatusEnum.Apply}>
+        <Tooltip showArrow color="warning" content="解除预定">
+          <Button
+            isIconOnly
+            color="warning"
+            size="sm"
+            variant="bordered"
+            onClick={() => {
+              setStatus(BookingStatusEnum.Unbind);
+              onOpen();
+            }}
+          >
+            <UnbindIcon />
+          </Button>
+        </Tooltip>
+        <Tooltip showArrow color="danger" content="催办">
+          <Button
+            isIconOnly
+            color="danger"
+            size="sm"
+            variant="bordered"
+            onClick={() => {
+              urgeExecute({ bookingId: item.id });
+            }}
+          >
+            <UrgeIcon />
+          </Button>
+        </Tooltip>
+      </ButtonGroup>
+      <ConfimModal
+        header="解除预定"
+        onCancel={() => {
+          onClose();
+          setStatus(undefined);
+        }}
+        onClose={onClose}
+        onConfirm={async () => {
+          try {
+            switch (status) {
+              case BookingStatusEnum.Unbind:
+                {
+                  execute({ id: item.id });
+                }
+
+                return;
+            }
+          } catch (error) {
+            toast.error("解除预定失败");
+          } finally {
+            onClose();
+            setStatus(undefined);
+          }
+        }}
+        onOpen={onOpen}
+        {...attr}
+      >
+        <p>
+          确定要解除
+          <span className="text-primary-500">{item.room?.name ?? "-"}</span>
+          会议室预定吗？
+        </p>
+      </ConfimModal>
+    </>
+  );
+};
+
+type SystemActionProps = Omit<SystemAction, "type"> &
+  Omit<NormalActionProps, "unbindBooking">;
+
+const SystemAction: FC<SystemActionProps> = ({
+  item,
+  status,
+  setStatus,
+  onClose,
+  onOpen,
+  attr,
+  passBooking,
+  rejectBooking,
+  unbindBooking,
+}) => {
+  const { result: passResult, execute: passExecute } = useAction(passBooking);
+  const { result: rejectResult, execute: rejectExecute } =
+    useAction(rejectBooking);
+  const { result: unbindResult, execute: unbindExecute } =
+    useAction(unbindBooking);
+
+  const statusTxt = useMemo(() => {
+    switch (status) {
+      case BookingStatusEnum.Pass:
+        return "通过";
+      case BookingStatusEnum.Reject:
+        return "驳回";
+      case BookingStatusEnum.Unbind:
+        return "解除";
+      default:
+        return;
+    }
+  }, [status]);
+
+  useEffect(() => {
+    parseResult(passResult);
+  }, [passResult]);
+  useEffect(() => {
+    parseResult(rejectResult);
+  }, [rejectResult]);
+  useEffect(() => {
+    parseResult(unbindResult);
+  }, [unbindResult]);
+
+  return (
+    <>
+      <ButtonGroup>
+        <Tooltip showArrow color="success" content="通过申请">
+          <Button
+            isIconOnly
+            color="success"
+            size="sm"
+            variant="bordered"
+            onClick={() => {
+              setStatus(BookingStatusEnum.Pass);
+              onOpen();
+            }}
+          >
+            <PassIcon />
+          </Button>
+        </Tooltip>
+        <Tooltip showArrow color="danger" content="驳回申请">
+          <Button
+            isIconOnly
+            color="danger"
+            size="sm"
+            variant="bordered"
+            onClick={() => {
+              setStatus(BookingStatusEnum.Reject);
+              onOpen();
+            }}
+          >
+            <RejectIcon />
+          </Button>
+        </Tooltip>
+        <Tooltip showArrow color="warning" content="解除申请">
+          <Button
+            isIconOnly
+            color="warning"
+            size="sm"
+            variant="bordered"
+            onClick={() => {
+              setStatus(BookingStatusEnum.Unbind);
+              onOpen();
+            }}
+          >
+            <UnbindIcon />
+          </Button>
+        </Tooltip>
+      </ButtonGroup>
+      <ConfimModal
+        header={`${statusTxt}申请`}
+        onCancel={() => {
+          onClose();
+          setStatus(undefined);
+        }}
+        onClose={onClose}
+        onConfirm={async () => {
+          try {
+            switch (status) {
+              case BookingStatusEnum.Pass:
+                {
+                  passExecute({ id: item.id });
+                }
+
+                return;
+              case BookingStatusEnum.Reject:
+                {
+                  rejectExecute({ id: item.id });
+                }
+
+                return;
+              case BookingStatusEnum.Unbind:
+                {
+                  unbindExecute({ id: item.id });
+                }
+
+                return;
+            }
+          } catch (error) {
+            toast.warning(`${statusTxt}失败`);
+          } finally {
+            onClose();
+            setStatus(undefined);
+          }
+        }}
+        onOpen={onOpen}
+        {...attr}
+      >
+        <p>
+          确定要
+          {statusTxt}：
+          <span className="text-primary-500">{item.room?.name ?? "-"}</span>{" "}
+          的预定申请吗？
+        </p>
+      </ConfimModal>
+    </>
+  );
 };

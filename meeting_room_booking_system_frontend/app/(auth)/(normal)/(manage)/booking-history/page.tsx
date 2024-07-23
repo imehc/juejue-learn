@@ -1,4 +1,4 @@
-import { unbindBooking } from "./actions";
+import { unbindBookingAction } from "./actions";
 
 import { BookingList, bookingListSchema } from "@/components/booking";
 import { UnknownError } from "@/components/unknown-error";
@@ -33,7 +33,7 @@ export default async function BookingHistoryPage({
       {...bookingList}
       status={payload.data.status}
       type="normal"
-      unbindBooking={unbindBooking}
+      unbindBooking={unbindBookingAction}
     />
   );
 }

@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsNotEmpty, MaxLength } from 'class-validator';
+import { IsNotEmpty, IsOptional, MaxLength } from 'class-validator';
 
 export class CreateMeetingRoomDto {
   @ApiProperty()
@@ -27,12 +27,14 @@ export class CreateMeetingRoomDto {
   location: string;
 
   @ApiPropertyOptional()
+  @IsOptional()
   @MaxLength(50, {
     message: '设备最长为 50 字符',
   })
   equipment: string;
 
   @ApiPropertyOptional()
+  @IsOptional()
   @MaxLength(100, {
     message: '描述最长为 100 字符',
   })

@@ -57,7 +57,7 @@ export class MeetingRoomService {
     }
     try {
       await this.repository.insert(createMeetingRoomDto);
-      return 'Created';
+      return '创建会议室成功';
     } catch (error) {
       throw new InternalServerErrorException();
     }
@@ -81,13 +81,9 @@ export class MeetingRoomService {
     meetingRoom.location = updateMeetingRoomDto.location;
     meetingRoom.name = updateMeetingRoomDto.name;
 
-    if (updateMeetingRoomDto.description) {
-      meetingRoom.description = updateMeetingRoomDto.description;
-    }
+    meetingRoom.description = updateMeetingRoomDto.description ?? '';
 
-    if (updateMeetingRoomDto.equipment) {
-      meetingRoom.equipment = updateMeetingRoomDto.equipment;
-    }
+    meetingRoom.equipment = updateMeetingRoomDto.equipment ?? '';
     try {
       await this.repository.update({ id: meetingRoom.id }, meetingRoom);
       return '更新会议室成功';
@@ -103,7 +99,7 @@ export class MeetingRoomService {
     }
     try {
       await this.repository.delete({ id });
-      return 'Deleted';
+      return '删除会议室成功';
     } catch (error) {
       throw new InternalServerErrorException();
     }

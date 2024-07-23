@@ -4,22 +4,20 @@ import { Input } from "@nextui-org/input";
 import { useFormState, useFormStatus } from "react-dom";
 import { Button, ButtonProps } from "@nextui-org/button";
 import { useEffect, useState } from "react";
-import { toast } from "sonner";
 import { useCountDown } from "ahooks";
 
-import { passwordModify, passwordModifyCaptcha } from "./actions";
+import { passwordModifyAction, passwordModifyCaptchaAction } from "./actions";
 
 import { UserDetailVo } from "@/meeting-room-booking-api";
+import { parseResult } from "@/helper/parse-result";
 
 export function PasswordModifyForm({ email }: UserDetailVo) {
   const [passwordModifyState, passwordModifyFormAction] = useFormState(
-    passwordModify,
-    {
-      message: null,
-    },
+    passwordModifyAction,
+    {},
   );
   const [passwordModifyCaptchaState, passwordModifyCaptchaFormAction] =
-    useFormState(passwordModifyCaptcha, { message: null });
+    useFormState(passwordModifyCaptchaAction, {});
 
   const [targetDate, setTargetDate] = useState<number>();
   const [countDown] = useCountDown({
@@ -30,31 +28,20 @@ export function PasswordModifyForm({ email }: UserDetailVo) {
   });
 
   useEffect(() => {
-    if (!passwordModifyState?.error) return;
-    toast.error(passwordModifyState.error);
-  }, [passwordModifyState]);
-
-  useEffect(() => {
-    if (!passwordModifyState?.success) return;
-    toast.success(passwordModifyState.success);
-  }, [passwordModifyState]);
-
-  useEffect(() => {
-    if (!passwordModifyCaptchaState?.error) return;
-    toast.error(passwordModifyCaptchaState.error);
+    parseResult(passwordModifyCaptchaState, () => {
+      setTargetDate(Date.now() + 60 * 1000);
+    });
   }, [passwordModifyCaptchaState]);
 
   useEffect(() => {
-    if (!passwordModifyCaptchaState?.success) return;
-    setTargetDate(Date.now() + 60 * 1000);
-    toast.success(passwordModifyCaptchaState.success);
-  }, [passwordModifyCaptchaState]);
+    parseResult(passwordModifyState);
+  }, [passwordModifyState]);
 
   return (
     <form
       action=""
       autoComplete="off"
-      className="w-full h-full flex flex-col justify-center items-center"
+      className="flex flex-col items-center justify-center w-full h-full"
     >
       <Input
         isDisabled
@@ -65,13 +52,15 @@ export function PasswordModifyForm({ email }: UserDetailVo) {
         name="email"
         type="email"
       />
-      <div className="max-w-sm w-full grid grid-cols-6 gap-4 mb-4">
+      <div className="grid w-full max-w-sm grid-cols-6 gap-4 mb-4">
         <Input
           fullWidth
           isRequired
           className="col-span-4"
-          errorMessage={passwordModifyState?.message?.captcha}
-          isInvalid={!!passwordModifyState?.message?.captcha}
+          errorMessage={passwordModifyState?.validationErrors?.captcha?.join(
+            " ",
+          )}
+          isInvalid={!!passwordModifyState?.validationErrors?.captcha?.length}
           label="验证码"
           name="captcha"
           type="number"
@@ -84,8 +73,10 @@ export function PasswordModifyForm({ email }: UserDetailVo) {
       <Input
         isRequired
         className="max-w-sm mb-4"
-        errorMessage={passwordModifyState?.message?.password}
-        isInvalid={!!passwordModifyState?.message?.password}
+        errorMessage={passwordModifyState?.validationErrors?.password?.join(
+          " ",
+        )}
+        isInvalid={!!passwordModifyState?.validationErrors?.password?.length}
         label="新密码"
         name="password"
         type="password"
@@ -93,8 +84,12 @@ export function PasswordModifyForm({ email }: UserDetailVo) {
       <Input
         isRequired
         className="max-w-sm mb-4"
-        errorMessage={passwordModifyState?.message?.confirmPassword}
-        isInvalid={!!passwordModifyState?.message?.confirmPassword}
+        errorMessage={passwordModifyState?.validationErrors?.confirmPassword?.join(
+          " ",
+        )}
+        isInvalid={
+          !!passwordModifyState?.validationErrors?.confirmPassword?.length
+        }
         label="确认密码"
         name="confirmPassword"
         type="password"

@@ -1,52 +1,21 @@
 "use server";
 
-import { URL } from "url";
-
-import { revalidatePath } from "next/cache";
+import { z } from "zod";
+import { flattenValidationErrors } from "next-safe-action";
 
 import { profileModifySchema } from "./schema";
 
 import { apiInstance } from "@/helper/auth";
-import {
-  CaptchaApi,
-  FileApi,
-  ResponseError,
-  UserApi,
-} from "@/meeting-room-booking-api";
+import { CaptchaApi, FileApi, UserApi } from "@/meeting-room-booking-api";
+import { actionClient } from "@/helper/safe-action";
 
-interface State {
-  message?: {
-    captcha?: string;
-  } | null;
-  error?: string;
-  success?: string;
-}
-
-export async function profileModify(
-  prevState: State,
-  formData: FormData,
-): Promise<State> {
-  const payload = profileModifySchema.safeParse(
-    Object.fromEntries(formData.entries()),
-  );
-
-  if (!payload.success) {
-    const captchaErr = payload.error.errors.find(
-      (err) => err.path[0] === "captcha",
-    )?.message;
-
-    return {
-      message: {
-        captcha: captchaErr,
-      },
-    };
-  }
-
-  const file = formData.get("picture") as File | null;
-
-  let headPic = payload.data.headPic;
-
-  try {
+export const profileModifyAction = actionClient
+  .schema(profileModifySchema, {
+    handleValidationErrorsShape: (ve) =>
+      flattenValidationErrors(ve).fieldErrors,
+  })
+  .stateAction(async ({ parsedInput: { picture: file, ...props } }) => {
+    let headPic = props.headPic;
     const userApi = apiInstance(UserApi);
     const fileApi = apiInstance(FileApi);
 
@@ -73,46 +42,17 @@ export async function profileModify(
     }
 
     const success = await userApi.updateUserInfo({
-      updateUserDto: { ...payload.data, headPic },
+      updateUserDto: { ...props, headPic },
     });
 
-    revalidatePath(success);
+    return { message: success ?? "更新个人资料成功" };
+  });
 
-    return { success };
-  } catch (error) {
-    if (error instanceof ResponseError) {
-      const text = await error.response.text();
-
-      return {
-        error: text ?? "修改失败",
-      };
-    }
-    console.error(error);
-
-    return {
-      error: (error as Error)?.message || "修改失败",
-    };
-  }
-}
-
-export async function profileModifyCaptcha(
-  prevState: State,
-  formData: FormData,
-): Promise<State> {
-  try {
+export const profileModifyCaptchaAction = actionClient
+  .schema(z.object({}))
+  .stateAction(async () => {
     const captchaApi = apiInstance(CaptchaApi);
-    const success = await captchaApi.updateUserInfoCaptcha();
+    const text = await captchaApi.updateUserInfoCaptcha();
 
-    return { success };
-  } catch (error) {
-    if (error instanceof ResponseError) {
-      const text = await error.response.text();
-
-      return {
-        error: text ?? "服务异常",
-      };
-    }
-
-    return { error: (error as Error)?.message || "服务异常" };
-  }
-}
+    return { message: text ?? "获取更新用户信息验证码成功" };
+  });

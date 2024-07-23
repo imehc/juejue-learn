@@ -1,90 +1,37 @@
 "use server";
 
+import { z } from "zod";
+import { flattenValidationErrors } from "next-safe-action";
+
 import { passwordModifySchema } from "./schema";
 
 import { apiInstance } from "@/helper/auth";
-import { CaptchaApi, ResponseError, UserApi } from "@/meeting-room-booking-api";
+import { actionClient } from "@/helper/safe-action";
+import { CaptchaApi, UserApi } from "@/meeting-room-booking-api";
 
-interface State {
-  message?: {
-    password?: string;
-    confirmPassword?: string;
-    captcha?: string;
-  } | null;
-  error?: string;
-  success?: string;
-}
-
-export async function passwordModify(
-  prevState: State,
-  formData: FormData,
-): Promise<State> {
-  const payload = passwordModifySchema.safeParse(
-    Object.fromEntries(formData.entries()),
-  );
-
-  if (!payload.success) {
-    const passwordErr = payload.error.errors.find(
-      (err) => err.path[0] === "password",
-    )?.message;
-    const confirmPasswordErr = payload.error.errors.find(
-      (err) => err.path[0] === "confirmPassword",
-    )?.message;
-    const captchaErr = payload.error.errors.find(
-      (err) => err.path[0] === "captcha",
-    )?.message;
-
-    return {
-      message: {
-        password: passwordErr,
-        confirmPassword: confirmPasswordErr,
-        captcha: captchaErr,
-      },
-    };
-  }
-
-  try {
+export const passwordModifyAction = actionClient
+  .schema(passwordModifySchema, {
+    handleValidationErrorsShape: (ve) =>
+      flattenValidationErrors(ve).fieldErrors,
+  })
+  .stateAction(async ({ parsedInput }) => {
+    // const payload = passwordModifySchema.safeParse(
+    //   Object.fromEntries(formData.entries()),
+    // );
     const userApi = apiInstance(UserApi);
 
-    const success = await userApi.updatePassword({
-      updateUserPasswordDto: payload.data,
+    const text = await userApi.updatePassword({
+      updateUserPasswordDto: parsedInput,
     });
 
-    return { success };
-  } catch (error) {
-    if (error instanceof ResponseError) {
-      const text = await error.response.text();
+    return { message: text ?? "修改成功" };
+  });
 
-      return {
-        error: text ?? "修改失败",
-      };
-    }
-    console.error(error);
-
-    return {
-      error: (error as Error)?.message || "修改失败",
-    };
-  }
-}
-
-export async function passwordModifyCaptcha(
-  prevState: State,
-  formData: FormData,
-): Promise<State> {
-  try {
+export const passwordModifyCaptchaAction = actionClient
+  .schema(z.object({}))
+  .stateAction(async () => {
     const captchaApi = apiInstance(CaptchaApi);
-    const success = await captchaApi.updatePasswordCaptcha();
+    const text = await captchaApi.updatePasswordCaptcha();
 
-    return { success };
-  } catch (error) {
-    if (error instanceof ResponseError) {
-      const text = await error.response.text();
-
-      return {
-        error: text ?? "服务异常",
-      };
-    }
-
-    return { error: (error as Error)?.message || "服务异常" };
-  }
-}
+    return { message: text ?? "获取更改密码验证码成功" };
+  });

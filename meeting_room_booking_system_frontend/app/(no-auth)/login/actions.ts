@@ -2,68 +2,29 @@
 
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
+import { flattenValidationErrors } from "next-safe-action";
 
 import { loginSchema } from "./schema";
 
 import { apiInstance } from "@/helper/auth";
 import { ACCESS_TOKEN, EXPIRES_IN, REFRESH_TOKEN } from "@/helper/cookie";
-import { Auth, ResponseError, UserApi } from "@/meeting-room-booking-api";
+import { Auth, UserApi } from "@/meeting-room-booking-api";
+import { actionClient } from "@/helper/safe-action";
 
-interface State {
-  message?: {
-    username?: string;
-    password?: string;
-  } | null;
-  error?: string;
-}
-
-export async function login(
-  prevState: State,
-  formData: FormData,
-): Promise<State> {
-  // const username = formData.get("username");
-  // const password = formData.get("password");
-
-  const payload = loginSchema.safeParse(Object.fromEntries(formData.entries()));
-
-  if (!payload.success) {
-    const usernameErr = payload.error.errors.find(
-      (err) => err.path[0] === "username",
-    )?.message;
-    const passwordErr = payload.error.errors.find(
-      (err) => err.path[0] === "password",
-    )?.message;
-
-    return {
-      message: {
-        username: usernameErr,
-        password: passwordErr,
-      },
-    };
-  }
-
-  try {
+export const loginAction = actionClient
+  .schema(loginSchema, {
+    handleValidationErrorsShape: (ve) =>
+      flattenValidationErrors(ve).fieldErrors,
+  })
+  .stateAction(async ({ parsedInput }) => {
     const userApi = apiInstance(UserApi);
 
-    const { auth } = await userApi.userLogin({ loginUserDto: payload.data });
+    const { auth } = await userApi.userLogin({ loginUserDto: parsedInput });
 
     await setAuthCookie(auth);
-  } catch (error) {
-    if (error instanceof ResponseError) {
-      const text = await error.response.text();
-
-      return {
-        error: text ?? "账号或密码错误",
-      };
-    }
-
-    return {
-      error: (error as Error)?.message || "账号或密码错误",
-    };
-  }
-  // TODO: 验证成功后跳转
-  redirect("/meeting-room");
-}
+    // TODO: 验证成功后跳转
+    redirect("/meeting-room");
+  });
 
 export async function clearCookie() {
   const cookieStore = cookies();

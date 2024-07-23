@@ -1,20 +1,23 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { z } from "zod";
 
 import { apiInstance } from "@/helper/auth";
-import { SystemApi, User } from "@/meeting-room-booking-api";
+import { SystemApi } from "@/meeting-room-booking-api";
+import { actionClient } from "@/helper/safe-action";
 
-export async function frozenUser({ id }: Pick<User, "id">) {
-  const systemApi = apiInstance(SystemApi);
+const schema = z.object({
+  id: z.coerce.number(),
+});
 
-  try {
+export const frozenUserAction = actionClient
+  .schema(schema)
+  .action(async ({ parsedInput: { id } }) => {
+    const systemApi = apiInstance(SystemApi);
     const text = await systemApi.freezeUser({ id: id });
 
     revalidatePath("/system/user");
 
-    return { data: text };
-  } catch (error) {
-    return { data: "fail" };
-  }
-}
+    return { message: text ?? "冻结用户成功" };
+  });
