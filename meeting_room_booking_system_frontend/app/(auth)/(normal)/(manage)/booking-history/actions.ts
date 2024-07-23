@@ -2,7 +2,6 @@
 
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { flattenValidationErrors } from "next-safe-action";
 
 import { apiInstance } from "@/helper/auth";
 import { BookingApi } from "@/meeting-room-booking-api";
@@ -13,10 +12,7 @@ const unbindBookingschema = z.object({
 });
 
 export const unbindBookingAction = actionClient
-  .schema(unbindBookingschema, {
-    handleValidationErrorsShape: (ve) =>
-      flattenValidationErrors(ve).fieldErrors,
-  })
+  .schema(unbindBookingschema)
   .action(async ({ parsedInput: { id } }) => {
     const bookingApi = apiInstance(BookingApi);
 
