@@ -4,6 +4,7 @@ supportsES6: true
 paramNaming: camelCase
 enumPropertyNaming: PascalCase
 disallowAdditionalPropertiesIfNotPresent: false
+stringEnums: true # 枚举类型
 
 # 与原有模板保持兼容
 prefixParameterInterfaces: true
