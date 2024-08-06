@@ -7,6 +7,8 @@ import {
   HttpException,
   HttpStatus,
   Inject,
+  InternalServerErrorException,
+  Logger,
   Param,
   Post,
   Put,
@@ -78,6 +80,8 @@ export class UserController {
     private readonly userService: UserService,
     private readonly userServerMock: UserServiceMock,
   ) {}
+
+  private logger = new Logger();
 
   @Inject(EmailService)
   private emailService: EmailService;
@@ -623,10 +627,15 @@ export class UserController {
 
     await this.redisService.set(key, code, ttl * 60);
 
-    await this.emailService.sendMail({
-      to: address,
-      subject: title,
-      html: `<p>你的${type}验证码是 ${code},${ttl}分钟内有效</p>`,
-    });
+    try {
+      return await this.emailService.sendMail({
+        to: address,
+        subject: title,
+        html: `<p>你的${type}验证码是 ${code},${ttl}分钟内有效</p>`,
+      });
+    } catch (error) {
+      this.logger.error(error, UserController);
+      throw new InternalServerErrorException();
+    }
   }
 }
