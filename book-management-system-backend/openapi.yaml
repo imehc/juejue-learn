@@ -1,0 +1,206 @@
+openapi: 3.0.0
+
+info:
+  title: 图书管理系统
+  description: API 接口文档
+  version: '1.0'
+
+tags:
+  - name: user
+    description: 用户
+  - name: book
+    description: 图书
+
+servers:
+  - url: http://127.0.0.1:6020
+
+paths:
+  /user/register:
+    post:
+      operationId: register
+      summary: 用户注册
+      tags:
+        - user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '201':
+          description: 注册成功
+
+  /user/login:
+    post:
+      operationId: login
+      description: 用户登录
+      tags:
+        - user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          description: 登录成功
+
+  /book:
+    get:
+      operationId: findAllBooks
+      description: 图书列表
+      tags:
+        - book
+      responses:
+        '200':
+          description: 图书列表
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookList'
+
+    post:
+      operationId: createBook
+      description: 新增图书
+      tags:
+        - book
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Book'
+      responses:
+        '201':
+          description: 新增图书成功
+
+  /book/{id}:
+    get:
+      operationId: findBook
+      description: 图书详情
+      tags:
+        - book
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: number
+      responses:
+        '200':
+          description: 查找图书详情成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookItem'
+
+    patch:
+      operationId: updateBook
+      description: 修改图书信息
+      tags:
+        - book
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Book'
+      responses:
+        '200':
+          description: 修改图书信息成功
+
+    delete:
+      operationId: deleteBook
+      description: 删除图书
+      tags:
+        - book
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: number
+      responses:
+        '204':
+          description: 删除图书成功
+
+  /book/upload:
+    post:
+      operationId: uploadBookImage
+      description: 上传图片
+      tags:
+        - book
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '201':
+          description: 上传图片成功
+          content:
+            application/json:
+              schema:
+                type: string
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+      required:
+        - username
+        - password
+
+    ID:
+      type: integer
+      format: int32
+
+    Book:
+      type: object
+      properties:
+        name:
+          type: string
+        author:
+          type: string
+        description:
+          type: string
+        cover:
+          type: string
+      required:
+        - name
+        - author
+        - description
+        - cover
+
+    BookItem:
+      allOf:
+        - type: object
+          properties:
+            id:
+              $ref: '#/components/schemas/ID'
+          required:
+            - id
+        - $ref: '#/components/schemas/Book'
+
+    BookList:
+      type: array
+      items:
+        $ref: '#/components/schemas/BookItem'
