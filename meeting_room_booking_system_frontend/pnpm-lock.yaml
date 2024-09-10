@@ -174,8 +174,8 @@ importers:
         specifier: ^0.3.0
         version: 0.3.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       nuqs:
-        specifier: ^1.17.7
-        version: 1.17.7(next@14.2.9(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
+        specifier: ^1.19.1
+        version: 1.19.1(next@14.2.9(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
       postcss:
         specifier: 8.4.38
         version: 8.4.38
@@ -2363,8 +2363,8 @@ packages:
     resolution: {integrity: sha512-bdok/XvKII3nUpklnV6P2hxtMNrCboOjAcyBuQnWEhO665FwrSNRxU+AqpsyvO6LgGYPspN+lu5CLtw4jPRKNA==}
     engines: {node: '>=0.10.0'}
 
-  nuqs@1.17.7:
-    resolution: {integrity: sha512-LiiC5XGqVPCGNA3Hg4tPmI5Ur0egmp+mB9FLWPltQfC6VbQyHqkJf4aZV6f9o8wX86Le9KAIHdnNCtx0f1ZTnw==}
+  nuqs@1.19.1:
+    resolution: {integrity: sha512-oixldNThB1wbu6B5K961++7wpTz/EZFPWnraGmIQhibDT+YxRJNplWMIoPJgL4dlsiSDVI5bbUWKpzsIWVh3Pg==}
     peerDependencies:
       next: '>=13.4 <14.0.2 || ^14.0.3'
 
@@ -5953,7 +5953,7 @@ snapshots:
 
   normalize-range@0.1.2: {}
 
-  nuqs@1.17.7(next@14.2.9(react-dom@18.3.1(react@18.3.1))(react@18.3.1)):
+  nuqs@1.19.1(next@14.2.9(react-dom@18.3.1(react@18.3.1))(react@18.3.1)):
     dependencies:
       mitt: 3.0.1
       next: 14.2.9(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
