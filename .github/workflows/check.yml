@@ -1,32 +1,48 @@
-name: Check Errors
+name: Build and Test
 
 on:
   push:
+    branches: [ main ]
   pull_request:
-    
+    branches: [ main ]
+
 jobs:
-  build:
+  build-backend:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: meeting_room_booking_system_backend
+
     steps:
-      - uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 9 
+    - name: Setup Node.js environment
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20.x'
-          registry-url: 'https://registry.npmjs.org'
-          cache: 'pnpm'
+    - name: Run commands in the aaa directory
+      run: |
+        npm install
+        npm run build
 
-      - name: Run commands in multiple directories
-        run: |
-          for dir in meeting_room_booking_system_backend meeting_room_booking_system_frontend; do
-            echo "Running commands in directory: $dir"
-            cd "$dir"
-            pnpm install
-            pnpm build
-            pnpm test
-            cd ..
-          done
+  build-backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: meeting_room_booking_system_frontend
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup Node.js environment
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+
+    - name: Run commands in the aaa directory
+      run: |
+        npm install
+        npm run build
