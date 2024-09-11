@@ -7,7 +7,10 @@ import {
 import { BookingList, bookingListSchema } from "@/components/booking";
 import { UnknownError } from "@/components/unknown-error";
 import { apiInstance } from "@/helper/auth";
-import { BookingApi } from "@/meeting-room-booking-api";
+import {
+  BookingApi,
+  type BookingApiFindAllBookingRequest,
+} from "@/meeting-room-booking-api";
 
 export default async function SystemBookingPage({
   searchParams,
@@ -21,7 +24,7 @@ export default async function SystemBookingPage({
   }
   const bookingApi = apiInstance(BookingApi);
   const bookingList = await bookingApi.findAllBooking({
-    ...payload.data,
+    ...(payload.data as BookingApiFindAllBookingRequest),
     skip: payload.data.skip + 1,
   });
 

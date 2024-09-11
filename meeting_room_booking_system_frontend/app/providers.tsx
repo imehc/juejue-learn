@@ -7,12 +7,14 @@ import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { ThemeProviderProps } from "next-themes/dist/types";
 import { Toaster } from "sonner";
 
-export interface ProvidersProps {
-  children: React.ReactNode;
-  themeProps?: ThemeProviderProps;
-}
+// https://github.com/styled-components/styled-components/issues/3731#issuecomment-2192053161
+const ThemeProvider = (props: ThemeProviderProps): React.JSX.Element => {
+  return NextThemesProvider(props) as React.JSX.Element;
+};
 
-export function Providers({ children, themeProps }: ProvidersProps) {
+export type ProvidersProps = ThemeProviderProps;
+
+export function Providers({ children, ...themeProps }: ProvidersProps) {
   const router = useRouter();
 
   return (
@@ -20,7 +22,7 @@ export function Providers({ children, themeProps }: ProvidersProps) {
       className="w-full h-full overflow-hidden flex flex-col justify-center items-center"
       navigate={router.push}
     >
-      <NextThemesProvider {...themeProps}>{children}</NextThemesProvider>
+      <ThemeProvider {...themeProps}>{children}</ThemeProvider>
       <Toaster richColors position="top-center" />
     </NextUIProvider>
   );
