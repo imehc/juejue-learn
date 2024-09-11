@@ -3,7 +3,11 @@ import { unbindBookingAction } from "./actions";
 import { BookingList, bookingListSchema } from "@/components/booking";
 import { UnknownError } from "@/components/unknown-error";
 import { apiInstance } from "@/helper/auth";
-import { BookingApi, UserApi } from "@/meeting-room-booking-api";
+import {
+  BookingApi,
+  type BookingApiFindAllBookingRequest,
+  UserApi,
+} from "@/meeting-room-booking-api";
 
 export default async function BookingHistoryPage({
   searchParams,
@@ -23,7 +27,7 @@ export default async function BookingHistoryPage({
   const user = await userApi.getUserInfo();
 
   const bookingList = await bookingApi.findAllBooking({
-    ...attr,
+    ...(attr as BookingApiFindAllBookingRequest),
     username: user.username,
     skip: payload.data.skip + 1,
   });

@@ -16,6 +16,7 @@ export default async function SystemStatistics({
     return <UnknownError />;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { chartType: _, ...props } = payload.data;
 
   const statisticApi = apiInstance(StatisticApi);
