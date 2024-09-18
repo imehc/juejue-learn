@@ -48,7 +48,7 @@
 		"ahooks": "^3.8.1",
 		"autoprefixer": "10.4.19",
 		"clsx": "2.1.1",
-		"date-fns": "^3.6.0",
+		"date-fns": "^4.1.0",
 		"eslint": "^8.56.0",
 		"eslint-config-next": "14.2.11",
 		"eslint-config-prettier": "^9.1.0",
