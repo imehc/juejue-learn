@@ -174,8 +174,8 @@ importers:
         specifier: ^0.3.0
         version: 0.3.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       nuqs:
-        specifier: ^1.17.7
-        version: 1.17.7(next@14.2.13(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
+        specifier: ^1.19.2
+        version: 1.19.2(next@14.2.13(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
       postcss:
         specifier: 8.4.47
         version: 8.4.47
@@ -356,12 +356,6 @@ packages:
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [win32]
-
-  '@nextui-org/aria-utils@2.0.24':
-    resolution: {integrity: sha512-YD+YvT01zFqN1Ey137OeFl9SEhAYf2BoZz+ykWiIJlMjl/LY1d5WE0nkzsjMHh6MV3HgS6CExxlf7TuApN6Piw==}
-    peerDependencies:
-      react: '>=18'
-      react-dom: '>=18'
 
   '@nextui-org/aria-utils@2.0.26':
     resolution: {integrity: sha512-e81HxkNI3/HCPPJT9OVK0g0ivTkuqeeQ043WlAxvgf+upFTEvNN5vmsSKBfWGgfZpsVHgNyHIzwbHjy9zKePLQ==}
@@ -2446,8 +2440,8 @@ packages:
     resolution: {integrity: sha512-bdok/XvKII3nUpklnV6P2hxtMNrCboOjAcyBuQnWEhO665FwrSNRxU+AqpsyvO6LgGYPspN+lu5CLtw4jPRKNA==}
     engines: {node: '>=0.10.0'}
 
-  nuqs@1.17.7:
-    resolution: {integrity: sha512-LiiC5XGqVPCGNA3Hg4tPmI5Ur0egmp+mB9FLWPltQfC6VbQyHqkJf4aZV6f9o8wX86Le9KAIHdnNCtx0f1ZTnw==}
+  nuqs@1.19.2:
+    resolution: {integrity: sha512-r6Hw44yMg8tuxr+zS4AmeB+Z++j1pT99DuCfy+XmouCBaXHHhBPOoWZQQuSUI0ja2s00v6o96HdSnvq2/5qOyw==}
     peerDependencies:
       next: '>=13.4 <14.0.2 || ^14.0.3'
 
@@ -3223,22 +3217,6 @@ snapshots:
 
   '@next/swc-win32-x64-msvc@14.2.13':
     optional: true
-
-  '@nextui-org/aria-utils@2.0.24(@nextui-org/theme@2.2.11(tailwindcss@3.4.13))(framer-motion@11.1.9(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
-    dependencies:
-      '@nextui-org/react-rsc-utils': 2.0.13
-      '@nextui-org/shared-utils': 2.0.7
-      '@nextui-org/system': 2.2.5(@nextui-org/theme@2.2.11(tailwindcss@3.4.13))(framer-motion@11.1.9(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@react-aria/utils': 3.24.1(react@18.3.1)
-      '@react-stately/collections': 3.10.7(react@18.3.1)
-      '@react-stately/overlays': 3.6.7(react@18.3.1)
-      '@react-types/overlays': 3.8.7(react@18.3.1)
-      '@react-types/shared': 3.23.1(react@18.3.1)
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
-    transitivePeerDependencies:
-      - '@nextui-org/theme'
-      - framer-motion
 
   '@nextui-org/aria-utils@2.0.26(@nextui-org/theme@2.2.11(tailwindcss@3.4.13))(framer-motion@11.1.9(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
@@ -6195,7 +6173,7 @@ snapshots:
 
   normalize-range@0.1.2: {}
 
-  nuqs@1.17.7(next@14.2.13(react-dom@18.3.1(react@18.3.1))(react@18.3.1)):
+  nuqs@1.19.2(next@14.2.13(react-dom@18.3.1(react@18.3.1))(react@18.3.1)):
     dependencies:
       mitt: 3.0.1
       next: 14.2.13(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
