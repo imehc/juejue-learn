@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@internationalized/date':
-        specifier: ^3.5.5
-        version: 3.5.5
+        specifier: ^3.5.6
+        version: 3.5.6
       '@nextui-org/avatar':
         specifier: ^2.0.33
         version: 2.0.33(@nextui-org/system@2.2.6(@nextui-org/theme@2.2.11(tailwindcss@3.4.13))(framer-motion@11.9.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@nextui-org/theme@2.2.11(tailwindcss@3.4.13))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -263,8 +263,8 @@ packages:
     resolution: {integrity: sha512-93zYdMES/c1D69yZiKDBj0V24vqNzB/koF26KPaagAfd3P/4gUlh3Dys5ogAK+Exi9QyzlD8x/08Zt7wIKcDcA==}
     deprecated: Use @eslint/object-schema instead
 
-  '@internationalized/date@3.5.5':
-    resolution: {integrity: sha512-H+CfYvOZ0LTJeeLOqm19E3uj/4YjrmOFtBufDHPfvtI80hFAMqtrp7oCACpe4Cil5l8S0Qu/9dYfZc/5lY8WQQ==}
+  '@internationalized/date@3.5.6':
+    resolution: {integrity: sha512-jLxQjefH9VI5P9UQuqB6qNKnvFt1Ky1TPIzHGsIlCi7sZZoMR8SdYbBGRvM0y+Jtb+ez4ieBzmiAUcpmPYpyOw==}
 
   '@internationalized/message@3.1.4':
     resolution: {integrity: sha512-Dygi9hH1s7V9nha07pggCkvmRfDd3q2lWnMGvrJyrOwYMe1yj4D2T9BoH9I6MGR7xz0biQrtLPsqUkqXzIrBOw==}
@@ -3043,7 +3043,7 @@ snapshots:
 
   '@humanwhocodes/object-schema@2.0.3': {}
 
-  '@internationalized/date@3.5.5':
+  '@internationalized/date@3.5.6':
     dependencies:
       '@swc/helpers': 0.5.11
 
@@ -3169,7 +3169,7 @@ snapshots:
 
   '@nextui-org/calendar@2.0.12(@nextui-org/system@2.2.6(@nextui-org/theme@2.2.11(tailwindcss@3.4.13))(framer-motion@11.9.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@nextui-org/theme@2.2.11(tailwindcss@3.4.13))(framer-motion@11.9.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
-      '@internationalized/date': 3.5.5
+      '@internationalized/date': 3.5.6
       '@nextui-org/button': 2.0.38(@nextui-org/system@2.2.6(@nextui-org/theme@2.2.11(tailwindcss@3.4.13))(framer-motion@11.9.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@nextui-org/theme@2.2.11(tailwindcss@3.4.13))(framer-motion@11.9.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@nextui-org/framer-utils': 2.0.25(@nextui-org/theme@2.2.11(tailwindcss@3.4.13))(framer-motion@11.9.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@nextui-org/react-utils': 2.0.17(react@18.3.1)
@@ -3259,7 +3259,7 @@ snapshots:
 
   '@nextui-org/date-input@2.1.4(@nextui-org/system@2.2.6(@nextui-org/theme@2.2.11(tailwindcss@3.4.13))(framer-motion@11.9.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@nextui-org/theme@2.2.11(tailwindcss@3.4.13))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
-      '@internationalized/date': 3.5.5
+      '@internationalized/date': 3.5.6
       '@nextui-org/react-utils': 2.0.17(react@18.3.1)
       '@nextui-org/shared-utils': 2.0.8
       '@nextui-org/system': 2.2.6(@nextui-org/theme@2.2.11(tailwindcss@3.4.13))(framer-motion@11.9.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -3275,7 +3275,7 @@ snapshots:
 
   '@nextui-org/date-picker@2.1.8(@nextui-org/system@2.2.6(@nextui-org/theme@2.2.11(tailwindcss@3.4.13))(framer-motion@11.9.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@nextui-org/theme@2.2.11(tailwindcss@3.4.13))(@types/react@18.3.10)(framer-motion@11.9.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
-      '@internationalized/date': 3.5.5
+      '@internationalized/date': 3.5.6
       '@nextui-org/aria-utils': 2.0.26(@nextui-org/theme@2.2.11(tailwindcss@3.4.13))(framer-motion@11.9.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@nextui-org/button': 2.0.38(@nextui-org/system@2.2.6(@nextui-org/theme@2.2.11(tailwindcss@3.4.13))(framer-motion@11.9.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@nextui-org/theme@2.2.11(tailwindcss@3.4.13))(framer-motion@11.9.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@nextui-org/calendar': 2.0.12(@nextui-org/system@2.2.6(@nextui-org/theme@2.2.11(tailwindcss@3.4.13))(framer-motion@11.9.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@nextui-org/theme@2.2.11(tailwindcss@3.4.13))(framer-motion@11.9.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -3597,7 +3597,7 @@ snapshots:
 
   '@nextui-org/system@2.2.6(@nextui-org/theme@2.2.11(tailwindcss@3.4.13))(framer-motion@11.9.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
-      '@internationalized/date': 3.5.5
+      '@internationalized/date': 3.5.6
       '@nextui-org/react-utils': 2.0.17(react@18.3.1)
       '@nextui-org/system-rsc': 2.1.6(@nextui-org/theme@2.2.11(tailwindcss@3.4.13))(react@18.3.1)
       '@react-aria/i18n': 3.11.1(react@18.3.1)
@@ -3929,7 +3929,7 @@ snapshots:
 
   '@react-aria/calendar@3.5.8(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
-      '@internationalized/date': 3.5.5
+      '@internationalized/date': 3.5.6
       '@react-aria/i18n': 3.11.1(react@18.3.1)
       '@react-aria/interactions': 3.22.2(react@18.3.1)
       '@react-aria/live-announcer': 3.3.4
@@ -3959,7 +3959,7 @@ snapshots:
 
   '@react-aria/datepicker@3.10.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
-      '@internationalized/date': 3.5.5
+      '@internationalized/date': 3.5.6
       '@internationalized/number': 3.5.3
       '@internationalized/string': 3.2.3
       '@react-aria/focus': 3.17.1(react@18.3.1)
@@ -4030,7 +4030,7 @@ snapshots:
 
   '@react-aria/i18n@3.11.1(react@18.3.1)':
     dependencies:
-      '@internationalized/date': 3.5.5
+      '@internationalized/date': 3.5.6
       '@internationalized/message': 3.1.4
       '@internationalized/number': 3.5.3
       '@internationalized/string': 3.2.3
@@ -4286,7 +4286,7 @@ snapshots:
 
   '@react-stately/calendar@3.5.1(react@18.3.1)':
     dependencies:
-      '@internationalized/date': 3.5.5
+      '@internationalized/date': 3.5.6
       '@react-stately/utils': 3.10.3(react@18.3.1)
       '@react-types/calendar': 3.4.6(react@18.3.1)
       '@react-types/shared': 3.24.1(react@18.3.1)
@@ -4310,7 +4310,7 @@ snapshots:
 
   '@react-stately/datepicker@3.9.4(react@18.3.1)':
     dependencies:
-      '@internationalized/date': 3.5.5
+      '@internationalized/date': 3.5.6
       '@internationalized/string': 3.2.3
       '@react-stately/form': 3.0.3(react@18.3.1)
       '@react-stately/overlays': 3.6.7(react@18.3.1)
@@ -4431,7 +4431,7 @@ snapshots:
 
   '@react-types/calendar@3.4.6(react@18.3.1)':
     dependencies:
-      '@internationalized/date': 3.5.5
+      '@internationalized/date': 3.5.6
       '@react-types/shared': 3.24.1(react@18.3.1)
       react: 18.3.1
 
@@ -4442,7 +4442,7 @@ snapshots:
 
   '@react-types/datepicker@3.7.4(react@18.3.1)':
     dependencies:
-      '@internationalized/date': 3.5.5
+      '@internationalized/date': 3.5.6
       '@react-types/calendar': 3.4.6(react@18.3.1)
       '@react-types/overlays': 3.8.7(react@18.3.1)
       '@react-types/shared': 3.24.1(react@18.3.1)
