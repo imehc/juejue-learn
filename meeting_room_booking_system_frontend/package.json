@@ -63,7 +63,7 @@
 		"i18next": "^23.16.2",
 		"intl-messageformat": "^10.7.1",
 		"next": "14.2.15",
-		"next-safe-action": "^7.9.5",
+		"next-safe-action": "^7.9.6",
 		"next-themes": "^0.3.0",
 		"nuqs": "^2.0.2",
 		"postcss": "8.4.47",
