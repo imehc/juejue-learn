@@ -168,8 +168,8 @@ importers:
         specifier: 14.2.15
         version: 14.2.15(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       next-safe-action:
-        specifier: ^7.9.6
-        version: 7.9.6(next@14.2.15(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(zod@3.23.8)
+        specifier: ^7.9.7
+        version: 7.9.7(next@14.2.15(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(zod@3.23.8)
       next-themes:
         specifier: ^0.3.0
         version: 0.3.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -2294,8 +2294,8 @@ packages:
   natural-compare@1.4.0:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
 
-  next-safe-action@7.9.6:
-    resolution: {integrity: sha512-N60Pyyd0Yk2NGthk7lk4Kv9NSxSHGLelJ011J+qdnxV9gaFY542nRZPd99eMkvsnX5YY5/YTyQ+UvjorHMCR8A==}
+  next-safe-action@7.9.7:
+    resolution: {integrity: sha512-xulVnnGtmL8nf2p93qG9Q2npFWWfqqnWrUgpnTKATLIFHqTIE6fBdYr5KavhODK+GfDg5hHD+f07JQzHsehLsg==}
     engines: {node: '>=18.17'}
     peerDependencies:
       '@sinclair/typebox': '>= 0.33.3'
@@ -5856,7 +5856,7 @@ snapshots:
 
   natural-compare@1.4.0: {}
 
-  next-safe-action@7.9.6(next@14.2.15(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(zod@3.23.8):
+  next-safe-action@7.9.7(next@14.2.15(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(zod@3.23.8):
     dependencies:
       next: 14.2.15(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react: 18.3.1
