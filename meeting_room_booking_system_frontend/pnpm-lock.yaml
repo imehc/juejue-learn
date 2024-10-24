@@ -159,8 +159,8 @@ importers:
         specifier: ~11.11.9
         version: 11.11.9(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       i18next:
-        specifier: ^23.16.2
-        version: 23.16.2
+        specifier: ^23.16.3
+        version: 23.16.3
       intl-messageformat:
         specifier: ^10.7.1
         version: 10.7.1
@@ -205,7 +205,7 @@ importers:
         version: 2.0.2(zod@3.23.8)
       zod-i18n-map:
         specifier: ^2.27.0
-        version: 2.27.0(i18next@23.16.2)(zod@3.23.8)
+        version: 2.27.0(i18next@23.16.3)(zod@3.23.8)
 
 packages:
 
@@ -1991,8 +1991,8 @@ packages:
     resolution: {integrity: sha512-0hJU9SCPvmMzIBdZFqNPXWa6dqh7WdH0cII9y+CyS8rG3nL48Bclra9HmKhVVUHyPWNH5Y7xDwAB7bfgSjkUMQ==}
     engines: {node: '>= 0.4'}
 
-  i18next@23.16.2:
-    resolution: {integrity: sha512-dFyxwLXxEQK32f6tITBMaRht25mZPJhQ0WbC0p3bO2mWBal9lABTMqSka5k+GLSRWLzeJBKDpH7BeIA9TZI7Jg==}
+  i18next@23.16.3:
+    resolution: {integrity: sha512-e8q9gFyjrou5v/hBXgRwtWVK7Gp5So19Kf42spJlijGDfkin5abYFHlblonmD2GFYcsf9XIT7MpVuveJq/VCcA==}
 
   ignore@5.3.1:
     resolution: {integrity: sha512-5Fytz/IraMjqpwfd34ke28PTVMjZjJG2MPn5t7OE4eUCUNf8BAa7b5WUS9/Qvr6mwOQS7Mk6vdsMno5he+T8Xw==}
@@ -5586,7 +5586,7 @@ snapshots:
     dependencies:
       function-bind: 1.1.2
 
-  i18next@23.16.2:
+  i18next@23.16.3:
     dependencies:
       '@babel/runtime': 7.24.7
 
@@ -6567,9 +6567,9 @@ snapshots:
     dependencies:
       zod: 3.23.8
 
-  zod-i18n-map@2.27.0(i18next@23.16.2)(zod@3.23.8):
+  zod-i18n-map@2.27.0(i18next@23.16.3)(zod@3.23.8):
     dependencies:
-      i18next: 23.16.2
+      i18next: 23.16.3
       zod: 3.23.8
 
   zod@3.23.8: {}
