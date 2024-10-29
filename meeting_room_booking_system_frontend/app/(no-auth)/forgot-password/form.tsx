@@ -1,23 +1,24 @@
 "use client";
 
-import { Input } from "@nextui-org/input";
-import { useFormState, useFormStatus } from "react-dom";
-import { Button, ButtonProps } from "@nextui-org/button";
-import { Divider } from "@nextui-org/divider";
-import { useEffect, useState } from "react";
+import { Button, Divider, Input } from "@nextui-org/react";
+import { useActionState, useEffect, useState } from "react";
 import { useCountDown } from "ahooks";
 
 import { forgotPasswordAction, forgotPasswordCaptchaAction } from "./actions";
 
-import { parseResult } from "@/helper/parse-result";
+import { parseResult } from "@/helper/parse";
 
 export function ForgotPasswordForm() {
-  const [forgotPasswordState, forgotPasswordFormAction] = useFormState(
-    forgotPasswordAction,
-    {},
-  );
-  const [forgotPasswordCaptchaState, forgotPasswordCaptchaFormAction] =
-    useFormState(forgotPasswordCaptchaAction, {});
+  const [
+    forgotPasswordState,
+    forgotPasswordFormAction,
+    isPendingWithForgotPassword,
+  ] = useActionState(forgotPasswordAction, {});
+  const [
+    forgotPasswordCaptchaState,
+    forgotPasswordCaptchaFormAction,
+    isPendingWithForgotPasswordCaptcha,
+  ] = useActionState(forgotPasswordCaptchaAction, {});
 
   const [targetDate, setTargetDate] = useState<number>();
   const [countDown] = useCountDown({
@@ -78,10 +79,18 @@ export function ForgotPasswordForm() {
           name="captcha"
           type="number"
         />
-        <SendCaptchaButton
-          countDown={countDown}
+        <Button
+          fullWidth
+          className="col-span-2 h-14"
+          color="primary"
           formAction={forgotPasswordCaptchaFormAction}
-        />
+          isDisabled={isPendingWithForgotPasswordCaptcha || countDown !== 0}
+          type="submit"
+        >
+          {countDown === 0
+            ? "发送验证码"
+            : `剩余${Math.round(countDown / 1000)}秒`}
+        </Button>
       </div>
       <Input
         isRequired
@@ -109,45 +118,16 @@ export function ForgotPasswordForm() {
       />
 
       <Divider className="mb-4" />
-      <SubmitButton formAction={forgotPasswordFormAction} />
+      <Button
+        fullWidth
+        className="max-w-sm"
+        color="primary"
+        formAction={forgotPasswordFormAction}
+        isDisabled={isPendingWithForgotPassword}
+        type="submit"
+      >
+        {isPendingWithForgotPassword ? "修改中..." : "修改"}
+      </Button>
     </form>
-  );
-}
-
-function SendCaptchaButton({
-  countDown,
-  ...props
-}: ButtonProps & { countDown: number }) {
-  const { pending } = useFormStatus();
-
-  return (
-    <Button
-      fullWidth
-      className="col-span-2 h-14"
-      color="primary"
-      isDisabled={pending || countDown !== 0}
-      type="submit"
-      {...props}
-    >
-      {countDown === 0 ? "发送验证码" : `剩余${Math.round(countDown / 1000)}秒`}
-    </Button>
-  );
-}
-
-function SubmitButton(props: ButtonProps) {
-  const { pending } = useFormStatus();
-
-  // TODO: 点击发送验证码不触发pending
-  return (
-    <Button
-      fullWidth
-      className="max-w-sm"
-      color="primary"
-      isDisabled={pending}
-      type="submit"
-      {...props}
-    >
-      {pending ? "修改中..." : "修改"}
-    </Button>
   );
 }

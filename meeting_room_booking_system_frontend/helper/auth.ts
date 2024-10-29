@@ -10,11 +10,11 @@ import {
   ResponseContext,
 } from "@/meeting-room-booking-api";
 
-export function apiInstance<T extends new (conf?: Configuration) => any>(
+export async function apiInstance<T extends new (conf?: Configuration) => any>(
   Api: T,
   conf?: ConfigurationParameters,
-): InstanceType<T> {
-  const accessToken = cookies().get(ACCESS_TOKEN)?.value;
+): Promise<InstanceType<T>> {
+  const accessToken = (await cookies()).get(ACCESS_TOKEN)?.value;
 
   const _conf = new Configuration({
     basePath: process.env.API_SERVER || basePath,

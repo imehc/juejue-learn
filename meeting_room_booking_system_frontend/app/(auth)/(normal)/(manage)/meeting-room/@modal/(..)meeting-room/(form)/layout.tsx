@@ -1,6 +1,6 @@
 "use client";
 
-import { Modal, ModalBody, ModalContent } from "@nextui-org/modal";
+import { Modal, ModalBody, ModalContent } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 import { PropsWithChildren } from "react";
 

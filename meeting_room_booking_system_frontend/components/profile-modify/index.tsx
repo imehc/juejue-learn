@@ -1,25 +1,26 @@
 "use client";
 
-import { useFormState, useFormStatus } from "react-dom";
-import { Button, ButtonProps } from "@nextui-org/button";
-import { Avatar } from "@nextui-org/avatar";
-import { useEffect, useMemo, useState } from "react";
+import { useActionState, useEffect, useMemo, useState } from "react";
 import { useCountDown } from "ahooks";
-import { Input } from "@nextui-org/input";
+import { Avatar, Button, Input } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 
 import { profileModifyAction, profileModifyCaptchaAction } from "./actions";
 
 import { BASE_PATH, UserDetailVo } from "@/meeting-room-booking-api";
-import { parseResult } from "@/helper/parse-result";
+import { parseResult } from "@/helper/parse";
 
 export function ProfileModifyForm({ headPic, nickName, email }: UserDetailVo) {
-  const [profileModifyState, profileModifyFormAction] = useFormState(
-    profileModifyAction,
-    {},
-  );
-  const [profileModifyCaptchaState, profileModifyCaptchaFormAction] =
-    useFormState(profileModifyCaptchaAction, {});
+  const [
+    profileModifyState,
+    profileModifyFormAction,
+    isPendingWithProfileModify,
+  ] = useActionState(profileModifyAction, {});
+  const [
+    profileModifyCaptchaState,
+    profileModifyCaptchaFormAction,
+    isPendingWithProfileModifyCaptca,
+  ] = useActionState(profileModifyCaptchaAction, {});
 
   const router = useRouter();
 
@@ -105,7 +106,6 @@ export function ProfileModifyForm({ headPic, nickName, email }: UserDetailVo) {
         />
         <Avatar
           className="w-20 h-20 text-center text-large"
-          disableAnimation={false}
           name={nickName?.slice(0, 2)}
           // src="https://i.pravatar.cc/150?u=a04258114e29026302d"
           src={src}
@@ -150,51 +150,31 @@ export function ProfileModifyForm({ headPic, nickName, email }: UserDetailVo) {
           name="captcha"
           type="number"
         />
-        <SendCaptchaButton
-          countDown={countDown}
+
+        <Button
+          fullWidth
+          className="col-span-2 h-14"
+          color="primary"
           formAction={profileModifyCaptchaFormAction}
-        />
+          isDisabled={isPendingWithProfileModifyCaptca || countDown !== 0}
+          type="submit"
+        >
+          {countDown === 0
+            ? "发送验证码"
+            : `剩余${Math.round(countDown / 1000)}秒`}
+        </Button>
       </div>
 
-      <SubmitButton formAction={profileModifyFormAction} />
+      <Button
+        fullWidth
+        className="max-w-sm"
+        color="primary"
+        formAction={profileModifyFormAction}
+        isDisabled={isPendingWithProfileModify}
+        type="submit"
+      >
+        {isPendingWithProfileModify ? "修改中..." : "修改"}
+      </Button>
     </form>
-  );
-}
-
-function SendCaptchaButton({
-  countDown,
-  ...props
-}: ButtonProps & { countDown: number }) {
-  const { pending } = useFormStatus();
-
-  return (
-    <Button
-      fullWidth
-      className="col-span-2 h-14"
-      color="primary"
-      isDisabled={pending || countDown !== 0}
-      type="submit"
-      {...props}
-    >
-      {countDown === 0 ? "发送验证码" : `剩余${Math.round(countDown / 1000)}秒`}
-    </Button>
-  );
-}
-
-function SubmitButton(props: ButtonProps) {
-  const { pending } = useFormStatus();
-
-  // TODO: 点击发送验证码不触发pending
-  return (
-    <Button
-      fullWidth
-      className="max-w-sm"
-      color="primary"
-      isDisabled={pending}
-      type="submit"
-      {...props}
-    >
-      {pending ? "修改中..." : "修改"}
-    </Button>
   );
 }

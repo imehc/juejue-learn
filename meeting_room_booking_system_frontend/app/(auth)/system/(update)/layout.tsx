@@ -1,5 +1,5 @@
 import { PropsWithChildren } from "react";
-import { Card, CardBody } from "@nextui-org/card";
+import { Card, CardBody } from "@nextui-org/react";
 
 import { SlideBar } from "@/components/sidebar";
 

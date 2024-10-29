@@ -1,4 +1,4 @@
-import { Pagination } from "@nextui-org/pagination";
+import { Pagination } from "@nextui-org/react";
 import { useQueryStates } from "nuqs";
 import { FC } from "react";
 

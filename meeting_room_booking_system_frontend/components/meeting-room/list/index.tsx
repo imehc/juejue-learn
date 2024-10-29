@@ -2,33 +2,32 @@
 
 import type { DelMeetingRoomAction } from "@/app/(auth)/system/(manage)/meeting-room/actions";
 
-import { Input } from "@nextui-org/input";
-import { Divider } from "@nextui-org/divider";
+import { format } from "date-fns";
+import { parseAsInteger, parseAsString, useQueryStates } from "nuqs";
+import { type FC, useEffect, useTransition } from "react";
+import { useAction } from "next-safe-action/hooks";
 import {
-  Table,
-  TableHeader,
-  TableColumn,
-  TableBody,
-  TableRow,
-  TableCell,
+  Button,
+  ButtonGroup,
+  Divider,
   getKeyValue,
-} from "@nextui-org/table";
-import { Pagination } from "@nextui-org/pagination";
-import {
+  Input,
+  Link,
   Modal,
   ModalBody,
   ModalContent,
   ModalFooter,
   ModalHeader,
+  Pagination,
+  Table,
+  TableBody,
+  TableCell,
+  TableColumn,
+  TableHeader,
+  TableRow,
+  Tooltip,
   useDisclosure,
-} from "@nextui-org/modal";
-import { format } from "date-fns";
-import { parseAsInteger, parseAsString, useQueryStates } from "nuqs";
-import { type FC, useEffect, useTransition } from "react";
-import { Button, ButtonGroup } from "@nextui-org/button";
-import { Link } from "@nextui-org/link";
-import { Tooltip } from "@nextui-org/tooltip";
-import { useAction } from "next-safe-action/hooks";
+} from "@nextui-org/react";
 
 import { meetingRoomListSchema } from "./schema";
 
@@ -37,7 +36,7 @@ import {
   MeetingRoomList as MeetingRoomListImpl,
 } from "@/meeting-room-booking-api";
 import { BookingIcon } from "@/components/menu-icon";
-import { parseResult } from "@/helper/parse-result";
+import { parseResult } from "@/helper/parse";
 
 type SystemAction = {
   type: "system";
@@ -175,7 +174,7 @@ export function MeetingRoomList({
           <TableColumn key="isBooked">预定状态</TableColumn>
           <TableColumn key="actions">操作</TableColumn>
         </TableHeader>
-        <TableBody emptyContent={"No rows to display."} items={meetingRooms}>
+        <TableBody emptyContent="没有符合的数据" items={meetingRooms}>
           {(item) => (
             <TableRow key={item.id}>
               {(columnKey) => (

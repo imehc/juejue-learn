@@ -1,23 +1,25 @@
 "use client";
 
-import { Input } from "@nextui-org/input";
-import { useFormState, useFormStatus } from "react-dom";
-import { Button, ButtonProps } from "@nextui-org/button";
-import { useEffect, useState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { useCountDown } from "ahooks";
+import { Input, Button } from "@nextui-org/react";
 
 import { passwordModifyAction, passwordModifyCaptchaAction } from "./actions";
 
 import { UserDetailVo } from "@/meeting-room-booking-api";
-import { parseResult } from "@/helper/parse-result";
+import { parseResult } from "@/helper/parse";
 
 export function PasswordModifyForm({ email }: UserDetailVo) {
-  const [passwordModifyState, passwordModifyFormAction] = useFormState(
-    passwordModifyAction,
-    {},
-  );
-  const [passwordModifyCaptchaState, passwordModifyCaptchaFormAction] =
-    useFormState(passwordModifyCaptchaAction, {});
+  const [
+    passwordModifyState,
+    passwordModifyFormAction,
+    isPendingWithPasswordModify,
+  ] = useActionState(passwordModifyAction, {});
+  const [
+    passwordModifyCaptchaState,
+    passwordModifyCaptchaFormAction,
+    isPendingWithPasswordModifyCaptcha,
+  ] = useActionState(passwordModifyCaptchaAction, {});
 
   const [targetDate, setTargetDate] = useState<number>();
   const [countDown] = useCountDown({
@@ -65,13 +67,23 @@ export function PasswordModifyForm({ email }: UserDetailVo) {
           name="captcha"
           type="number"
         />
-        <SendCaptchaButton
-          countDown={countDown}
+
+        <Button
+          fullWidth
+          className="col-span-2 h-14"
+          color="primary"
           formAction={passwordModifyCaptchaFormAction}
-        />
+          isDisabled={isPendingWithPasswordModifyCaptcha || countDown !== 0}
+          type="submit"
+        >
+          {countDown === 0
+            ? "发送验证码"
+            : `剩余${Math.round(countDown / 1000)}秒`}
+        </Button>
       </div>
       <Input
         isRequired
+        autoComplete="on"
         className="max-w-sm mb-4"
         errorMessage={passwordModifyState?.validationErrors?.password?.join(
           " ",
@@ -83,6 +95,7 @@ export function PasswordModifyForm({ email }: UserDetailVo) {
       />
       <Input
         isRequired
+        autoComplete="on"
         className="max-w-sm mb-4"
         errorMessage={passwordModifyState?.validationErrors?.confirmPassword?.join(
           " ",
@@ -95,45 +108,16 @@ export function PasswordModifyForm({ email }: UserDetailVo) {
         type="password"
       />
 
-      <SubmitButton formAction={passwordModifyFormAction} />
+      <Button
+        fullWidth
+        className="max-w-sm"
+        color="primary"
+        formAction={passwordModifyFormAction}
+        isDisabled={isPendingWithPasswordModify}
+        type="submit"
+      >
+        {isPendingWithPasswordModify ? "修改中..." : "修改"}
+      </Button>
     </form>
-  );
-}
-
-function SendCaptchaButton({
-  countDown,
-  ...props
-}: ButtonProps & { countDown: number }) {
-  const { pending } = useFormStatus();
-
-  return (
-    <Button
-      fullWidth
-      className="col-span-2 h-14"
-      color="primary"
-      isDisabled={pending || countDown !== 0}
-      type="submit"
-      {...props}
-    >
-      {countDown === 0 ? "发送验证码" : `剩余${Math.round(countDown / 1000)}秒`}
-    </Button>
-  );
-}
-
-function SubmitButton(props: ButtonProps) {
-  const { pending } = useFormStatus();
-
-  // TODO: 点击发送验证码不触发pending
-  return (
-    <Button
-      fullWidth
-      className="max-w-sm"
-      color="primary"
-      isDisabled={pending}
-      type="submit"
-      {...props}
-    >
-      {pending ? "修改中..." : "修改"}
-    </Button>
   );
 }

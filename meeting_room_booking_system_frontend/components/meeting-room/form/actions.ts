@@ -11,11 +11,11 @@ import { actionClient } from "@/helper/safe-action";
 
 export const meetingRoomAction = actionClient
   .schema(meetingRoomFormSchema, {
-    handleValidationErrorsShape: (ve) =>
+    handleValidationErrorsShape: async (ve) =>
       flattenValidationErrors(ve).fieldErrors,
   })
   .stateAction(async ({ parsedInput: { id, ...props } }) => {
-    const meetingRoomApi = apiInstance(MeetingRoomApi);
+    const meetingRoomApi = await apiInstance(MeetingRoomApi);
 
     if (!id) {
       const text = await meetingRoomApi.createMeetingRoom({

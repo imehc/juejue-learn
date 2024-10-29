@@ -1,11 +1,12 @@
 "use client";
 
 import * as React from "react";
-import { NextUIProvider } from "@nextui-org/system";
+import { NextUIProvider } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { ThemeProviderProps } from "next-themes/dist/types";
 import { Toaster } from "sonner";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 
 // https://github.com/styled-components/styled-components/issues/3731#issuecomment-2192053161
 const ThemeProvider = (props: ThemeProviderProps): React.JSX.Element => {
@@ -22,7 +23,9 @@ export function Providers({ children, ...themeProps }: ProvidersProps) {
       className="w-full h-full overflow-hidden flex flex-col justify-center items-center"
       navigate={router.push}
     >
-      <ThemeProvider {...themeProps}>{children}</ThemeProvider>
+      <ThemeProvider {...themeProps}>
+        <NuqsAdapter>{children}</NuqsAdapter>
+      </ThemeProvider>
       <Toaster richColors position="top-center" />
     </NextUIProvider>
   );

@@ -1,7 +1,5 @@
 "use client";
 
-import { Input } from "@nextui-org/input";
-import { Divider } from "@nextui-org/divider";
 import {
   Table,
   TableHeader,
@@ -10,28 +8,28 @@ import {
   TableRow,
   TableCell,
   getKeyValue,
-} from "@nextui-org/table";
-import { Pagination } from "@nextui-org/pagination";
-import {
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
+  Input,
+  Pagination,
+  Divider,
   useDisclosure,
-} from "@nextui-org/modal";
+  Avatar,
+  Button,
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+} from "@nextui-org/react";
 import { format } from "date-fns";
 import { parseAsInteger, parseAsString, useQueryStates } from "nuqs";
 import { FC, useEffect, useTransition } from "react";
-import { Button } from "@nextui-org/button";
-import { Avatar } from "@nextui-org/avatar";
 import { useAction } from "next-safe-action/hooks";
 
 import { userListSchema } from "./schema";
 import { frozenUserAction } from "./actions";
 
 import { BASE_PATH, User, UserListVo } from "@/meeting-room-booking-api";
-import { parseResult } from "@/helper/parse-result";
+import { parseResult } from "@/helper/parse";
 
 interface Props extends UserListVo {}
 
@@ -137,7 +135,7 @@ export function UserList({ users, totalCount }: Props) {
           <TableColumn key="isFrozen">状态</TableColumn>
           <TableColumn key="actions">操作</TableColumn>
         </TableHeader>
-        <TableBody emptyContent={"No rows to display."} items={users}>
+        <TableBody emptyContent="没有符合的数据" items={users}>
           {(item) => (
             <TableRow key={item.id}>
               {(columnKey) => (

@@ -1,6 +1,6 @@
 "use client";
 
-import { Listbox, ListboxItem } from "@nextui-org/listbox";
+import { Listbox, ListboxItem } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 
 import { sidebarOptionsWithNormal } from "./normal-options";

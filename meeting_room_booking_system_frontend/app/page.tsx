@@ -4,7 +4,7 @@ import { apiInstance } from "@/helper/auth";
 import { UserApi } from "@/meeting-room-booking-api";
 
 export default async function Home() {
-  const userApi = apiInstance(UserApi);
+  const userApi = await apiInstance(UserApi);
   const user = await userApi.getUserInfo();
 
   if (user.isAdmin) {

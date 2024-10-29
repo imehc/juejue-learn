@@ -1,13 +1,13 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { PropsWithChildren } from "react";
-import { Link } from "@nextui-org/link";
+import { Link } from "@nextui-org/react";
 
 import { ACCESS_TOKEN } from "@/helper/cookie";
 import { Navbar } from "@/components/navbar";
 
-export default function AuthLayout({ children }: PropsWithChildren) {
-  if (!cookies().has(ACCESS_TOKEN)) {
+export default async function AuthLayout({ children }: PropsWithChildren) {
+  if (!(await cookies()).has(ACCESS_TOKEN)) {
     redirect("/login");
   }
 

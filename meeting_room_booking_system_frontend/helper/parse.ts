@@ -1,5 +1,23 @@
+import {
+  parseAbsoluteToLocal,
+  toCalendarDateTime,
+} from "@internationalized/date";
 import { useAction } from "next-safe-action/hooks";
 import { toast } from "sonner";
+import { SafeParseReturnType } from "zod";
+
+/** 格式化日期 */
+export const parseDate = (date?: Date | null) => {
+  try {
+    if (!date) {
+      return null;
+    }
+
+    return toCalendarDateTime(parseAbsoluteToLocal(date.toISOString()));
+  } catch (error) {
+    return null;
+  }
+};
 
 type ParseResultProps = ReturnType<typeof useAction>["result"];
 
@@ -20,4 +38,9 @@ export const parseResult = (props: ParseResultProps, func?: () => unknown) => {
 
     return;
   }
+};
+
+/** 格式化错误 */
+export const parseZodErr = (parse: SafeParseReturnType<unknown, unknown>) => {
+  return parse.error?.errors.map((item) => item.message).join(",");
 };

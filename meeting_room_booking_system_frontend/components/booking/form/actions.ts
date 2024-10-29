@@ -11,13 +11,13 @@ import { actionClient } from "@/helper/safe-action";
 
 export const addBookingAction = actionClient
   .schema(addBookingSchema, {
-    handleValidationErrorsShape: (ve) =>
+    handleValidationErrorsShape: async (ve) =>
       flattenValidationErrors(ve).fieldErrors,
   })
   .stateAction<{
     message?: string;
   }>(async ({ parsedInput }, {}) => {
-    const bookingApi = apiInstance(BookingApi);
+    const bookingApi = await apiInstance(BookingApi);
 
     const text = await bookingApi.createBooking({
       createBookingDto: parsedInput,

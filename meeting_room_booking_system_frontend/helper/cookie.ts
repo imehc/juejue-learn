@@ -28,6 +28,7 @@ export async function updateAuth(request: NextRequest) {
     return clearCookie(res);
   }
 
+  // eslint-disable-next-line no-console
   console.log(
     "Remaining expiration time: ",
     differenceInMinutes(new Date(+expiresIn), new Date()),

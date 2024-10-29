@@ -10,11 +10,11 @@ import { CaptchaApi, UserApi } from "@/meeting-room-booking-api";
 
 export const registerAction = actionClient
   .schema(registerSchema, {
-    handleValidationErrorsShape: (ve) =>
+    handleValidationErrorsShape: async (ve) =>
       flattenValidationErrors(ve).fieldErrors,
   })
   .stateAction(async ({ parsedInput }) => {
-    const userApi = apiInstance(UserApi);
+    const userApi = await apiInstance(UserApi);
 
     const text = await userApi.userRegister({
       registerUserDto: parsedInput,
@@ -25,11 +25,11 @@ export const registerAction = actionClient
 
 export const registerCaptchaAction = actionClient
   .schema(registerCaptchaSchema, {
-    handleValidationErrorsShape: (ve) =>
+    handleValidationErrorsShape: async (ve) =>
       flattenValidationErrors(ve).fieldErrors,
   })
   .stateAction(async ({ parsedInput: { email } }) => {
-    const captchaApi = apiInstance(CaptchaApi);
+    const captchaApi = await apiInstance(CaptchaApi);
     const text = await captchaApi.registerCaptcha({ address: email });
 
     return { message: text ?? "获取注册验证码成功" };

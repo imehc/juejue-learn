@@ -10,11 +10,11 @@ import { CaptchaApi, UserApi } from "@/meeting-room-booking-api";
 
 export const forgotPasswordAction = actionClient
   .schema(forgotSchema, {
-    handleValidationErrorsShape: (ve) =>
+    handleValidationErrorsShape: async (ve) =>
       flattenValidationErrors(ve).fieldErrors,
   })
   .stateAction(async ({ parsedInput }) => {
-    const userApi = apiInstance(UserApi);
+    const userApi = await apiInstance(UserApi);
 
     const text = await userApi.forgotPassword({
       forgotUserPasswordDto: parsedInput,
@@ -25,11 +25,11 @@ export const forgotPasswordAction = actionClient
 
 export const forgotPasswordCaptchaAction = actionClient
   .schema(forgotPasswordCaptchaSchema, {
-    handleValidationErrorsShape: (ve) =>
+    handleValidationErrorsShape: async (ve) =>
       flattenValidationErrors(ve).fieldErrors,
   })
   .stateAction(async ({ parsedInput: { email } }) => {
-    const captchaApi = apiInstance(CaptchaApi);
+    const captchaApi = await apiInstance(CaptchaApi);
     const text = await captchaApi.fotgotCaptcha({ address: email });
 
     return { message: text ?? "获取找回密码验证码成功" };

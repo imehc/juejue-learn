@@ -10,14 +10,14 @@ import { CaptchaApi, UserApi } from "@/meeting-room-booking-api";
 
 export const passwordModifyAction = actionClient
   .schema(passwordModifySchema, {
-    handleValidationErrorsShape: (ve) =>
+    handleValidationErrorsShape: async (ve) =>
       flattenValidationErrors(ve).fieldErrors,
   })
   .stateAction(async ({ parsedInput }) => {
     // const payload = passwordModifySchema.safeParse(
     //   Object.fromEntries(formData.entries()),
     // );
-    const userApi = apiInstance(UserApi);
+    const userApi = await apiInstance(UserApi);
 
     const text = await userApi.updatePassword({
       updateUserPasswordDto: parsedInput,
@@ -28,7 +28,7 @@ export const passwordModifyAction = actionClient
 
 export const passwordModifyCaptchaAction = actionClient.stateAction(
   async () => {
-    const captchaApi = apiInstance(CaptchaApi);
+    const captchaApi = await apiInstance(CaptchaApi);
     const text = await captchaApi.updatePasswordCaptcha();
 
     return { message: text ?? "获取更改密码验证码成功" };

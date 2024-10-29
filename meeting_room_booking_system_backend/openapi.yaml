@@ -39,8 +39,8 @@ paths:
           required: true
           in: query
           description: 邮箱地址
-          example: xxx@xx.com
           schema:
+            example: xxx@xx.com
             type: string
       responses:
         '200':
@@ -67,8 +67,8 @@ paths:
           required: true
           in: query
           description: 邮箱地址
-          example: xxx@xx.com
           schema:
+            example: xxx@xx.com
             type: string
       responses:
         '200':
@@ -205,8 +205,8 @@ paths:
           required: true
           in: query
           description: 刷新token
-          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9
           schema:
+            example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9
             type: string
       responses:
         '200':

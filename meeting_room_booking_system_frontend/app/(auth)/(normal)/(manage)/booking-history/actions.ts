@@ -14,7 +14,7 @@ const unbindBookingschema = z.object({
 export const unbindBookingAction = actionClient
   .schema(unbindBookingschema)
   .action(async ({ parsedInput: { id } }) => {
-    const bookingApi = apiInstance(BookingApi);
+    const bookingApi = await apiInstance(BookingApi);
 
     const text = await bookingApi.unbindBooking({
       bookingId: id,
