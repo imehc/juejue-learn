@@ -3,7 +3,7 @@
 import { useActionState, useEffect, useMemo, useState } from "react";
 import { useCountDown } from "ahooks";
 import { Avatar, Button, Input } from "@nextui-org/react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next-nprogress-bar";
 
 import { profileModifyAction, profileModifyCaptchaAction } from "./actions";
 

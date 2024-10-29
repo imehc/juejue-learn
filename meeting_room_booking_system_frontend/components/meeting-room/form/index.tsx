@@ -2,7 +2,7 @@
 
 import { Button, Input } from "@nextui-org/react";
 import { useActionState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next-nprogress-bar";
 
 import { meetingRoomAction } from "./actions";
 

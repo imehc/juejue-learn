@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation";
+import { notFound } from "next-nprogress-bar";
 
 import { MeetingRoomForm } from "..";
 
