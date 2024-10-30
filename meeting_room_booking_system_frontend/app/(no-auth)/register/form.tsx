@@ -61,6 +61,7 @@ export function RegisterForm() {
       />
       <Input
         isRequired
+        autoComplete="on"
         className="max-w-sm mb-4"
         errorMessage={registerState?.validationErrors?.password?.join(" ")}
         isInvalid={!!registerState?.validationErrors?.password?.length}
@@ -70,6 +71,7 @@ export function RegisterForm() {
       />
       <Input
         isRequired
+        autoComplete="on"
         className="max-w-sm mb-4"
         errorMessage={registerState?.validationErrors?.confirmPassword?.join(
           " ",

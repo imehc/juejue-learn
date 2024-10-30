@@ -22,6 +22,7 @@ export function SystemLoginForm() {
       <Input
         isRequired
         required
+        autoComplete="on"
         className="max-w-sm mb-4"
         errorMessage={loginState?.validationErrors?.username?.join(" ")}
         isInvalid={!!loginState?.validationErrors?.username?.length}
@@ -32,6 +33,7 @@ export function SystemLoginForm() {
       <Input
         isRequired
         required
+        autoComplete="on"
         className="max-w-sm mb-4"
         errorMessage={loginState?.validationErrors?.password?.join(" ")}
         isInvalid={!!loginState?.validationErrors?.password?.length}

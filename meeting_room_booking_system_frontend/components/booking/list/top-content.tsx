@@ -160,6 +160,7 @@ export const BookingListTopContent = forwardRef<
           setQueryState((state) => {
             return {
               ...state,
+              status: null,
               username: null,
               name: null,
               location: null,
