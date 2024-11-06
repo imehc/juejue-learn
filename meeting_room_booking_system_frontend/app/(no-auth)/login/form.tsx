@@ -67,10 +67,11 @@ export function LoginForm() {
         as={Link}
         className="mt-4"
         color="default"
-        // 没有固定ip地址或域名之前，暂时先暴露改端口以支持第三方登录
+        // 没有固定ip地址或域名之前，暂不支持第三方登录
         href="http://localhost:6020/user/google"
         startContent={<GoogleIcon />}
         variant="bordered"
+        isDisabled={process.env.NODE_ENV === "production"}
       >
         Signin with Google
       </Button>
@@ -79,10 +80,11 @@ export function LoginForm() {
         as={Link}
         className="mt-4"
         color="default"
-        // 没有固定ip地址或域名之前，暂时先暴露改端口以支持第三方登录
+        // 没有固定ip地址或域名之前，暂不支持第三方登录
         href="http://localhost:6020/user/github"
         startContent={<GithubIcon />}
         variant="bordered"
+        isDisabled={process.env.NODE_ENV === "production"}
       >
         Signin with Github
       </Button>
