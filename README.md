@@ -29,3 +29,7 @@ docker run -p 6022:6022 -d meeting_room_booking_system_frontend
 
 ## 本地开发
 > 先进入`meeting_room_booking_system_backend`目录，修改`.env.dev.yaml`配置
+
+## 已知问题
+- [ ] next-ui DatePicker组件待适配
+- [ ] react19适配
