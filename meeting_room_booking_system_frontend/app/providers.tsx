@@ -3,8 +3,10 @@
 import * as React from "react";
 import { NextUIProvider } from "@nextui-org/react";
 import { useRouter } from "next-nprogress-bar";
-import { ThemeProvider as NextThemesProvider } from "next-themes";
-import { ThemeProviderProps } from "next-themes/dist/types";
+import {
+  ThemeProvider as NextThemesProvider,
+  ThemeProviderProps,
+} from "next-themes";
 import { Toaster } from "sonner";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { AppProgressBar as ProgressBar } from "next-nprogress-bar";
