@@ -14,7 +14,7 @@ const schema = z.object({
 export const passBookingAction = actionClient
   .schema(schema)
   .action(async ({ parsedInput: { id } }) => {
-    const bookingApi = apiInstance(BookingApi);
+    const bookingApi = await apiInstance(BookingApi);
     const text = await bookingApi.passBooking({
       bookingId: id,
     });
@@ -27,7 +27,7 @@ export const passBookingAction = actionClient
 export const rejectBookingAction = actionClient
   .schema(schema)
   .action(async ({ parsedInput: { id } }) => {
-    const bookingApi = apiInstance(BookingApi);
+    const bookingApi = await apiInstance(BookingApi);
     const text = await bookingApi.rejectBooking({
       bookingId: id,
     });
@@ -40,7 +40,7 @@ export const rejectBookingAction = actionClient
 export const unbindBookingAction = actionClient
   .schema(schema)
   .action(async ({ parsedInput: { id } }) => {
-    const bookingApi = apiInstance(BookingApi);
+    const bookingApi = await apiInstance(BookingApi);
     const text = await bookingApi.unbindBooking({
       bookingId: id,
     });

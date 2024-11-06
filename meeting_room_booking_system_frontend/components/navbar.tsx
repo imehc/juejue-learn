@@ -1,4 +1,5 @@
 import {
+  link as linkStyles,
   Navbar as NextUINavbar,
   NavbarContent,
   NavbarMenu,
@@ -6,14 +7,13 @@ import {
   NavbarBrand,
   NavbarItem,
   NavbarMenuItem,
-} from "@nextui-org/navbar";
-import { Kbd } from "@nextui-org/kbd";
-import { Link } from "@nextui-org/link";
-import { Input } from "@nextui-org/input";
-import { link as linkStyles } from "@nextui-org/theme";
+  Input,
+  Kbd,
+  Link,
+} from "@nextui-org/react";
 import NextLink from "next/link";
 import clsx from "clsx";
-import { FC, use } from "react";
+import { FC } from "react";
 
 import { siteConfig } from "@/config/site";
 import { ThemeSwitch } from "@/components/theme-switch";
@@ -21,9 +21,9 @@ import { GithubIcon, SearchIcon, Logo, ProfileIcon } from "@/components/icons";
 import { apiInstance } from "@/helper/auth";
 import { UserApi } from "@/meeting-room-booking-api";
 
-export const Navbar: FC = () => {
-  const userApi = apiInstance(UserApi);
-  const user = use(userApi.getUserInfo());
+export const Navbar: FC = async () => {
+  const userApi = await apiInstance(UserApi);
+  const user = await userApi.getUserInfo();
 
   const searchInput = (
     <Input

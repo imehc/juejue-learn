@@ -1,7 +1,7 @@
 "use client";
 
-import { Listbox, ListboxItem } from "@nextui-org/listbox";
-import { useRouter } from "next/navigation";
+import { Listbox, ListboxItem } from "@nextui-org/react";
+import { useRouter } from "next-nprogress-bar";
 
 import { sidebarOptionsWithNormal } from "./normal-options";
 import { sidebarOptionsWithSystem } from "./system-options";

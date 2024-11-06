@@ -7,7 +7,7 @@ import {
 // 升级next15、react19后支持有状态操作
 // https://github.com/TheEdoRan/next-safe-action/issues?q=is%3Aissue+stateAction+is%3Aclosed
 export const actionClient = createSafeActionClient({
-  handleReturnedServerError: (originalError) => {
+  handleServerError: (originalError) => {
     if (originalError instanceof Error) {
       return originalError.message;
     }

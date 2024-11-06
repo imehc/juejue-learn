@@ -1,4 +1,4 @@
-import { Chip } from "@nextui-org/chip";
+import { Chip } from "@nextui-org/react";
 import { FC } from "react";
 
 import { BookingStatusEnum } from "@/meeting-room-booking-api";

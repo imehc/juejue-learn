@@ -1,29 +1,31 @@
 "use client";
 
-import { Input } from "@nextui-org/input";
-import { useFormState, useFormStatus } from "react-dom";
-import { Link } from "@nextui-org/link";
-import { Button, ButtonProps } from "@nextui-org/button";
-import { Divider } from "@nextui-org/divider";
-import { useEffect } from "react";
+import { useActionState, useEffect } from "react";
+import { Button, Divider, Input, Link } from "@nextui-org/react";
 
 import { loginAction } from "./actions";
 
 import { GithubIcon, GoogleIcon } from "@/components/icons";
-import { parseResult } from "@/helper/parse-result";
+import { parseResult } from "@/helper/parse";
 
 export function LoginForm() {
-  const [loginState, loginFormAction] = useFormState(loginAction, {});
+  const [loginState, loginFormAction, isPending] = useActionState(
+    loginAction,
+    {},
+  );
 
   useEffect(() => {
     parseResult(loginState);
   }, [loginState]);
+
+  const disabled = process.env.NODE_ENV === "production";
 
   return (
     <form action="" autoComplete="off" className="w-full">
       <Input
         isRequired
         required
+        autoComplete="on"
         className="max-w-sm mb-4"
         errorMessage={loginState?.validationErrors?.username?.join(" ")}
         isInvalid={!!loginState?.validationErrors?.username?.length}
@@ -34,6 +36,7 @@ export function LoginForm() {
       <Input
         isRequired
         required
+        autoComplete="on"
         className="max-w-sm mb-4"
         errorMessage={loginState?.validationErrors?.password?.join(" ")}
         isInvalid={!!loginState?.validationErrors?.password?.length}
@@ -50,15 +53,25 @@ export function LoginForm() {
         </Link>
       </div>
       <Divider className="mb-4" />
-      <SubmitButton formAction={loginFormAction} />
+      <Button
+        fullWidth
+        className="max-w-sm"
+        color="primary"
+        formAction={loginFormAction}
+        isDisabled={isPending}
+        type="submit"
+      >
+        {isPending ? "登录中..." : "登录"}
+      </Button>
       {/* 使用next可以使用next-auth来进行第三方登录 */}
       <Button
         fullWidth
         as={Link}
         className="mt-4"
         color="default"
-        // 没有固定ip地址或域名之前，暂时先暴露改端口以支持第三方登录
+        // 没有固定ip地址或域名之前，暂不支持第三方登录
         href="http://localhost:6020/user/google"
+        isDisabled={disabled}
         startContent={<GoogleIcon />}
         variant="bordered"
       >
@@ -69,30 +82,14 @@ export function LoginForm() {
         as={Link}
         className="mt-4"
         color="default"
-        // 没有固定ip地址或域名之前，暂时先暴露改端口以支持第三方登录
+        // 没有固定ip地址或域名之前，暂不支持第三方登录
         href="http://localhost:6020/user/github"
+        isDisabled={disabled}
         startContent={<GithubIcon />}
         variant="bordered"
       >
         Signin with Github
       </Button>
     </form>
-  );
-}
-
-function SubmitButton(props: ButtonProps) {
-  const { pending } = useFormStatus();
-
-  return (
-    <Button
-      fullWidth
-      className="max-w-sm"
-      color="primary"
-      isDisabled={pending}
-      type="submit"
-      {...props}
-    >
-      {pending ? "登录中..." : "登录"}
-    </Button>
   );
 }

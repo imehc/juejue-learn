@@ -7,25 +7,29 @@ import type {
 } from "@/app/(auth)/system/(manage)/booking/actions";
 import type { UnbindBookingAction } from "@/app/(auth)/(normal)/(manage)/booking-history/actions";
 
-import { Chip } from "@nextui-org/chip";
+import { toast } from "sonner";
+import { useAction } from "next-safe-action/hooks";
+import { format } from "date-fns";
 import {
   Table,
   TableHeader,
   TableColumn,
+  Chip,
+  Popover,
+  PopoverTrigger,
+  Button,
+  PopoverContent,
+  CheckboxGroup,
+  Checkbox,
   TableBody,
   TableRow,
   TableCell,
+  useDisclosure,
   getKeyValue,
-} from "@nextui-org/table";
-import { CheckboxGroup, Checkbox } from "@nextui-org/checkbox";
-import { useDisclosure } from "@nextui-org/modal";
-import { Tooltip } from "@nextui-org/tooltip";
-import { format } from "date-fns";
-import { FC, useEffect, useMemo, useRef, useState } from "react";
-import { Button, ButtonGroup } from "@nextui-org/button";
-import { Popover, PopoverContent, PopoverTrigger } from "@nextui-org/popover";
-import { toast } from "sonner";
-import { useAction } from "next-safe-action/hooks";
+  ButtonGroup,
+  Tooltip,
+} from "@nextui-org/react";
+import { useRef, FC, useState, useEffect, useMemo } from "react";
 
 import { BookingListTopContent, BookingListTopContentRef } from "./top-content";
 import { BookingListBottomContent } from "./bottom-content";
@@ -45,7 +49,7 @@ import {
   UrgeIcon,
 } from "@/components/menu-icon";
 import { ConfimModal } from "@/components/confirm-modal";
-import { parseResult } from "@/helper/parse-result";
+import { parseResult } from "@/helper/parse";
 
 type SystemAction = {
   type: "system";
@@ -152,7 +156,7 @@ export function BookingList({
         <TableColumn key="remark">备注</TableColumn>
         <TableColumn key="actions">操作</TableColumn>
       </TableHeader>
-      <TableBody emptyContent={"No rows to display."} items={bookings}>
+      <TableBody emptyContent="没有符合的数据" items={bookings}>
         {(item) => (
           <TableRow key={item.id}>
             {(columnKey) => (

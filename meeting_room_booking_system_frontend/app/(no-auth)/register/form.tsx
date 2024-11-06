@@ -1,25 +1,23 @@
 "use client";
 
-import { Input } from "@nextui-org/input";
-import { useFormState, useFormStatus } from "react-dom";
-import { Link } from "@nextui-org/link";
-import { Button, ButtonProps } from "@nextui-org/button";
-import { Divider } from "@nextui-org/divider";
-import { useEffect, useState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { useCountDown } from "ahooks";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next-nprogress-bar";
+import { Button, Divider, Input, Link } from "@nextui-org/react";
 
 import { registerAction, registerCaptchaAction } from "./actions";
 
-import { parseResult } from "@/helper/parse-result";
+import { parseResult } from "@/helper/parse";
 
 export function RegisterForm() {
   const router = useRouter();
-  const [registerState, registerFormAction] = useFormState(registerAction, {});
-  const [registerCaptchaState, registerCaptchaFormAction] = useFormState(
-    registerCaptchaAction,
-    {},
-  );
+  const [registerState, registerFormAction, isPendingWithRegister] =
+    useActionState(registerAction, {});
+  const [
+    registerCaptchaState,
+    registerCaptchaFormAction,
+    isPendingWithRegisterCaptcha,
+  ] = useActionState(registerCaptchaAction, {});
 
   const [targetDate, setTargetDate] = useState<number>();
   const [countDown] = useCountDown({
@@ -63,6 +61,7 @@ export function RegisterForm() {
       />
       <Input
         isRequired
+        autoComplete="on"
         className="max-w-sm mb-4"
         errorMessage={registerState?.validationErrors?.password?.join(" ")}
         isInvalid={!!registerState?.validationErrors?.password?.length}
@@ -72,6 +71,7 @@ export function RegisterForm() {
       />
       <Input
         isRequired
+        autoComplete="on"
         className="max-w-sm mb-4"
         errorMessage={registerState?.validationErrors?.confirmPassword?.join(
           " ",
@@ -107,10 +107,18 @@ export function RegisterForm() {
           name="captcha"
           type="number"
         />
-        <SendCaptchaButton
-          countDown={countDown}
+        <Button
+          fullWidth
+          className="col-span-2 h-14"
+          color="primary"
           formAction={registerCaptchaFormAction}
-        />
+          isDisabled={isPendingWithRegisterCaptcha || countDown !== 0}
+          type="submit"
+        >
+          {countDown === 0
+            ? "发送验证码"
+            : `剩余${Math.round(countDown / 1000)}秒`}
+        </Button>
       </div>
       <div className="w-full mb-4 text-end">
         <span>已有账号？去</span>
@@ -119,45 +127,16 @@ export function RegisterForm() {
         </Link>
       </div>
       <Divider className="mb-4" />
-      <SubmitButton formAction={registerFormAction} />
+      <Button
+        fullWidth
+        className="max-w-sm"
+        color="primary"
+        formAction={registerFormAction}
+        isDisabled={isPendingWithRegister}
+        type="submit"
+      >
+        {isPendingWithRegister ? "注册中..." : "注册"}
+      </Button>
     </form>
-  );
-}
-
-function SendCaptchaButton({
-  countDown,
-  ...props
-}: ButtonProps & { countDown: number }) {
-  const { pending } = useFormStatus();
-
-  return (
-    <Button
-      fullWidth
-      className="col-span-2 h-14"
-      color="primary"
-      isDisabled={pending || countDown !== 0}
-      type="submit"
-      {...props}
-    >
-      {countDown === 0 ? "发送验证码" : `剩余${Math.round(countDown / 1000)}秒`}
-    </Button>
-  );
-}
-
-function SubmitButton(props: ButtonProps) {
-  const { pending } = useFormStatus();
-
-  // TODO: 点击发送验证码不触发pending
-  return (
-    <Button
-      fullWidth
-      className="max-w-sm"
-      color="primary"
-      isDisabled={pending}
-      type="submit"
-      {...props}
-    >
-      {pending ? "注册中..." : "注册"}
-    </Button>
   );
 }

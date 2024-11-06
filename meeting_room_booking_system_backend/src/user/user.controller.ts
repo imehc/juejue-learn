@@ -405,13 +405,22 @@ export class UserController {
   @ApiBearerAuth() // 需要登录标识
   @ApiExtraModels(UserDetailVo, UserInfoVo) // 如果没有生成对应类型，则需要此
   @ApiOkResponse({
-    schema: {
-      oneOf: refs(UserDetailVo, UserInfoVo),
-      discriminator: {
-        propertyName: 'type',
-        mapping: {
-          system: 'UserInfo', // 管理员
-          normal: 'UserDetailVo', // 普通用户
+    content: {
+      'application/json': {
+        schema: {
+          // https://github.com/nestjs/swagger/issues/225#issuecomment-669036603
+          // oneOf: [
+          //   { $ref: getSchemaPath(UserDetailVo) },
+          //   { $ref: getSchemaPath(UserInfoVo) },
+          // ],// 或
+          oneOf: refs(UserDetailVo, UserInfoVo),
+          discriminator: {
+            propertyName: 'type',
+            mapping: {
+              system: 'UserInfo', // 管理员
+              normal: 'UserDetailVo', // 普通用户
+            },
+          },
         },
       },
     },

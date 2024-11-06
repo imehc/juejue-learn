@@ -14,7 +14,7 @@ const schema = z.object({
 export const frozenUserAction = actionClient
   .schema(schema)
   .action(async ({ parsedInput: { id } }) => {
-    const systemApi = apiInstance(SystemApi);
+    const systemApi = await apiInstance(SystemApi);
     const text = await systemApi.freezeUser({ id: id });
 
     revalidatePath("/system/user");

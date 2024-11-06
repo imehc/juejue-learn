@@ -1,12 +1,12 @@
-import { Button } from "@nextui-org/button";
 import {
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
   useDisclosure,
-} from "@nextui-org/modal";
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Button,
+} from "@nextui-org/react";
 import { PropsWithChildren, ReactNode } from "react";
 
 interface Props extends PropsWithChildren {

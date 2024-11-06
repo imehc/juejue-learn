@@ -1,17 +1,17 @@
 "use client";
 
-import { Input } from "@nextui-org/input";
-import { useFormState, useFormStatus } from "react-dom";
-import { Button, ButtonProps } from "@nextui-org/button";
-import { Divider } from "@nextui-org/divider";
-import { useEffect } from "react";
+import { useActionState, useEffect } from "react";
+import { Input, Divider, Button } from "@nextui-org/react";
 
 import { systemLoginAction } from "./actions";
 
-import { parseResult } from "@/helper/parse-result";
+import { parseResult } from "@/helper/parse";
 
 export function SystemLoginForm() {
-  const [loginState, loginFormAction] = useFormState(systemLoginAction, {});
+  const [loginState, loginFormAction, isPending] = useActionState(
+    systemLoginAction,
+    {},
+  );
 
   useEffect(() => {
     parseResult(loginState);
@@ -22,6 +22,7 @@ export function SystemLoginForm() {
       <Input
         isRequired
         required
+        autoComplete="on"
         className="max-w-sm mb-4"
         errorMessage={loginState?.validationErrors?.username?.join(" ")}
         isInvalid={!!loginState?.validationErrors?.username?.length}
@@ -32,6 +33,7 @@ export function SystemLoginForm() {
       <Input
         isRequired
         required
+        autoComplete="on"
         className="max-w-sm mb-4"
         errorMessage={loginState?.validationErrors?.password?.join(" ")}
         isInvalid={!!loginState?.validationErrors?.password?.length}
@@ -40,24 +42,16 @@ export function SystemLoginForm() {
         type="password"
       />
       <Divider className="mb-4" />
-      <SubmitButton formAction={loginFormAction} />
+      <Button
+        fullWidth
+        className="max-w-sm"
+        color="primary"
+        formAction={loginFormAction}
+        isDisabled={isPending}
+        type="submit"
+      >
+        {isPending ? "登录中..." : "登录"}
+      </Button>
     </form>
-  );
-}
-
-function SubmitButton(props: ButtonProps) {
-  const { pending } = useFormStatus();
-
-  return (
-    <Button
-      fullWidth
-      className="max-w-sm"
-      color="primary"
-      isDisabled={pending}
-      type="submit"
-      {...props}
-    >
-      {pending ? "登录中..." : "登录"}
-    </Button>
   );
 }

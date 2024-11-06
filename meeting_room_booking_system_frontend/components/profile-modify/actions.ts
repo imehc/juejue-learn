@@ -10,13 +10,13 @@ import { actionClient } from "@/helper/safe-action";
 
 export const profileModifyAction = actionClient
   .schema(profileModifySchema, {
-    handleValidationErrorsShape: (ve) =>
+    handleValidationErrorsShape: async (ve) =>
       flattenValidationErrors(ve).fieldErrors,
   })
   .stateAction(async ({ parsedInput: { picture: file, ...props } }) => {
     let headPic = props.headPic;
-    const userApi = apiInstance(UserApi);
-    const fileApi = apiInstance(FileApi);
+    const userApi = await apiInstance(UserApi);
+    const fileApi = await apiInstance(FileApi);
 
     if (file?.size) {
       // 上传搭配静态文件夹
@@ -48,7 +48,7 @@ export const profileModifyAction = actionClient
   });
 
 export const profileModifyCaptchaAction = actionClient.stateAction(async () => {
-  const captchaApi = apiInstance(CaptchaApi);
+  const captchaApi = await apiInstance(CaptchaApi);
   const text = await captchaApi.updateUserInfoCaptcha();
 
   return { message: text ?? "获取更新用户信息验证码成功" };

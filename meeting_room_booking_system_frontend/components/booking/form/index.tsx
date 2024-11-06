@@ -1,26 +1,30 @@
 "use client";
 
-import { Button, ButtonProps } from "@nextui-org/button";
-import { Input, Textarea } from "@nextui-org/input";
-import { useFormState, useFormStatus } from "react-dom";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
-import { DatePicker } from "@nextui-org/date-picker";
+import { useRouter } from "next-nprogress-bar";
+import { useActionState, useEffect } from "react";
+import {
+  Button,
+  DatePicker,
+  DateValue,
+  Input,
+  Textarea,
+} from "@nextui-org/react";
 import { addHours } from "date-fns";
-import { DateValue } from "@internationalized/date";
 
 import { addBookingAction } from "./actions";
 
 import { MeetingRoom } from "@/meeting-room-booking-api";
-import { parseDate } from "@/helper/parse-date";
-import { parseResult } from "@/helper/parse-result";
+import { parseDate, parseResult } from "@/helper/parse";
 
 export function AddBookingForm({ id, name }: MeetingRoom) {
   // const { execute } = useStateAction(addBookingAction, {
   //   initResult: { data: { newName: "jane" } },
   // });
   const router = useRouter();
-  const [handleState, handleFormAction] = useFormState(addBookingAction, {});
+  const [handleState, handleFormAction, isPending] = useActionState(
+    addBookingAction,
+    {},
+  );
 
   useEffect(() => {
     parseResult(handleState, router.back);
@@ -49,6 +53,7 @@ export function AddBookingForm({ id, name }: MeetingRoom) {
         name="name"
         type="text"
       />
+      {/* TODO: 点击选择日期报错,待适配 https://github.com/nextui-org/nextui/issues/3939 */}
       <DatePicker
         isRequired
         showMonthAndYearPickers
@@ -82,24 +87,22 @@ export function AddBookingForm({ id, name }: MeetingRoom) {
         placeholder="请填写备注"
       />
 
-      <SubmitButton formAction={handleFormAction} />
+      <Button
+        fullWidth
+        className="max-w-sm"
+        color="primary"
+        formAction={handleFormAction}
+        isDisabled={isPending}
+        type="submit"
+        onKeyDown={(e) => {
+          // https://github.com/nextui-org/nextui/issues/2074#issuecomment-2051057417
+          if ("continuePropagation" in e) {
+            e.continuePropagation();
+          }
+        }}
+      >
+        {isPending ? "预定中...`" : "预定"}
+      </Button>
     </form>
-  );
-}
-
-function SubmitButton(props: ButtonProps) {
-  const { pending } = useFormStatus();
-
-  return (
-    <Button
-      fullWidth
-      className="max-w-sm"
-      color="primary"
-      isDisabled={pending}
-      type="submit"
-      {...props}
-    >
-      {pending ? "预定中...`" : "预定"}
-    </Button>
   );
 }

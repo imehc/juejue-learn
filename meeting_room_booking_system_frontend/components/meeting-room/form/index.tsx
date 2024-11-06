@@ -1,15 +1,13 @@
 "use client";
 
-import { Button, ButtonProps } from "@nextui-org/button";
-import { Input } from "@nextui-org/input";
-import { useFormState, useFormStatus } from "react-dom";
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { Button, Input } from "@nextui-org/react";
+import { useActionState, useEffect } from "react";
+import { useRouter } from "next-nprogress-bar";
 
 import { meetingRoomAction } from "./actions";
 
 import { MeetingRoom } from "@/meeting-room-booking-api";
-import { parseResult } from "@/helper/parse-result";
+import { parseResult } from "@/helper/parse";
 
 export function MeetingRoomForm({
   id,
@@ -20,7 +18,10 @@ export function MeetingRoomForm({
   description,
 }: Partial<MeetingRoom>) {
   const router = useRouter();
-  const [handleState, handleFormAction] = useFormState(meetingRoomAction, {});
+  const [handleState, handleFormAction, isPending] = useActionState(
+    meetingRoomAction,
+    {},
+  );
 
   useEffect(() => {
     parseResult(handleState, router.back);
@@ -93,31 +94,16 @@ export function MeetingRoomForm({
         type="text"
       />
 
-      <SubmitButton formAction={handleFormAction} hasUpdated={!!id} />
+      <Button
+        fullWidth
+        className="max-w-sm"
+        color="primary"
+        formAction={handleFormAction}
+        isDisabled={isPending}
+        type="submit"
+      >
+        {isPending ? `${!!id ? "更新" : "创建"}中...` : !!id ? "更新" : "创建"}
+      </Button>
     </form>
-  );
-}
-
-function SubmitButton({
-  hasUpdated,
-  ...props
-}: ButtonProps & { hasUpdated: boolean }) {
-  const { pending } = useFormStatus();
-
-  return (
-    <Button
-      fullWidth
-      className="max-w-sm"
-      color="primary"
-      isDisabled={pending}
-      type="submit"
-      {...props}
-    >
-      {pending
-        ? `${hasUpdated ? "更新" : "创建"}中...`
-        : hasUpdated
-          ? "更新"
-          : "创建"}
-    </Button>
   );
 }

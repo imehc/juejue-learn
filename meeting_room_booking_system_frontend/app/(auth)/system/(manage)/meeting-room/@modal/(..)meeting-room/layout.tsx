@@ -1,7 +1,7 @@
 "use client";
 
-import { Modal, ModalBody, ModalContent } from "@nextui-org/modal";
-import { useRouter } from "next/navigation";
+import { Modal, ModalBody, ModalContent } from "@nextui-org/react";
+import { useRouter } from "next-nprogress-bar";
 import { PropsWithChildren } from "react";
 
 export default function MeetingRoomModalLayout({

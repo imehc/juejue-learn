@@ -51,6 +51,14 @@ function initConfig(
     .setVersion('1.0')
     .addServer(cs.get('nest-server.doc-url'))
     .addBearerAuth({ type: 'http', description: '基于jwt的认证' })
+    .addTag('auth', '权限')
+    .addTag('user', '用户')
+    .addTag('system', '管理员')
+    .addTag('captcha', '验证码')
+    .addTag('meeting-room', '会议室')
+    .addTag('booking', '预定')
+    .addTag('statistic', '统计')
+    .addTag('file', '文件')
     .build();
   const document = SwaggerModule.createDocument(app, config);
   // 写入到文件

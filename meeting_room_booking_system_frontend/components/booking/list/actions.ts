@@ -14,7 +14,7 @@ const schema = z.object({
 export const urgeBookingAction = actionClient
   .schema(schema)
   .action(async ({ parsedInput: { bookingId } }) => {
-    const bookingApi = apiInstance(BookingApi);
+    const bookingApi = await apiInstance(BookingApi);
     const text = await bookingApi.urgeBooking({ bookingId });
 
     revalidatePath("/meeting-room");

@@ -4,24 +4,23 @@ import { statisticsSchema } from "./schema";
 import { apiInstance } from "@/helper/auth";
 import { StatisticApi } from "@/meeting-room-booking-api";
 import { UnknownError } from "@/components/unknown-error";
+import { BasicPageParams } from "@/types";
+import { parseZodErr } from "@/helper/parse";
 
-export default async function SystemStatistics({
-  searchParams,
-}: {
-  searchParams: unknown;
-}) {
+export default async function SystemStatistics(props: BasicPageParams) {
+  const searchParams = await props.searchParams;
   const payload = statisticsSchema.safeParse(searchParams);
 
   if (!payload.success) {
-    return <UnknownError />;
+    return <UnknownError msg={parseZodErr(payload)} />;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { chartType: _, ...props } = payload.data;
+  const { chartType: _, ...attr } = payload.data;
 
-  const statisticApi = apiInstance(StatisticApi);
-  const userBooking = await statisticApi.findUserBookingCount(props);
-  const meetingRoomUsed = await statisticApi.findMeetingRoomUsedCount(props);
+  const statisticApi = await apiInstance(StatisticApi);
+  const userBooking = await statisticApi.findUserBookingCount(attr);
+  const meetingRoomUsed = await statisticApi.findMeetingRoomUsedCount(attr);
 
   return (
     <Statistics meetingRoomUsed={meetingRoomUsed} userBooking={userBooking} />

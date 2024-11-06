@@ -14,7 +14,7 @@ const schema = z.object({
 export const delMeetingRoomAction = actionClient
   .schema(schema)
   .action(async ({ parsedInput: { id } }) => {
-    const meetingRoomApi = apiInstance(MeetingRoomApi);
+    const meetingRoomApi = await apiInstance(MeetingRoomApi);
     const text = await meetingRoomApi.delMeetingRoom({ meetingRoomId: id });
 
     revalidatePath("/system/meeting-room");

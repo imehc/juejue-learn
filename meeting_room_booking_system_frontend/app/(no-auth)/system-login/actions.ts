@@ -13,11 +13,11 @@ import { actionClient } from "@/helper/safe-action";
 
 export const systemLoginAction = actionClient
   .schema(loginSchema, {
-    handleValidationErrorsShape: (ve) =>
+    handleValidationErrorsShape: async (ve) =>
       flattenValidationErrors(ve).fieldErrors,
   })
   .stateAction(async ({ parsedInput }) => {
-    const systemApi = apiInstance(SystemApi);
+    const systemApi = await apiInstance(SystemApi);
 
     const { auth } = await systemApi.systemLogin({
       loginUserDto: parsedInput,

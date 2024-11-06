@@ -13,11 +13,12 @@ import { actionClient } from "@/helper/safe-action";
 
 export const loginAction = actionClient
   .schema(loginSchema, {
-    handleValidationErrorsShape: (ve) =>
+    // TODO: https://github.com/TheEdoRan/next-safe-action/issues/288#issuecomment-2438651208
+    handleValidationErrorsShape: async (ve) =>
       flattenValidationErrors(ve).fieldErrors,
   })
   .stateAction(async ({ parsedInput }) => {
-    const userApi = apiInstance(UserApi);
+    const userApi = await apiInstance(UserApi);
 
     const { auth } = await userApi.userLogin({ loginUserDto: parsedInput });
 
@@ -27,7 +28,7 @@ export const loginAction = actionClient
   });
 
 export async function clearCookie() {
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
 
   cookieStore.delete(ACCESS_TOKEN);
   cookieStore.delete(EXPIRES_IN);
@@ -39,7 +40,7 @@ export async function setAuthCookie({
   refreshToken,
   expiresIn,
 }: Auth) {
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
 
   const now = new Date().getTime() + expiresIn;
 
@@ -53,7 +54,7 @@ export async function setAuthCookie({
     httpOnly: true,
     sameSite: "lax",
   });
-  cookies().set(EXPIRES_IN, now.toString(), {
+  cookieStore.set(EXPIRES_IN, now.toString(), {
     httpOnly: true,
     sameSite: "lax",
     expires: now,
