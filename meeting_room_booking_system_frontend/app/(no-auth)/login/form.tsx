@@ -18,6 +18,8 @@ export function LoginForm() {
     parseResult(loginState);
   }, [loginState]);
 
+  const disabled = process.env.NODE_ENV === "production";
+
   return (
     <form action="" autoComplete="off" className="w-full">
       <Input
@@ -69,7 +71,7 @@ export function LoginForm() {
         color="default"
         // 没有固定ip地址或域名之前，暂不支持第三方登录
         href="http://localhost:6020/user/google"
-        isDisabled={process.env.NODE_ENV === "production"}
+        isDisabled={disabled}
         startContent={<GoogleIcon />}
         variant="bordered"
       >
@@ -82,7 +84,7 @@ export function LoginForm() {
         color="default"
         // 没有固定ip地址或域名之前，暂不支持第三方登录
         href="http://localhost:6020/user/github"
-        isDisabled={process.env.NODE_ENV === "production"}
+        isDisabled={disabled}
         startContent={<GithubIcon />}
         variant="bordered"
       >
