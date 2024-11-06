@@ -69,9 +69,9 @@ export function LoginForm() {
         color="default"
         // 没有固定ip地址或域名之前，暂不支持第三方登录
         href="http://localhost:6020/user/google"
+        isDisabled={process.env.NODE_ENV === "production"}
         startContent={<GoogleIcon />}
         variant="bordered"
-        isDisabled={process.env.NODE_ENV === "production"}
       >
         Signin with Google
       </Button>
@@ -82,9 +82,9 @@ export function LoginForm() {
         color="default"
         // 没有固定ip地址或域名之前，暂不支持第三方登录
         href="http://localhost:6020/user/github"
+        isDisabled={process.env.NODE_ENV === "production"}
         startContent={<GithubIcon />}
         variant="bordered"
-        isDisabled={process.env.NODE_ENV === "production"}
       >
         Signin with Github
       </Button>
