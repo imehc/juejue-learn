@@ -14,7 +14,7 @@
 		"@nextui-org/react": "^2.4.8",
 		"@nivo/bar": "^0.87.0",
 		"@nivo/core": "^0.87.0",
-		"@nivo/pie": "^0.87.0",
+		"@nivo/pie": "^0.88.0",
 		"@react-aria/ssr": "3.9.6",
 		"@react-aria/visually-hidden": "3.8.17",
 		"@types/node": "22.9.0",
