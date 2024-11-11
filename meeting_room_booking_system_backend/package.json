@@ -57,7 +57,7 @@
     "socks-proxy-agent": "^8.0.4",
     "typeorm": "^0.3.20",
     "uuid": "^11.0.2",
-    "winston": "^3.16.0",
+    "winston": "^3.17.0",
     "winston-daily-rotate-file": "^5.0.0"
   },
   "devDependencies": {
