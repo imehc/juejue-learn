@@ -53,6 +53,13 @@ paths:
       description: 图书列表
       tags:
         - book
+      parameters:
+        - name: name
+          required: false
+          in: query
+          description: 图书名称
+          schema:
+            type: string
       responses:
         '200':
           description: 图书列表

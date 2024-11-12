@@ -11,6 +11,7 @@ import {
   UploadedFile,
   HttpCode,
   HttpStatus,
+  Query,
 } from '@nestjs/common';
 import { BookService } from './book.service';
 import { CreateBookDto } from './dto/create-book.dto';
@@ -29,8 +30,8 @@ export class BookController {
   }
 
   @Get()
-  findAll() {
-    return this.bookService.findAll();
+  findAll(@Query("name") name:string) {
+    return this.bookService.findAll(name);
   }
 
   @Get(':id')
