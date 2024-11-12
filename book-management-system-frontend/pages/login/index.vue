@@ -10,7 +10,10 @@
         label="用户名"
         name="username"
       >
-        <UInput v-model="state.username" />
+        <UInput
+          v-model="state.username"
+          autocomplete="on"
+        />
       </UFormGroup>
       <UFormGroup
         label="密码"
@@ -18,6 +21,7 @@
       >
         <UInput
           v-model="state.password"
+          autocomplete="on"
           type="password"
         />
       </UFormGroup>
@@ -74,7 +78,6 @@ const onSubmit = async (event: FormSubmitEvent<AuthSchemaValue>) => {
     body: event.data,
     onResponseError: (error) => {
       toast.add({ title: error.response._data.message ?? '登录失败', color: 'red' })
-      console.log('error')
     },
   })
     .then(() => {
@@ -82,6 +85,7 @@ const onSubmit = async (event: FormSubmitEvent<AuthSchemaValue>) => {
       cookie.value = event.data.username
       router.replace('book')
     })
+    .catch(() => {})
     .finally(() => isPending.value = false)
 }
 </script>

@@ -14,7 +14,7 @@ export default defineEventHandler(async (event) => {
       const response = await error.response.json()
       throw createError({
         statusCode: 400,
-        statusMessage: response.message,
+        message: response.message,
         fatal: true,
       })
     }
