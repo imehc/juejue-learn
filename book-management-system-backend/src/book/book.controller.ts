@@ -22,7 +22,7 @@ import * as path from 'path';
 
 @Controller('book')
 export class BookController {
-  constructor(private readonly bookService: BookService) {}
+  constructor(private readonly bookService: BookService) { }
 
   @Post()
   create(@Body() createBookDto: CreateBookDto) {
@@ -30,7 +30,7 @@ export class BookController {
   }
 
   @Get()
-  findAll(@Query("name") name:string) {
+  findAll(@Query("name") name: string) {
     return this.bookService.findAll(name);
   }
 
@@ -68,6 +68,6 @@ export class BookController {
   )
   updateFile(@UploadedFile() file: Express.Multer.File) {
     console.log('file: ', file);
-    return file.path;
+    return "/" + file.path;
   }
 }
