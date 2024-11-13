@@ -3,7 +3,7 @@ export default defineAppConfig({
     primary: 'lime',
     gray: 'neutral',
     notifications: {
-      position: 'top-10 left-1/2 -translate-x-1/2',
+      position: 'left-1/2 -translate-x-1/2',
     },
     card: {
       body: {

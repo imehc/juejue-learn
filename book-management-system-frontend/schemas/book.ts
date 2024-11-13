@@ -12,6 +12,8 @@ type BookSchemaValue = z.infer<typeof bookSchema>
 
 type IBookItem = BookSchemaValue & Partial<Pick<BookItem, 'id'>>
 
+type IFormType = 'create' | 'update' | 'info'
+
 const initBook = (): IBookItem => ({
   name: '',
   author: '',
@@ -22,6 +24,7 @@ const initBook = (): IBookItem => ({
 export {
   bookSchema,
   type BookSchemaValue,
+  type IFormType,
   type IBookItem,
   initBook,
 }

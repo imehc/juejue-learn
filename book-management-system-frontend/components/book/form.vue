@@ -13,11 +13,11 @@
         @submit="onSubmit"
       >
         <UAlert
-          icon="i-heroicons-command-line"
+          icon="i-line-md:folder-multiple"
           color="primary"
           variant="solid"
-          :title="!hasCreated ? '编辑图书' : '新增图书'"
-          description="请完善图书信息"
+          :title="formType === 'info' ? '图书详情' : formType === 'update' ? '编辑图书' : '新增图书'"
+          :description="formType === 'info' ? '' : '请完善图书信息'"
         />
         <UFormGroup
           label="图书"
@@ -26,6 +26,7 @@
           <UInput
             v-model="state.name"
             autocomplete="on"
+            :disabled="formType === 'info'"
           />
         </UFormGroup>
         <UFormGroup
@@ -35,6 +36,7 @@
           <UInput
             v-model="state.author"
             autocomplete="on"
+            :disabled="formType === 'info'"
           />
         </UFormGroup>
         <UFormGroup
@@ -44,6 +46,7 @@
           <UTextarea
             v-model="state.description"
             autocomplete="on"
+            :disabled="formType === 'info'"
           />
         </UFormGroup>
         <UFormGroup
@@ -51,12 +54,14 @@
           name="cover"
         >
           <label
-            class="min-w-24 min-h-24 border border-solid border-gray-300 rounded-md flex justify-center items-center cursor-pointer"
+            class="min-w-24 min-h-24 border border-solid border-gray-300 rounded-md flex justify-center items-center"
+            :class="formType === 'info' ? 'cursor-not-allowed' : 'cursor-pointer'"
           >
             <input
               type="file"
               className="hidden w-full h-full z-10"
               accept=".png, .jpg, .jpeg, .gif"
+              :disabled="formType === 'info'"
               @change="onFileChange"
             >
             <UIcon
@@ -77,7 +82,7 @@
           :loading="isPending"
           :disabled="isPending"
         >
-          {{ isPending ? '提交中...' : !hasCreated ? "编辑" : "新增" }}
+          {{ isPending ? '提交中...' : formType === 'info' ? '关闭' : '提交' }}
         </UButton>
       </UForm>
     </UContainer>
@@ -85,7 +90,7 @@
 </template>
 
 <script setup lang="ts">
-import { bookSchema, initBook, type BookSchemaValue } from '~/schemas'
+import { bookSchema, initBook, type BookSchemaValue, type IFormType } from '~/schemas'
 import type { FormSubmitEvent } from '#ui/types'
 import { BASE_PATH, type BookItem } from '~/book-management-system-api'
 
@@ -100,6 +105,7 @@ interface Props {
 
 const isOpen = defineModel<boolean>({ type: Boolean, default: false })
 const state = defineModel<IBookItem>('data', { type: Object, default: initBook() })
+const formType = defineModel<IFormType>('type', { default: 'create' })
 const { refresh } = defineProps<Props>()
 
 const toast = useToast()
@@ -107,21 +113,23 @@ const toast = useToast()
 const isPending = ref(false)
 const uploadImagePending = ref(false)
 
-const hasCreated = computed(() => !state.value?.id)
-
 const onSubmit = async (event: FormSubmitEvent<BookSchemaValue>) => {
+  if (!formType.value || formType.value === 'info') {
+    isOpen.value = false
+    return
+  }
   isPending.value = true
-  const path = !hasCreated.value ? `/api/book/${state.value?.id}/update` : '/api/book/create'
-  await $fetch(path, {
-    method: 'POST',
+  const path = formType.value === 'create' ? '/api/book/create' : `/api/book/${state.value?.id}/update`
+  $fetch(path, {
+    method: 'PUT',
     body: event.data,
     onResponseError: (error) => {
-      const text = hasCreated.value ? '创建失败' : '更新失败'
+      const text = (formType.value === 'create') ? '创建失败' : '更新失败'
       toast.add({ title: error.response._data.message ?? text, color: 'red' })
     },
   })
     .then(() => {
-      const text = hasCreated.value ? '创建成功' : '更新成功'
+      const text = (formType.value === 'create') ? '创建成功' : '更新成功'
       toast.add({ title: text })
       refresh?.()
       isOpen.value = false
@@ -159,6 +167,5 @@ const formRef = ref()
 
 const handleClose = () => {
   formRef.value?.clear()
-  state.value = initBook()
 }
 </script>

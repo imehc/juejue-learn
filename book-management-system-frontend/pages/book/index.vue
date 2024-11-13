@@ -70,6 +70,7 @@
           variant="solid"
           label="详情"
           block
+          @click="handleInfo"
         >
           <template #trailing>
             <UIcon
@@ -97,6 +98,7 @@
           variant="solid"
           label="删除"
           block
+          @click="handleDelete"
         >
           <template #trailing>
             <UIcon
@@ -111,6 +113,7 @@
       v-model="formIsOpen"
       :data="formData"
       :refresh="refresh"
+      :type="formType"
     />
   </div>
 </template>
@@ -118,7 +121,9 @@
 <script lang="ts" setup>
 import { useMouse, useWindowScroll } from '@vueuse/core'
 import { BASE_PATH, type BookItem } from '~/book-management-system-api'
-import { initBook } from '~/schemas'
+import { initBook, type IFormType } from '~/schemas'
+
+const toast = useToast()
 
 // ===========按图书名称搜索=============
 const bookName = ref('')
@@ -153,15 +158,51 @@ const onContextMenu = (book: BookItem) => {
   isOpen.value = true
 }
 // ===================表单===================
+const formType = ref<IFormType>('create')
 const formIsOpen = ref(false)
 const formData = ref(initBook())
 
 const handleCreate = () => {
+  formType.value = 'create'
   formData.value = initBook()
   formIsOpen.value = true
 }
 const handleUpdate = () => {
+  formType.value = 'update'
   formIsOpen.value = true
+}
+const handleInfo = () => {
+  formType.value = 'info'
+  formIsOpen.value = true
+}
+
+const handleDelete = () => {
+  toast.add({
+    title: `确定删除图书 ${formData.value.name}吗？`,
+    color: 'red',
+    actions: [
+      {
+        label: '取消',
+      },
+      {
+        label: '确定',
+        click: async () => {
+          $fetch(`/api/book/${formData.value.id}/delete`, {
+            method: 'DELETE',
+            onResponseError: (error) => {
+              toast.add({ title: error.response._data.message ?? '删除失败', color: 'red' })
+            },
+          })
+            .then(() => {
+              toast.add({ title: '删除成功' })
+              refresh()
+            })
+            .catch(() => { })
+        },
+        color: 'red',
+      },
+    ],
+  })
 }
 </script>
 
