@@ -73,7 +73,7 @@ const isPending = ref(false)
 
 const onSubmit = async (event: FormSubmitEvent<AuthSchemaValue>) => {
   isPending.value = true
-  await $fetch('/api/register', {
+  await $fetch('/api/auth/register', {
     method: 'POST',
     body: event.data,
     onResponseError: (error) => {

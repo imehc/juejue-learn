@@ -7,7 +7,7 @@ export default defineEventHandler(async (event) => {
     const user: User = await readBody(event)
     const userApi = apiInstance(UserApi)
     await userApi.register({ user })
-    return setResponseStatus(event, 201)
+    setResponseStatus(event, 201)
   }
   catch (error) {
     if (error instanceof ResponseError) {

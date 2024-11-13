@@ -16,7 +16,9 @@
             >
               搜索图书
             </UButton>
-            <UButton>新增图书</UButton>
+            <UButton @click="handleCreate">
+              新增图书
+            </UButton>
           </div>
         </UCard>
       </template>
@@ -37,8 +39,8 @@
               :key="book.id"
             >
               <div
-                class="aspect-[1/1.5] flex shadow-sm rounded-sm overflow-hidden flex-col-reverse cursor-pointer hover:shadow-lg"
-                @contextmenu.prevent="onContextMenu"
+                class="aspect-[1/1.8] flex shadow-sm rounded-sm overflow-hidden flex-col-reverse cursor-pointer hover:shadow-lg"
+                @contextmenu.prevent="onContextMenu(book)"
               >
                 <div class="text-xs text-left ml-1 text-gray-400 shrink-0">
                   {{ book.author }}
@@ -48,7 +50,7 @@
                 </div>
                 <div class="flex-1">
                   <NuxtImg
-                    :src="BASE_PATH + '1' + book.cover"
+                    :src="BASE_PATH + book.cover"
                     class="object-cover bg-center bg-no-repeat bg-cover"
                   />
                 </div>
@@ -81,6 +83,7 @@
           variant="solid"
           label="更新"
           block
+          @click="handleUpdate"
         >
           <template #trailing>
             <UIcon
@@ -104,12 +107,18 @@
         </UButton>
       </div>
     </UContextMenu>
+    <BookForm
+      v-model="formIsOpen"
+      :data="formData"
+      :refresh="refresh"
+    />
   </div>
 </template>
 
 <script lang="ts" setup>
 import { useMouse, useWindowScroll } from '@vueuse/core'
-import { BASE_PATH } from '~/book-management-system-api'
+import { BASE_PATH, type BookItem } from '~/book-management-system-api'
+import { initBook } from '~/schemas'
 
 // ===========按图书名称搜索=============
 const bookName = ref('')
@@ -118,8 +127,9 @@ const handleSearch = () => {
   submitBookName.value = bookName.value
 }
 
-const { status, data } = useLazyFetch('/api/find-all-book', {
-  transform: data => data?.map(item => ({ id: item.id, name: item.name, cover: item.cover, author: item.author })) ?? [],
+const { status, data, refresh } = useLazyFetch('/api/book/find-all', {
+  // transform: data => data?.map(item => ({ id: item.id, name: item.name, cover: item.cover, author: item.author })) ?? [],
+  transform: data => data ?? [],
   query: { name: submitBookName },
 })
 // ===================右击菜单===================
@@ -129,7 +139,8 @@ const { y: windowY } = useWindowScroll()
 const isOpen = ref(false)
 const virtualElement = ref({ getBoundingClientRect: () => ({}) })
 
-const onContextMenu = () => {
+const onContextMenu = (book: BookItem) => {
+  formData.value = book
   // unref 获取 ref 的值
   const top = unref(y) - unref(windowY)
   const left = unref(x)
@@ -140,6 +151,17 @@ const onContextMenu = () => {
     left,
   })
   isOpen.value = true
+}
+// ===================表单===================
+const formIsOpen = ref(false)
+const formData = ref(initBook())
+
+const handleCreate = () => {
+  formData.value = initBook()
+  formIsOpen.value = true
+}
+const handleUpdate = () => {
+  formIsOpen.value = true
 }
 </script>
 
