@@ -1,0 +1,5 @@
+const REDIS_ClIENT = 'REDIS_CLIENT';
+
+const CREATED = 'CREATED';
+
+export { CREATED, REDIS_ClIENT };
