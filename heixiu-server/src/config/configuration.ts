@@ -15,6 +15,9 @@ type baseKeys = 'host' | 'port';
 type RedisConfig = `redis-server.${baseKeys | 'db'}`;
 type NodemailerConfig = `nodemailer-server.${baseKeys | 'user' | 'pass'}`;
 type NestServerConfig = `nest-server.${'port' | 'doc-url'}`;
+type JwtConfig =
+  `jwt.${'secret' | 'access-token-expires-time' | 'access-refresh-expires-time'}`;
+
 export declare type ConfigurationImpl = {
-  [K in RedisConfig | NodemailerConfig | NestServerConfig]: string;
+  [K in RedisConfig | NodemailerConfig | NestServerConfig | JwtConfig]: string;
 };

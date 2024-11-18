@@ -34,9 +34,6 @@ export class EmailService {
     type: CaptchaType;
     ttl: number;
   }) {
-    if (!to) {
-      throw new HttpException('未指定邮箱地址', HttpStatus.BAD_REQUEST);
-    }
     try {
       await this.transporter.sendMail({
         from: {

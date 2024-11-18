@@ -14,6 +14,9 @@ import { EmailService } from 'src/email/email.service';
 import { RedisService } from 'src/redis/redis.service';
 import { registerWrapper } from 'src/config/helper';
 import { EmailDto } from './dto/email.dto';
+import { LoginUserDto } from './dto/login.dto';
+import { User } from '@prisma/client';
+import { JwtService } from '@nestjs/jwt';
 
 @Controller('user')
 export class UserController {
@@ -24,6 +27,9 @@ export class UserController {
 
   @Inject(RedisService)
   private redisService: RedisService;
+
+  @Inject(JwtService)
+  private jwtService: JwtService;
 
   @Get('register-captcha')
   async registerCaptcha(@Query() { email }: EmailDto) {
@@ -47,6 +53,24 @@ export class UserController {
 
   @Post('register')
   async register(@Body() registerUser: RegisterUserDto) {
-    return await this.userService.register(registerUser);
+    const user =  await this.userService.register(registerUser);
+    return this.sign({ id: user.id, username: user.username });
+  }
+
+  @Post('login')
+  async login(@Body() loginUser: LoginUserDto) {
+    const user = await this.userService.login(loginUser);
+    return this.sign({ id: user.id, username: user.username });
+  }
+
+  private async sign({ id, username }: Pick<User, 'id' | 'username'>) {
+    // TODO: 双刷token
+    const accessToken = this.jwtService.sign(
+      { userId: id, username },
+      // { expiresIn: '' }, 
+    );
+    return {
+      accessToken,
+    };
   }
 }

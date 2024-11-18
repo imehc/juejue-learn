@@ -6,8 +6,8 @@ import { ConfigurationImpl } from './config/configuration';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.useGlobalPipes(new ValidationPipe()); // 全局启用
-  
+  app.useGlobalPipes(new ValidationPipe({ transform: true })); // 全局启用
+
   const configService = app.get(ConfigService<ConfigurationImpl>);
 
   await app.listen(configService.get('nest-server.port'));

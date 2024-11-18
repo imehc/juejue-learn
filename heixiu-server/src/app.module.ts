@@ -5,8 +5,11 @@ import { PrismaModule } from './prisma/prisma.module';
 import { UserModule } from './user/user.module';
 import { RedisModule } from './redis/redis.module';
 import { EmailModule } from './email/email.module';
-import { ConfigModule } from '@nestjs/config';
-import configuration from './config/configuration';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import configuration, { ConfigurationImpl } from './config/configuration';
+import { JwtModule } from '@nestjs/jwt';
+import { APP_GUARD } from '@nestjs/core';
+import { AuthGuard } from './auth.guard';
 
 @Module({
   imports: [
@@ -15,8 +18,25 @@ import configuration from './config/configuration';
     UserModule,
     RedisModule,
     EmailModule,
+    JwtModule.registerAsync({
+      global: true,
+      useFactory(configService: ConfigService<ConfigurationImpl>) {
+        return {
+          secret: configService.get('jwt.secret'),
+          signOptions: {
+            // https://github.com/vercel/ms?tab=readme-ov-file#examples
+            expiresIn: configService.get('jwt.access-token-expires-time'),
+          },
+        };
+      },
+      inject: [ConfigService],
+    }),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    PrismaModule,
+    { provide: APP_GUARD, useClass: AuthGuard }, // 全局启用Graud
+  ],
 })
 export class AppModule {}

@@ -46,6 +46,8 @@ nest g module [名称]
 nest g service [名称] --no-spec 
 # 创建resource
 nest g resource [名称]
+# 创建gurad
+nest g guard [名称] --flat --no-spec
 ```
 
 # 启动项目
@@ -57,3 +59,13 @@ nest g resource [名称]
 ## 生产阶段
 
 > 需要正确配置`.env.yaml`文件
+
+# 工具
+
+> [yaml转typescript](https://portal.he3app.com/home/extension/yaml-to-typescript-interface)
+
+# TODO
+
+- [ ]  双刷token
+- [ ]  返回的token不宜过长
+- [ ]  获取新token原token失效
