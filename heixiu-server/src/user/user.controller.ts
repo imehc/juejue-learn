@@ -12,11 +12,16 @@ import { UserService } from './user.service';
 import { RegisterUserDto } from './dto/register.dto';
 import { EmailService } from 'src/email/email.service';
 import { RedisService } from 'src/redis/redis.service';
-import { registerWrapper } from 'src/config/helper';
+import { forgetPasswordWrapper, registerWrapper } from 'src/config/helper';
 import { EmailDto } from './dto/email.dto';
 import { LoginUserDto } from './dto/login.dto';
 import { User } from '@prisma/client';
 import { JwtService } from '@nestjs/jwt';
+import { RequireLogin, UserInfo } from 'src/config/custom.decorator';
+import { UpdatePasswordUserDto } from './dto/update-password.dto';
+import { ForgetPasswordUserDto } from './dto/forget-password.dto';
+import { UpdateUserDto } from './dto/update.dto';
+import { UpdateUserEmailDto } from './dto/update-email.dto';
 
 @Controller('user')
 export class UserController {
@@ -31,7 +36,7 @@ export class UserController {
   @Inject(JwtService)
   private jwtService: JwtService;
 
-  @Get('register-captcha')
+  @Get('register/captcha')
   async registerCaptcha(@Query() { email }: EmailDto) {
     const hasCaptcha = await this.redisService.get(registerWrapper(email));
     if (hasCaptcha) {
@@ -51,9 +56,41 @@ export class UserController {
     return '发送成功';
   }
 
+  @Get('forget-password/captcha')
+  async forgetPasswordCaptcha(@Query() { email }: EmailDto) {
+    const hasCaptcha = await this.redisService.get(
+      forgetPasswordWrapper(email),
+    );
+    if (hasCaptcha) {
+      throw new HttpException('请勿重复发送', HttpStatus.BAD_REQUEST);
+    }
+
+    const ttl = 5 * 60; // 五分钟有效期
+    const code = Math.random().toString().slice(2, 8);
+    await this.redisService.set(forgetPasswordWrapper(email), code, ttl);
+    await this.emailService.sendMail({
+      to: email,
+      subject: this.emailService.getCaptchaType('forget-password'),
+      text: code,
+      type: 'forget-password',
+      ttl: ttl / 60,
+    });
+    return '发送成功';
+  }
+
+  @Post('forget-password')
+  async forgetPassword(@Body() { captcha, ...data }: ForgetPasswordUserDto) {
+    await this.userService.updateUser({
+      type: 'forget-password',
+      data: data,
+      captcha,
+    });
+    return '重置密码成功';
+  }
+
   @Post('register')
   async register(@Body() registerUser: RegisterUserDto) {
-    const user =  await this.userService.register(registerUser);
+    const user = await this.userService.register(registerUser);
     return this.sign({ id: user.id, username: user.username });
   }
 
@@ -63,11 +100,57 @@ export class UserController {
     return this.sign({ id: user.id, username: user.username });
   }
 
+  @Get('info')
+  @RequireLogin()
+  async info(@UserInfo('userId') userId: number) {
+    return this.userService.findUserById(userId);
+  }
+
+  @Post('update-password')
+  @RequireLogin()
+  async updatePassword(
+    @UserInfo('userId') userId: number,
+    @Body() updatePasswordUserDto: UpdatePasswordUserDto,
+  ) {
+    await this.userService.updateUser({
+      type: 'update-password',
+      data: { id: userId, ...updatePasswordUserDto },
+    });
+    return '修改密码成功';
+  }
+
+  @Post('update')
+  @RequireLogin()
+  async update(
+    @UserInfo('userId') userId: number,
+    @Body() updateUserDto: UpdateUserDto,
+  ) {
+    await this.userService.updateUser({
+      type: 'update-user',
+      data: { id: userId, ...updateUserDto },
+    });
+    return '修改成功';
+  }
+
+  @Post('update-email')
+  @RequireLogin()
+  async updateEmail(
+    @UserInfo('userId') userId: number,
+    @Body() { email, captcha }: UpdateUserEmailDto,
+  ) {
+    await this.userService.updateUser({
+      type: 'update-email',
+      data: { id: userId, email },
+      captcha,
+    });
+    return '修改邮箱成功';
+  }
+
   private async sign({ id, username }: Pick<User, 'id' | 'username'>) {
     // TODO: 双刷token
     const accessToken = this.jwtService.sign(
       { userId: id, username },
-      // { expiresIn: '' }, 
+      // { expiresIn: '' },
     );
     return {
       accessToken,

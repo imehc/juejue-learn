@@ -67,6 +67,8 @@ export class EmailService {
     switch (type) {
       case 'register':
         return '感谢您注册Heixiu聊天室！';
+      case 'forget-password':
+        return '您正在重置密码！';
       case 'login':
         return '您正在登录Heixiu聊天室！';
       default:
@@ -75,4 +77,4 @@ export class EmailService {
   }
 }
 
-type CaptchaType = 'register' | 'login';
+type CaptchaType = 'register' | 'login' | 'forget-password';
