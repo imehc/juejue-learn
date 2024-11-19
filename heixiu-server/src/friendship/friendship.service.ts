@@ -29,15 +29,15 @@ export class FriendshipService {
       throw new BadRequestException('不能添加自己');
     }
     // 查找是否已经是好友
-    const foundFriend = await this.prismaService.friendship.findFirst({
+    const foundFriend = await this.prismaService.friendship.findMany({
       where: {
         OR: [
-          { userId: userId, friendId: friendAddDto.friendId },
+          { userId, friendId: friendAddDto.friendId },
           { friendId: userId, userId: friendAddDto.friendId },
         ],
       },
     });
-    if (foundFriend) {
+    if (foundFriend.length >= 2) {
       throw new BadRequestException('已经是好友');
     }
     // 查找是否发送过请求
@@ -223,7 +223,7 @@ export class FriendshipService {
     try {
       if (!friendships.length) {
         await this.prismaService.$transaction([
-          // 双向添加，双方都是朋友
+          // 双向添加，双方都是好友
           this.prismaService.friendship.create({
             data: { userId, friendId },
           }),
@@ -232,7 +232,7 @@ export class FriendshipService {
           }),
         ]);
       } else if (friendships.length === 1) {
-        // 更新另一个好友
+        // 更新为双向好友
         const friendship = friendships.at(0);
         await this.prismaService.friendship.create({
           data: { userId: friendship.friendId, friendId: friendship.userId },
