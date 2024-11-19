@@ -14,13 +14,46 @@ datasource db {
 }
 
 // 用户表
-model User{
-  id Int @id @default(autoincrement())
-  username String @db.VarChar(50)
-  password String @db.VarChar(50)
-  nickName String @db.VarChar(50)
-  email String @db.VarChar(50) @unique
-  headPic String @db.VarChar(100) @default("")
-  createTime DateTime @default(now())
-  updateTime DateTime @updatedAt
+model User {
+  id       Int      @id @default(autoincrement())
+  username String   @db.VarChar(50)
+  password String   @db.VarChar(50)
+  nickName String   @db.VarChar(50)
+  email    String   @unique @db.VarChar(50)
+  headPic  String   @default("") @db.VarChar(100)
+  createAt DateTime @default(now())
+  updateAt DateTime @updatedAt
+
+  friends        Friendship[] @relation("userToFriend") // user的好友
+  inverseFriends Friendship[] @relation("friendToUser") // user是那些人的好友高
+}
+
+model Friendship {
+  user   User @relation("userToFriend", fields: [userId], references: [id])
+  userId Int
+
+  friend   User @relation("friendToUser", fields: [friendId], references: [id])
+  friendId Int
+
+  @@id([userId, friendId])
+}
+
+enum FriendRequestStatus {
+  PENDING // 待处理
+  ACCEPTED // 已同意
+  REJECTED // 已拒绝
+}
+
+model FriendRequest {
+  id         Int                 @id @default(autoincrement())
+  // 请求发送方
+  fromUserId Int
+  // 待添加好友
+  toUserId   Int
+  // 添加理由
+  reason     String              @db.VarChar(100)
+  // 状态 
+  status     FriendRequestStatus
+  createAt   DateTime            @default(now())
+  updateAt   DateTime            @updatedAt
 }

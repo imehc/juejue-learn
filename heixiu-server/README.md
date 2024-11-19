@@ -48,6 +48,8 @@ nest g service [名称] --no-spec
 nest g resource [名称]
 # 创建gurad
 nest g guard [名称] --flat --no-spec
+# 生成客户端类型
+npx prisma generate
 ```
 
 # 启动项目

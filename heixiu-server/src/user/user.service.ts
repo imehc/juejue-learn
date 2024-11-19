@@ -21,14 +21,14 @@ import { UpdatePasswordUserDto } from './dto/update-password.dto';
 @Injectable()
 export class UserService {
   @Inject(PrismaService)
-  private prismaService: PrismaService;
+  private readonly prismaService: PrismaService;
 
   @Inject(RedisService)
-  private redisServer: RedisService;
+  private readonly redisServer: RedisService;
 
-  private logger = new Logger();
+  private readonly logger = new Logger();
 
-  async register({ captcha, ...data }: RegisterUserDto) {
+  public async register({ captcha, ...data }: RegisterUserDto) {
     const cacheCaptcha = await this.redisServer.get(
       registerWrapper(data.email),
     );
@@ -64,6 +64,7 @@ export class UserService {
           /** 只返回选择的字段 */
         },
       });
+      this.redisServer.del(registerWrapper(data.email));
       return user;
     } catch (error) {
       this.logger.error(error, UserService);
@@ -71,7 +72,7 @@ export class UserService {
     }
   }
 
-  async login(loginUserDto: LoginUserDto) {
+  public async login(loginUserDto: LoginUserDto) {
     const foundUser = await this.prismaService.user.findFirst({
       where: {
         username: loginUserDto.username,
@@ -96,7 +97,7 @@ export class UserService {
     return user;
   }
 
-  async findUserById(userId: number) {
+  public async findUserById(userId: number) {
     const user = await this.prismaService.user.findUnique({
       where: { id: userId },
       select: {
@@ -105,13 +106,13 @@ export class UserService {
         email: true,
         nickName: true,
         headPic: true,
-        createTime: true,
+        createAt: true,
       },
     });
     return user;
   }
 
-  async updateUser(config: UpdateConfig) {
+  public async updateUser(config: UpdateConfig) {
     switch (config.type) {
       case 'forget-password': {
         const foundUser = await this.prismaService.user.findUnique({
@@ -134,7 +135,9 @@ export class UserService {
             where: { email: config.data.email },
             data: { password: md5(config.data.password) },
           });
+          this.redisServer.del(forgetPasswordWrapper(config.data.email));
         } catch (error) {
+          this.logger.error(error, UserService);
           throw new InternalServerErrorException('内部错误');
         }
         break;
@@ -158,6 +161,7 @@ export class UserService {
             data: { password: md5(config.data.password) },
           });
         } catch (error) {
+          this.logger.error(error, UserService);
           throw new InternalServerErrorException('内部错误');
         }
         break;
@@ -170,6 +174,7 @@ export class UserService {
             data: { nickName, headPic },
           });
         } catch (error) {
+          this.logger.error(error, UserService);
           throw new InternalServerErrorException('内部错误');
         }
         break;
@@ -195,7 +200,9 @@ export class UserService {
             where: { id: foundUser.id },
             data: { email: config.data.email },
           });
+          this.redisServer.del(updateEmailWrapper(config.data.email));
         } catch (error) {
+          this.logger.error(error, UserService);
           throw new InternalServerErrorException('内部错误');
         }
       }

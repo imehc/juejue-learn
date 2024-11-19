@@ -10,6 +10,7 @@ import configuration, { ConfigurationImpl } from './config/configuration';
 import { JwtModule } from '@nestjs/jwt';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './auth.guard';
+import { FriendshipModule } from './friendship/friendship.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { AuthGuard } from './auth.guard';
       },
       inject: [ConfigService],
     }),
+    FriendshipModule,
   ],
   controllers: [AppController],
   providers: [

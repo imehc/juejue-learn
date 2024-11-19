@@ -28,16 +28,16 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Inject(EmailService)
-  private emailService: EmailService;
+  private readonly emailService: EmailService;
 
   @Inject(RedisService)
-  private redisService: RedisService;
+  private readonly redisService: RedisService;
 
   @Inject(JwtService)
-  private jwtService: JwtService;
+  private readonly jwtService: JwtService;
 
   @Get('register/captcha')
-  async registerCaptcha(@Query() { email }: EmailDto) {
+  public async registerCaptcha(@Query() { email }: EmailDto) {
     const hasCaptcha = await this.redisService.get(registerWrapper(email));
     if (hasCaptcha) {
       throw new HttpException('请勿重复发送', HttpStatus.BAD_REQUEST);
@@ -57,7 +57,7 @@ export class UserController {
   }
 
   @Get('forget-password/captcha')
-  async forgetPasswordCaptcha(@Query() { email }: EmailDto) {
+  public async forgetPasswordCaptcha(@Query() { email }: EmailDto) {
     const hasCaptcha = await this.redisService.get(
       forgetPasswordWrapper(email),
     );
@@ -79,7 +79,9 @@ export class UserController {
   }
 
   @Post('forget-password')
-  async forgetPassword(@Body() { captcha, ...data }: ForgetPasswordUserDto) {
+  public async forgetPassword(
+    @Body() { captcha, ...data }: ForgetPasswordUserDto,
+  ) {
     await this.userService.updateUser({
       type: 'forget-password',
       data: data,
@@ -89,26 +91,26 @@ export class UserController {
   }
 
   @Post('register')
-  async register(@Body() registerUser: RegisterUserDto) {
+  public async register(@Body() registerUser: RegisterUserDto) {
     const user = await this.userService.register(registerUser);
     return this.sign({ id: user.id, username: user.username });
   }
 
   @Post('login')
-  async login(@Body() loginUser: LoginUserDto) {
+  public async login(@Body() loginUser: LoginUserDto) {
     const user = await this.userService.login(loginUser);
     return this.sign({ id: user.id, username: user.username });
   }
 
   @Get('info')
   @RequireLogin()
-  async info(@UserInfo('userId') userId: number) {
+  public async info(@UserInfo('userId') userId: number) {
     return this.userService.findUserById(userId);
   }
 
   @Post('update-password')
   @RequireLogin()
-  async updatePassword(
+  public async updatePassword(
     @UserInfo('userId') userId: number,
     @Body() updatePasswordUserDto: UpdatePasswordUserDto,
   ) {
@@ -121,7 +123,7 @@ export class UserController {
 
   @Post('update')
   @RequireLogin()
-  async update(
+  public async update(
     @UserInfo('userId') userId: number,
     @Body() updateUserDto: UpdateUserDto,
   ) {
@@ -134,7 +136,7 @@ export class UserController {
 
   @Post('update-email')
   @RequireLogin()
-  async updateEmail(
+  public async updateEmail(
     @UserInfo('userId') userId: number,
     @Body() { email, captcha }: UpdateUserEmailDto,
   ) {
@@ -146,6 +148,7 @@ export class UserController {
     return '修改邮箱成功';
   }
 
+  /** 签发jwt */
   private async sign({ id, username }: Pick<User, 'id' | 'username'>) {
     // TODO: 双刷token
     const accessToken = this.jwtService.sign(

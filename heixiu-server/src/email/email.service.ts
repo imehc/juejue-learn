@@ -9,9 +9,9 @@ import { readFileSync } from 'fs';
 
 @Injectable()
 export class EmailService {
-  private transporter: Transporter;
+  private readonly transporter: Transporter;
 
-  private logger = new Logger();
+  private readonly logger = new Logger();
 
   constructor(private configService: ConfigService<ConfigurationImpl>) {
     this.transporter = createTransport({
@@ -24,7 +24,7 @@ export class EmailService {
     });
   }
 
-  async sendMail({
+  public async sendMail({
     to,
     subject,
     text,
