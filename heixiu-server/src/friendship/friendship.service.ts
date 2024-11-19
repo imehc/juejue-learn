@@ -46,10 +46,21 @@ export class FriendshipService {
         where: { fromUserId: userId, toUserId: friendAddDto.friendId },
       },
     );
-    if (foundFriendRequest) {
+    if (foundFriendRequest?.status === FriendRequestStatus.PENDING) {
       throw new BadRequestException('已发送过申请,请勿重复发送');
     }
     try {
+      if (foundFriendRequest?.id) {
+        await this.prismaService.friendRequest.update({
+          where: { id: foundFriendRequest.id },
+          data: {
+            reason: friendAddDto.reason,
+            status: FriendRequestStatus.PENDING,
+            updateAt: new Date(),
+          },
+        });
+        return;
+      }
       await this.prismaService.friendRequest.create({
         data: {
           fromUserId: userId,
@@ -167,35 +178,69 @@ export class FriendshipService {
       throw new BadRequestException('已处理该好友申请');
     }
     try {
-      const row = await this.prismaService.friendRequest.updateMany({
-        where: {
-          fromUserId: friendId,
-          toUserId: userId,
-          status: FriendRequestStatus.PENDING,
-        },
-        data: {
-          status: FriendRequestStatus.ACCEPTED,
-        },
-      });
-      if (row.count === 0) {
+      const rows = await this.prismaService.$transaction([
+        // 双向添加，双方都是朋友
+        this.prismaService.friendRequest.updateMany({
+          where: {
+            fromUserId: friendId,
+            toUserId: userId,
+            status: FriendRequestStatus.PENDING,
+          },
+          data: {
+            status: FriendRequestStatus.ACCEPTED,
+          },
+        }),
+        this.prismaService.friendRequest.updateMany({
+          where: {
+            fromUserId: userId,
+            toUserId: friendId,
+            status: FriendRequestStatus.PENDING,
+          },
+          data: {
+            status: FriendRequestStatus.ACCEPTED,
+          },
+        }),
+      ]);
+      if (rows.every((item) => item.count === 0)) {
         throw new BadRequestException('同意好友申请失败');
       }
     } catch (error) {
       this.logger.error(error, FriendshipService);
       throw new InternalServerErrorException('内部错误');
     }
-    const res = await this.prismaService.friendship.findMany({
-      where: { userId, friendId },
+    const friendships = await this.prismaService.friendship.findMany({
+      where: {
+        OR: [
+          { userId, friendId },
+          { userId: friendId, friendId: userId },
+        ],
+      },
     });
-    if (!res.length) {
-      try {
+    if (friendships.length >= 2) {
+      throw new BadRequestException('已经是好友');
+    }
+    // 双向好友，最多只能有两个
+    try {
+      if (!friendships.length) {
+        await this.prismaService.$transaction([
+          // 双向添加，双方都是朋友
+          this.prismaService.friendship.create({
+            data: { userId, friendId },
+          }),
+          this.prismaService.friendship.create({
+            data: { userId: friendId, friendId: userId },
+          }),
+        ]);
+      } else if (friendships.length === 1) {
+        // 更新另一个好友
+        const friendship = friendships.at(0);
         await this.prismaService.friendship.create({
-          data: { userId, friendId },
+          data: { userId: friendship.friendId, friendId: friendship.userId },
         });
-      } catch (error) {
-        this.logger.error(error, FriendshipService);
-        throw new InternalServerErrorException('内部错误');
       }
+    } catch (error) {
+      this.logger.error(error, FriendshipService);
+      throw new InternalServerErrorException('内部错误');
     }
   }
 
