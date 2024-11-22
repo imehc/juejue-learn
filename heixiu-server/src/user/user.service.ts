@@ -7,16 +7,16 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { RedisService } from 'src/redis/redis.service';
-import { RegisterUserDto } from './dto/register.dto';
+import { RegisterDto } from './dto/register.dto';
 import {
   forgetPasswordWrapper,
   registerWrapper,
   updateEmailWrapper,
 } from 'src/helper/helper';
-import { LoginUserDto } from './dto/login.dto';
+import { LoginDto } from './dto/login.dto';
 import { md5 } from 'src/helper/utils';
 import { User } from '@prisma/client';
-import { UpdatePasswordUserDto } from './dto/update-password.dto';
+import { UpdatePasswordDto } from './dto/update-password.dto';
 
 @Injectable()
 export class UserService {
@@ -28,7 +28,7 @@ export class UserService {
 
   private readonly logger = new Logger();
 
-  public async register({ captcha, ...data }: RegisterUserDto) {
+  public async register({ captcha, ...data }: RegisterDto) {
     const cacheCaptcha = await this.redisServer.get(
       registerWrapper(data.email),
     );
@@ -72,10 +72,10 @@ export class UserService {
     }
   }
 
-  public async login(loginUserDto: LoginUserDto) {
+  public async login(loginDto: LoginDto) {
     const foundUser = await this.prismaService.user.findFirst({
       where: {
-        username: loginUserDto.username,
+        username: loginDto.username,
       },
       select: {
         id: true,
@@ -90,7 +90,7 @@ export class UserService {
     }
 
     const { password, ...user } = foundUser;
-    if (password !== md5(loginUserDto.password)) {
+    if (password !== md5(loginDto.password)) {
       throw new BadRequestException('密码错误');
     }
 
@@ -218,7 +218,7 @@ type UpdateConfig =
     }
   | {
       type: 'update-password';
-      data: Pick<User, 'id'> & UpdatePasswordUserDto;
+      data: Pick<User, 'id'> & UpdatePasswordDto;
     }
   | {
       type: 'update-email';

@@ -9,19 +9,29 @@ import {
   Query,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { RegisterUserDto } from './dto/register.dto';
+import { RegisterDto } from './dto/register.dto';
 import { EmailService } from 'src/email/email.service';
 import { RedisService } from 'src/redis/redis.service';
 import { forgetPasswordWrapper, registerWrapper } from 'src/helper/helper';
 import { EmailDto } from './dto/email.dto';
-import { LoginUserDto } from './dto/login.dto';
-import { User } from '@prisma/client';
+import { LoginDto } from './dto/login.dto';
 import { JwtService } from '@nestjs/jwt';
 import { RequireLogin, UserInfo } from 'src/helper/custom.decorator';
-import { UpdatePasswordUserDto } from './dto/update-password.dto';
-import { ForgetPasswordUserDto } from './dto/forget-password.dto';
+import { UpdatePasswordDto } from './dto/update-password.dto';
+import { ForgetPasswordDto } from './dto/forget-password.dto';
 import { UpdateUserDto } from './dto/update.dto';
 import { UpdateUserEmailDto } from './dto/update-email.dto';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiExtraModels,
+  ApiOkResponse,
+  ApiOperation,
+  ApiQuery,
+  getSchemaPath,
+} from '@nestjs/swagger';
+import { Auth } from './vo/auth.vo';
+import { CreateAt, UserInfo as User } from './vo/info.vo';
 
 @Controller('user')
 export class UserController {
@@ -36,6 +46,18 @@ export class UserController {
   @Inject(JwtService)
   private readonly jwtService: JwtService;
 
+  @ApiOperation({
+    description: '用户发送注册验证码',
+    operationId: 'sendRegisterCaptcha',
+    tags: ['user'],
+  })
+  @ApiQuery({
+    name: 'email',
+    type: String,
+    description: '邮箱地址',
+    example: 'xxx@xx.com',
+  })
+  @ApiOkResponse({ description: '发送成功', type: String })
   @Get('register/captcha')
   public async registerCaptcha(@Query() { email }: EmailDto) {
     const hasCaptcha = await this.redisService.get(registerWrapper(email));
@@ -56,6 +78,18 @@ export class UserController {
     return '发送成功';
   }
 
+  @ApiOperation({
+    description: '用户发送找回密码验证码',
+    operationId: 'sendForgotPasswordCaptcha',
+    tags: ['user'],
+  })
+  @ApiQuery({
+    name: 'email',
+    type: String,
+    description: '邮箱地址',
+    example: 'xxx@xx.com',
+  })
+  @ApiOkResponse({ description: '发送成功', type: String })
   @Get('forget-password/captcha')
   public async forgetPasswordCaptcha(@Query() { email }: EmailDto) {
     const hasCaptcha = await this.redisService.get(
@@ -78,10 +112,15 @@ export class UserController {
     return '发送成功';
   }
 
+  @ApiOperation({
+    description: '用户找回密码',
+    operationId: 'forgetPassword',
+    tags: ['user'],
+  })
+  @ApiBody({ type: ForgetPasswordDto })
+  @ApiOkResponse({ description: '重置密码成功', type: String })
   @Post('forget-password')
-  public async forgetPassword(
-    @Body() { captcha, ...data }: ForgetPasswordUserDto,
-  ) {
+  public async forgetPassword(@Body() { captcha, ...data }: ForgetPasswordDto) {
     await this.userService.updateUser({
       type: 'forget-password',
       data: data,
@@ -90,29 +129,70 @@ export class UserController {
     return '重置密码成功';
   }
 
+  @ApiOperation({
+    description: '用户注册',
+    operationId: 'register',
+    tags: ['user'],
+  })
+  @ApiBody({ type: RegisterDto })
+  @ApiOkResponse({ type: Auth })
   @Post('register')
-  public async register(@Body() registerUser: RegisterUserDto) {
+  public async register(@Body() registerUser: RegisterDto) {
     const user = await this.userService.register(registerUser);
     return this.sign({ id: user.id, username: user.username });
   }
 
+  @ApiOperation({
+    description: '用户登录',
+    operationId: 'login',
+    tags: ['user'],
+  })
+  @ApiBody({ type: LoginDto })
+  @ApiOkResponse({ type: Auth })
   @Post('login')
-  public async login(@Body() loginUser: LoginUserDto) {
+  public async login(@Body() loginUser: LoginDto) {
     const user = await this.userService.login(loginUser);
     return this.sign({ id: user.id, username: user.username });
   }
 
+  @ApiOperation({
+    description: '用户获取个人信息',
+    operationId: 'findInfo',
+    tags: ['user'],
+  })
+  @ApiBearerAuth()
+  @ApiExtraModels(CreateAt)
+  @ApiOkResponse({
+    content: {
+      'application/json': {
+        schema: {
+          allOf: [
+            { $ref: getSchemaPath(User) },
+            { $ref: getSchemaPath(CreateAt) },
+          ],
+        },
+      },
+    },
+  })
   @Get('info')
   @RequireLogin()
   public async info(@UserInfo('userId') userId: number) {
     return this.userService.findUserById(userId);
   }
 
+  @ApiOperation({
+    description: '用户修改密码',
+    operationId: 'updatePassword',
+    tags: ['user'],
+  })
+  @ApiBearerAuth()
+  @ApiBody({ type: UpdatePasswordDto })
+  @ApiOkResponse({ description: '修改密码成功', type: String })
   @Post('update-password')
   @RequireLogin()
   public async updatePassword(
     @UserInfo('userId') userId: number,
-    @Body() updatePasswordUserDto: UpdatePasswordUserDto,
+    @Body() updatePasswordUserDto: UpdatePasswordDto,
   ) {
     await this.userService.updateUser({
       type: 'update-password',
@@ -121,6 +201,14 @@ export class UserController {
     return '修改密码成功';
   }
 
+  @ApiOperation({
+    description: '用户更新信息',
+    operationId: 'updateInfo',
+    tags: ['user'],
+  })
+  @ApiBearerAuth()
+  @ApiBody({ type: UpdateUserDto })
+  @ApiOkResponse({ description: '修改成功', type: String })
   @Post('update')
   @RequireLogin()
   public async update(
@@ -134,6 +222,14 @@ export class UserController {
     return '修改成功';
   }
 
+  @ApiOperation({
+    description: '用户修改邮箱',
+    operationId: 'updateEmail',
+    tags: ['user'],
+  })
+  @ApiBearerAuth()
+  @ApiBody({ type: UpdateUserEmailDto })
+  @ApiOkResponse({ description: '修改成功', type: String })
   @Post('update-email')
   @RequireLogin()
   public async updateEmail(

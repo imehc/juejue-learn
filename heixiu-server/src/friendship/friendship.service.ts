@@ -5,7 +5,7 @@ import {
   InternalServerErrorException,
   Logger,
 } from '@nestjs/common';
-import { FriendAddDto } from './dto/add.dto';
+import { AddFriendDto } from './dto/add.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { FriendRequestStatus, User } from '@prisma/client';
 
@@ -16,10 +16,10 @@ export class FriendshipService {
 
   private readonly logger = new Logger();
 
-  public async add(friendAddDto: FriendAddDto, userId: number) {
+  public async add(friend: AddFriendDto, userId: number) {
     // 查找该用户是否存在
     const foundUser = await this.prismaService.user.findFirst({
-      where: { id: friendAddDto.friendId },
+      where: { id: friend.friendId },
     });
     if (!foundUser) {
       throw new BadRequestException('用户不存在');
@@ -32,8 +32,8 @@ export class FriendshipService {
     const foundFriend = await this.prismaService.friendship.findMany({
       where: {
         OR: [
-          { userId, friendId: friendAddDto.friendId },
-          { friendId: userId, userId: friendAddDto.friendId },
+          { userId, friendId: friend.friendId },
+          { friendId: userId, userId: friend.friendId },
         ],
       },
     });
@@ -43,7 +43,7 @@ export class FriendshipService {
     // 查找是否发送过请求
     const foundFriendRequest = await this.prismaService.friendRequest.findFirst(
       {
-        where: { fromUserId: userId, toUserId: friendAddDto.friendId },
+        where: { fromUserId: userId, toUserId: friend.friendId },
       },
     );
     if (foundFriendRequest?.status === FriendRequestStatus.PENDING) {
@@ -54,7 +54,7 @@ export class FriendshipService {
         await this.prismaService.friendRequest.update({
           where: { id: foundFriendRequest.id },
           data: {
-            reason: friendAddDto.reason,
+            reason: friend.reason,
             status: FriendRequestStatus.PENDING,
             updateAt: new Date(),
           },
@@ -64,8 +64,8 @@ export class FriendshipService {
       await this.prismaService.friendRequest.create({
         data: {
           fromUserId: userId,
-          toUserId: friendAddDto.friendId,
-          reason: friendAddDto.reason,
+          toUserId: friend.friendId,
+          reason: friend.reason,
           status: FriendRequestStatus.PENDING,
         },
       });
@@ -87,12 +87,21 @@ export class FriendshipService {
       set.add(friend.friendId);
     }
     const friendIds = [...set].filter((item) => item !== userId);
-    const res: Pick<User, 'id' | 'username' | 'nickname' | 'email'>[] = [];
+    const res: Pick<
+      User,
+      'id' | 'username' | 'nickname' | 'email' | 'headPic'
+    >[] = [];
 
     for (const id of friendIds) {
       const user = await this.prismaService.user.findUnique({
         where: { id },
-        select: { id: true, username: true, nickname: true, email: true },
+        select: {
+          id: true,
+          username: true,
+          nickname: true,
+          email: true,
+          headPic: true,
+        },
       });
       res.push(user);
     }
