@@ -3,7 +3,7 @@ import { IsEmail, IsNotEmpty, MaxLength, MinLength } from 'class-validator';
 export class UpdateUserDto {
   @IsNotEmpty({ message: '昵称不能为空' })
   @MaxLength(20, { message: '昵称不能超过20个字符' })
-  nickName: string;
+  nickname: string;
 
   headPic: string;
 }

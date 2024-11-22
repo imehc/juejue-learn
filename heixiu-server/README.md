@@ -35,6 +35,8 @@ docker run --name chat-room-db \
 npx prisma migrate reset 
 # 创建新的 migration
 npx prisma migrate dev --name [名称]
+# 预览迁移 但不立即执行迁移
+npx prisma migrate dev --name [名称] --create-only
 ```
 
 # nest命令

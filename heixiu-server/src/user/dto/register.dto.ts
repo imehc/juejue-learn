@@ -13,7 +13,7 @@ export class RegisterUserDto extends EmailDto {
 
   @IsNotEmpty({ message: '昵称不能为空' })
   @MaxLength(20, { message: '昵称不能超过20个字符' })
-  nickName: string;
+  nickname: string;
 
   @IsNotEmpty({ message: '邮箱不能为空' })
   @IsEmail({}, { message: '邮箱格式不正确' })

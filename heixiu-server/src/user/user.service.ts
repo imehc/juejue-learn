@@ -68,7 +68,7 @@ export class UserService {
       return user;
     } catch (error) {
       this.logger.error(error, UserService);
-      throw new InternalServerErrorException('内部错误');
+      throw new InternalServerErrorException('服务异常');
     }
   }
 
@@ -104,7 +104,7 @@ export class UserService {
         id: true,
         username: true,
         email: true,
-        nickName: true,
+        nickname: true,
         headPic: true,
         createAt: true,
       },
@@ -138,7 +138,7 @@ export class UserService {
           this.redisServer.del(forgetPasswordWrapper(config.data.email));
         } catch (error) {
           this.logger.error(error, UserService);
-          throw new InternalServerErrorException('内部错误');
+          throw new InternalServerErrorException('服务异常');
         }
         break;
       }
@@ -162,20 +162,20 @@ export class UserService {
           });
         } catch (error) {
           this.logger.error(error, UserService);
-          throw new InternalServerErrorException('内部错误');
+          throw new InternalServerErrorException('服务异常');
         }
         break;
       }
       case 'update-user': {
-        const { nickName, headPic, id } = config.data;
+        const { nickname, headPic, id } = config.data;
         try {
           await this.prismaService.user.update({
             where: { id },
-            data: { nickName, headPic },
+            data: { nickname, headPic },
           });
         } catch (error) {
           this.logger.error(error, UserService);
-          throw new InternalServerErrorException('内部错误');
+          throw new InternalServerErrorException('服务异常');
         }
         break;
       }
@@ -203,7 +203,7 @@ export class UserService {
           this.redisServer.del(updateEmailWrapper(config.data.email));
         } catch (error) {
           this.logger.error(error, UserService);
-          throw new InternalServerErrorException('内部错误');
+          throw new InternalServerErrorException('服务异常');
         }
       }
     }
@@ -227,5 +227,5 @@ type UpdateConfig =
     }
   | {
       type: 'update-user';
-      data: Pick<User, 'id' | 'nickName' | 'headPic'>;
+      data: Pick<User, 'id' | 'nickname' | 'headPic'>;
     };

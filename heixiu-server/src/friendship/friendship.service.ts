@@ -71,7 +71,7 @@ export class FriendshipService {
       });
     } catch (error) {
       this.logger.error(error, FriendshipService);
-      throw new InternalServerErrorException('内部错误');
+      throw new InternalServerErrorException('服务异常');
     }
   }
 
@@ -87,12 +87,12 @@ export class FriendshipService {
       set.add(friend.friendId);
     }
     const friendIds = [...set].filter((item) => item !== userId);
-    const res: Pick<User, 'id' | 'username' | 'nickName' | 'email'>[] = [];
+    const res: Pick<User, 'id' | 'username' | 'nickname' | 'email'>[] = [];
 
     for (const id of friendIds) {
       const user = await this.prismaService.user.findUnique({
         where: { id },
-        select: { id: true, username: true, nickName: true, email: true },
+        select: { id: true, username: true, nickname: true, email: true },
       });
       res.push(user);
     }
@@ -152,7 +152,7 @@ export class FriendshipService {
       }
     } catch (error) {
       this.logger.error(error, FriendshipService);
-      throw new InternalServerErrorException('内部错误');
+      throw new InternalServerErrorException('服务异常');
     }
   }
 
@@ -206,7 +206,7 @@ export class FriendshipService {
       }
     } catch (error) {
       this.logger.error(error, FriendshipService);
-      throw new InternalServerErrorException('内部错误');
+      throw new InternalServerErrorException('服务异常');
     }
     const friendships = await this.prismaService.friendship.findMany({
       where: {
@@ -240,7 +240,7 @@ export class FriendshipService {
       }
     } catch (error) {
       this.logger.error(error, FriendshipService);
-      throw new InternalServerErrorException('内部错误');
+      throw new InternalServerErrorException('服务异常');
     }
   }
 
@@ -273,7 +273,7 @@ export class FriendshipService {
       }
     } catch (error) {
       this.logger.error(error, FriendshipService);
-      throw new InternalServerErrorException('内部错误');
+      throw new InternalServerErrorException('服务异常');
     }
   }
 }
