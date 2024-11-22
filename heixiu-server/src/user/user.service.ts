@@ -12,9 +12,9 @@ import {
   forgetPasswordWrapper,
   registerWrapper,
   updateEmailWrapper,
-} from 'src/config/helper';
+} from 'src/helper/helper';
 import { LoginUserDto } from './dto/login.dto';
-import { md5 } from 'src/config/utils';
+import { md5 } from 'src/helper/utils';
 import { User } from '@prisma/client';
 import { UpdatePasswordUserDto } from './dto/update-password.dto';
 

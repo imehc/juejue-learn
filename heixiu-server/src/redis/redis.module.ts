@@ -1,9 +1,9 @@
 import { Global, Module } from '@nestjs/common';
 import { RedisService } from './redis.service';
-import { REDIS_ClIENT } from 'src/config/const';
+import { REDIS_ClIENT } from 'src/helper/const';
 import { createClient } from 'redis';
 import { ConfigService } from '@nestjs/config';
-import { ConfigurationImpl } from 'src/config/configuration';
+import { ConfigurationImpl } from 'src/helper/configuration';
 
 @Global() // 声明为全局模块
 @Module({

@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
 import { FriendshipService } from './friendship.service';
-import { RequireLogin, UserInfo } from 'src/config/custom.decorator';
+import { RequireLogin, UserInfo } from 'src/helper/custom.decorator';
 import { FriendAddDto } from './dto/add.dto';
 
 @Controller('friendship')

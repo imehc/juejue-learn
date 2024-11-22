@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { createTransport, Transporter } from 'nodemailer';
 import { compile } from 'handlebars';
 import type Mail from 'nodemailer/lib/mailer';
-import { ConfigurationImpl } from 'src/config/configuration';
+import { ConfigurationImpl } from 'src/helper/configuration';
 import { join, resolve } from 'path';
 import { readFileSync } from 'fs';
 

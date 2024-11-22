@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { ChatroomService } from './chatroom.service';
-import { RequireLogin, UserInfo } from 'src/config/custom.decorator';
+import { RequireLogin, UserInfo } from 'src/helper/custom.decorator';
 import { CreateSingleChatroomDto } from './dto/create-single.dto';
 import { CreateMultipleChatroomDto } from './dto/create-multiple.dto';
 import { ChatroomMemberQueryDto } from './dto/member-query.dto';
