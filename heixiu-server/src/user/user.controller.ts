@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  HttpCode,
   HttpException,
   HttpStatus,
   Inject,
@@ -119,6 +120,7 @@ export class UserController {
   })
   @ApiBody({ type: ForgetPasswordDto })
   @ApiOkResponse({ description: '重置密码成功', type: String })
+  @HttpCode(HttpStatus.OK)
   @Post('forget-password')
   public async forgetPassword(@Body() { captcha, ...data }: ForgetPasswordDto) {
     await this.userService.updateUser({
@@ -136,6 +138,7 @@ export class UserController {
   })
   @ApiBody({ type: RegisterDto })
   @ApiOkResponse({ type: Auth })
+  @HttpCode(HttpStatus.OK)
   @Post('register')
   public async register(@Body() registerUser: RegisterDto) {
     const user = await this.userService.register(registerUser);
@@ -149,6 +152,7 @@ export class UserController {
   })
   @ApiBody({ type: LoginDto })
   @ApiOkResponse({ type: Auth })
+  @HttpCode(HttpStatus.OK)
   @Post('login')
   public async login(@Body() loginUser: LoginDto) {
     const user = await this.userService.login(loginUser);
@@ -189,6 +193,7 @@ export class UserController {
   @ApiBody({ type: UpdatePasswordDto })
   @ApiOkResponse({ description: '修改密码成功', type: String })
   @Post('update-password')
+  @HttpCode(HttpStatus.OK)
   @RequireLogin()
   public async updatePassword(
     @UserInfo('userId') userId: number,
@@ -209,6 +214,8 @@ export class UserController {
   @ApiBearerAuth()
   @ApiBody({ type: UpdateUserDto })
   @ApiOkResponse({ description: '修改成功', type: String })
+  @HttpCode(HttpStatus.OK)
+
   @Post('update')
   @RequireLogin()
   public async update(
@@ -231,6 +238,8 @@ export class UserController {
   @ApiBody({ type: UpdateUserEmailDto })
   @ApiOkResponse({ description: '修改成功', type: String })
   @Post('update-email')
+  @HttpCode(HttpStatus.OK)
+
   @RequireLogin()
   public async updateEmail(
     @UserInfo('userId') userId: number,

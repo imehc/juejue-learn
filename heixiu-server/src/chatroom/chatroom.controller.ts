@@ -1,4 +1,14 @@
-import { Body, Controller, Get, Param, Post, Put, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  Post,
+  Put,
+  Query,
+} from '@nestjs/common';
 import { ChatroomService } from './chatroom.service';
 import { RequireLogin, UserInfo } from 'src/helper/custom.decorator';
 import { CreateSingleChatroomDto } from './dto/create-single.dto';
@@ -15,6 +25,7 @@ import {
   ApiQuery,
   getSchemaPath,
   ApiExtraModels,
+  ApiResponse,
 } from '@nestjs/swagger';
 import { UserInfo as User } from '../user/vo/info.vo';
 import { ChatRoom, ChatRoomUser, ChatRoomUserId } from './vo/room.vo';
@@ -30,7 +41,12 @@ export class ChatroomController {
     tags: ['chatroom'],
   })
   @ApiBearerAuth()
-  @ApiOkResponse({ description: '创建成功', type: String })
+  @ApiResponse({
+    description: '创建成功',
+    type: String,
+    status: HttpStatus.CREATED,
+  })
+  @HttpCode(HttpStatus.CREATED)
   @Post('single')
   public async createSingleChatroom(
     @Body() createSingleChatroom: CreateSingleChatroomDto,
@@ -50,7 +66,12 @@ export class ChatroomController {
   })
   @ApiBearerAuth()
   @ApiBody({ type: CreateMultipleChatroomDto })
-  @ApiOkResponse({ description: '创建成功', type: String })
+  @ApiResponse({
+    description: '创建成功',
+    type: String,
+    status: HttpStatus.CREATED,
+  })
+  @HttpCode(HttpStatus.CREATED)
   @Post('multiple')
   public async createMultipleChatroom(
     @Body() createMultipleChatroom: CreateMultipleChatroomDto,
@@ -151,6 +172,7 @@ export class ChatroomController {
     example: 0,
   })
   @ApiOkResponse({ description: '加入成功', type: String })
+  @HttpCode(HttpStatus.OK)
   @Put(':id/join')
   public async joinChatroom(
     @Param() { id }: ChatroomMemberInfoDto,
@@ -175,6 +197,7 @@ export class ChatroomController {
     example: 0,
   })
   @ApiOkResponse({ description: '退出成功', type: String })
+  @HttpCode(HttpStatus.OK)
   @Put(':id/quit')
   public async quitChatroom(
     @Param() { id }: ChatroomMemberInfoDto,

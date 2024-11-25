@@ -3,6 +3,8 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   Post,
   Put,
@@ -16,6 +18,7 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiParam,
+  ApiResponse,
 } from '@nestjs/swagger';
 
 import { UserInfo as User } from '../user/vo/info.vo';
@@ -33,7 +36,12 @@ export class FriendshipController {
   })
   @ApiBearerAuth()
   @ApiBody({ type: AddFriendDto })
-  @ApiOkResponse({ description: '发送好友申请成功', type: String })
+  @ApiResponse({
+    description: '发送好友申请成功',
+    type: String,
+    status: HttpStatus.CREATED,
+  })
+  @HttpCode(HttpStatus.CREATED)
   @Post()
   public async addFriend(
     @Body() friend: AddFriendDto,
@@ -61,7 +69,7 @@ export class FriendshipController {
     tags: ['friendship'],
   })
   @ApiBearerAuth()
-  @ApiOkResponse({ type: FriendApplication,isArray: true })
+  @ApiOkResponse({ type: FriendApplication, isArray: true })
   @Get('request')
   public async findFriendRequest(@UserInfo('userId') userId: number) {
     return this.friendshipService.findFriendRequest(userId);
@@ -80,6 +88,7 @@ export class FriendshipController {
     example: 0,
   })
   @ApiOkResponse({ description: '拒绝该申请成功', type: String })
+  @HttpCode(HttpStatus.OK)
   @Put(':id/reject')
   public async rejectFriendRequest(
     @Param('id') friendId: number,
@@ -102,6 +111,7 @@ export class FriendshipController {
     example: 0,
   })
   @ApiOkResponse({ description: '同意该申请成功', type: String })
+  @HttpCode(HttpStatus.OK)
   @Put(':id/agree')
   public async agreeFriendRequest(
     @Param('id') friendId: number,
@@ -123,7 +133,12 @@ export class FriendshipController {
     description: '用户id',
     example: 0,
   })
-  @ApiOkResponse({ description: '删除成功', type: String })
+  @ApiResponse({
+    description: '删除成功',
+    type: String,
+    status: HttpStatus.NO_CONTENT,
+  })
+  @HttpCode(HttpStatus.NO_CONTENT)
   @Delete(':id')
   public async deleteFriend(
     @Param('id') friendId: number,

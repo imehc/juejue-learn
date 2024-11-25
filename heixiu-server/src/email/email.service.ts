@@ -1,4 +1,10 @@
-import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Inject,
+  Injectable,
+  Logger,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { createTransport, Transporter } from 'nodemailer';
 import { compile } from 'handlebars';
@@ -6,12 +12,17 @@ import type Mail from 'nodemailer/lib/mailer';
 import { ConfigurationImpl } from 'src/helper/configuration';
 import { join, resolve } from 'path';
 import { readFileSync } from 'fs';
+import { RedisService } from 'src/redis/redis.service';
+import { forgetPasswordWrapper, registerWrapper } from 'src/helper/helper';
 
 @Injectable()
 export class EmailService {
   private readonly transporter: Transporter;
 
   private readonly logger = new Logger();
+
+  @Inject(RedisService)
+  private readonly redisService: RedisService;
 
   constructor(private configService: ConfigService<ConfigurationImpl>) {
     this.transporter = createTransport({
@@ -45,6 +56,16 @@ export class EmailService {
         html: this.loadTemplate(type, text as string, ttl),
       });
     } catch (error) {
+      // 发送失败删除缓存验证码
+      switch (type) {
+        case 'register':
+          await this.redisService.del(registerWrapper(to as string));
+          break;
+        case 'forget-password':
+          await this.redisService.del(forgetPasswordWrapper(to as string));
+        default:
+          break;
+      }
       this.logger.error(error, EmailService);
       throw new HttpException('请检查该邮箱是否存在', HttpStatus.BAD_REQUEST);
     }
@@ -58,7 +79,7 @@ export class EmailService {
     const replacements = {
       type: this.getCaptchaType(type),
       code,
-      validity: ttl,
+      validity: ttl, // 分钟
     };
     return template(replacements);
   }

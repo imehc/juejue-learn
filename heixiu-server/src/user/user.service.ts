@@ -64,11 +64,12 @@ export class UserService {
           /** 只返回选择的字段 */
         },
       });
-      this.redisServer.del(registerWrapper(data.email));
       return user;
     } catch (error) {
       this.logger.error(error, UserService);
       throw new InternalServerErrorException('服务异常');
+    } finally {
+      this.redisServer.del(registerWrapper(data.email));
     }
   }
 
@@ -135,10 +136,11 @@ export class UserService {
             where: { email: config.data.email },
             data: { password: md5(config.data.password) },
           });
-          this.redisServer.del(forgetPasswordWrapper(config.data.email));
         } catch (error) {
           this.logger.error(error, UserService);
           throw new InternalServerErrorException('服务异常');
+        } finally {
+          this.redisServer.del(forgetPasswordWrapper(config.data.email));
         }
         break;
       }
@@ -200,10 +202,11 @@ export class UserService {
             where: { id: foundUser.id },
             data: { email: config.data.email },
           });
-          this.redisServer.del(updateEmailWrapper(config.data.email));
         } catch (error) {
           this.logger.error(error, UserService);
           throw new InternalServerErrorException('服务异常');
+        } finally {
+          this.redisServer.del(updateEmailWrapper(config.data.email));
         }
       }
     }
