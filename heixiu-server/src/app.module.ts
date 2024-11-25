@@ -12,10 +12,19 @@ import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './auth.guard';
 import { FriendshipModule } from './friendship/friendship.module';
 import { ChatroomModule } from './chatroom/chatroom.module';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ load: [configuration], isGlobal: true }), // 环境配置
+    // https://docs.nestjs.com/security/rate-limiting 速率限制
+    ThrottlerModule.forRoot([
+      {
+        name: 'short',
+        ttl: 1000, // 毫秒
+        limit: 3,
+      },
+    ]),
     PrismaModule,
     UserModule,
     RedisModule,
@@ -24,7 +33,7 @@ import { ChatroomModule } from './chatroom/chatroom.module';
       global: true,
       useFactory(configService: ConfigService<ConfigurationImpl>) {
         return {
-          secret: configService.get('jwt.secret'),
+          secret: configService.get('jwt.access-token-secret'),
           signOptions: {
             // https://github.com/vercel/ms?tab=readme-ov-file#examples
             expiresIn: configService.get('jwt.access-token-expires-time'),
@@ -41,6 +50,7 @@ import { ChatroomModule } from './chatroom/chatroom.module';
     AppService,
     PrismaModule,
     { provide: APP_GUARD, useClass: AuthGuard }, // 全局启用Graud
+    { provide: APP_GUARD, useClass: ThrottlerGuard }, 
   ],
 })
 export class AppModule {}
