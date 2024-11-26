@@ -7,20 +7,28 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
-import { Observable } from 'rxjs';
-import { JwtUserData } from './helper/global';
+import { JwtUserData } from '../helper/global';
+import { ConfigService } from '@nestjs/config';
+import { ConfigurationImpl } from 'src/helper/configuration';
+import { RedisService } from 'src/redis/redis.service';
+import { jwtWrapper } from 'src/helper/helper';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
+  constructor(
+    private readonly configService: ConfigService<ConfigurationImpl>,
+  ) {}
+
   @Inject()
   private reflector: Reflector;
+
+  @Inject(RedisService)
+  private redisService: RedisService;
 
   @Inject(JwtService)
   private jwtService: JwtService;
 
-  canActivate(
-    context: ExecutionContext,
-  ): boolean | Promise<boolean> | Observable<boolean> {
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     const request: Request = context.switchToHttp().getRequest();
     // const response: Response = context.switchToHttp().getResponse();
 
@@ -38,11 +46,18 @@ export class AuthGuard implements CanActivate {
       throw new UnauthorizedException('登录已过期');
     }
 
+    type JWTData = JwtUserData & { exp: number };
     try {
       const token = authorization.split(' ')[1];
-      const data = this.jwtService.verify<JwtUserData>(token);
-      request.user = data;
-      return true;
+      const data = await this.jwtService.verifyAsync<JWTData>(token, {
+        secret: this.configService.get('jwt.access-token-secret'),
+      });
+      const cacheExp = await this.redisService.get(jwtWrapper(data.userId));
+      if (+cacheExp === data.exp) {
+        request.user = data;
+        return true;
+      }
+      throw new Error('已过期'); // 只需要抛出错误即可
     } catch (error) {
       throw new UnauthorizedException('登录已失效');
     }

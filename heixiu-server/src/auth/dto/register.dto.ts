@@ -1,5 +1,5 @@
 import { IsEmail, IsNotEmpty, MaxLength, MinLength } from 'class-validator';
-import { EmailDto } from './email.dto';
+import { EmailDto } from '../../user/dto/email.dto';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class RegisterDto extends EmailDto {

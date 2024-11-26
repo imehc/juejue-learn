@@ -1,5 +1,10 @@
-const REDIS_ClIENT = 'REDIS_CLIENT';
+const REDIS_ClIENT = 'REDIS_CLIENT' as const;
 
-const CREATED = 'CREATED';
+const CREATED = 'CREATED' as const;
 
-export { CREATED, REDIS_ClIENT };
+const AUTH = {
+  JWT: 'jwt',
+  JWT_REFRESH: 'jwt-refresh',
+} as const;
+
+export { CREATED, REDIS_ClIENT, AUTH };

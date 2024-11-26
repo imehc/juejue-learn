@@ -5,18 +5,20 @@ import { PrismaModule } from './prisma/prisma.module';
 import { UserModule } from './user/user.module';
 import { RedisModule } from './redis/redis.module';
 import { EmailModule } from './email/email.module';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import configuration, { ConfigurationImpl } from './helper/configuration';
-import { JwtModule } from '@nestjs/jwt';
+import { ConfigModule } from '@nestjs/config';
+import configuration from './helper/configuration';
 import { APP_GUARD } from '@nestjs/core';
-import { AuthGuard } from './auth.guard';
 import { FriendshipModule } from './friendship/friendship.module';
 import { ChatroomModule } from './chatroom/chatroom.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ load: [configuration], isGlobal: true }), // 环境配置
+    ConfigModule.forRoot({
+      load: [configuration],
+      isGlobal: true,
+    }), // 环境配置
     // https://docs.nestjs.com/security/rate-limiting 速率限制
     ThrottlerModule.forRoot([
       {
@@ -29,28 +31,15 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
     UserModule,
     RedisModule,
     EmailModule,
-    JwtModule.registerAsync({
-      global: true,
-      useFactory(configService: ConfigService<ConfigurationImpl>) {
-        return {
-          secret: configService.get('jwt.access-token-secret'),
-          signOptions: {
-            // https://github.com/vercel/ms?tab=readme-ov-file#examples
-            expiresIn: configService.get('jwt.access-token-expires-time'),
-          },
-        };
-      },
-      inject: [ConfigService],
-    }),
     FriendshipModule,
     ChatroomModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [
     AppService,
     PrismaModule,
-    { provide: APP_GUARD, useClass: AuthGuard }, // 全局启用Graud
-    { provide: APP_GUARD, useClass: ThrottlerGuard }, 
+    { provide: APP_GUARD, useClass: ThrottlerGuard },
   ],
 })
 export class AppModule {}

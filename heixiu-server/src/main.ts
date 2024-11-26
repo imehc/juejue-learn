@@ -34,6 +34,7 @@ function initConfig(
   const config = new DocumentBuilder()
     .addServer(cs.get('nest-server.doc-url'))
     .addBearerAuth({ type: 'http' })
+    .addTag('auth', 'auth')
     .addTag('user', '用户')
     .addTag('friendship', '好友')
     .addTag('chatroom', '群聊')
@@ -43,4 +44,5 @@ function initConfig(
   writeFileSync('./openapi.yaml', dump(document, {}));
   // http://localhost:6020/api
   SwaggerModule.setup('api', app, document);
+  // 学习更多 https://wanago.io/2020/09/21/api-nestjs-refresh-tokens-jwt/
 }
