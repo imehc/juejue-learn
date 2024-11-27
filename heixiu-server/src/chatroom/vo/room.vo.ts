@@ -26,6 +26,6 @@ export class ChatRoomUserId {
 }
 
 export class ChatRoomUser {
-  @ApiProperty({ description: '聊天室成员id', isArray: true, type: User })
+  @ApiProperty({ description: '聊天室成员', isArray: true, type: User })
   users: User[];
 }

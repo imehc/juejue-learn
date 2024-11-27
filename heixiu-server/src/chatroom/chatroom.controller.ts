@@ -10,7 +10,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { ChatroomService } from './chatroom.service';
-import { RequireLogin, UserInfo } from 'src/helper/custom.decorator';
+import { ApiDoc, RequireLogin, UserInfo } from 'src/helper/custom.decorator';
 import { CreateSingleChatroomDto } from './dto/create-single.dto';
 import { CreateMultipleChatroomDto } from './dto/create-multiple.dto';
 import { ChatroomMemberQueryDto } from './dto/member-query.dto';
@@ -31,22 +31,21 @@ import { UserInfo as User } from '../user/vo/info.vo';
 import { ChatRoom, ChatRoomUser, ChatRoomUserId } from './vo/room.vo';
 
 @Controller('chatroom')
-@RequireLogin()
 export class ChatroomController {
   constructor(private readonly chatroomService: ChatroomService) {}
 
-  @ApiOperation({
-    description: '创建一对一聊天室',
-    operationId: 'createOneToOneChatroom',
-    tags: ['chatroom'],
+  @ApiDoc({
+    operation: {
+      description: '创建一对一聊天室',
+      operationId: 'createOneToOneChatroom',
+      tags: ['chatroom'],
+    },
+    response: {
+      type: String,
+      description: '创建成功',
+      status: HttpStatus.CREATED,
+    },
   })
-  @ApiBearerAuth()
-  @ApiResponse({
-    description: '创建成功',
-    type: String,
-    status: HttpStatus.CREATED,
-  })
-  @HttpCode(HttpStatus.CREATED)
   @Post('single')
   public async createSingleChatroom(
     @Body() createSingleChatroom: CreateSingleChatroomDto,
@@ -59,19 +58,18 @@ export class ChatroomController {
     return '创建成功';
   }
 
-  @ApiOperation({
-    description: '创建多人聊天室',
-    operationId: 'createMultipleChatroom',
-    tags: ['chatroom'],
+  @ApiDoc({
+    operation: {
+      description: '创建多人聊天室',
+      operationId: 'createMultipleChatroom',
+      tags: ['chatroom'],
+    },
+    response: {
+      type: String,
+      description: '创建成功',
+      status: HttpStatus.CREATED,
+    },
   })
-  @ApiBearerAuth()
-  @ApiBody({ type: CreateMultipleChatroomDto })
-  @ApiResponse({
-    description: '创建成功',
-    type: String,
-    status: HttpStatus.CREATED,
-  })
-  @HttpCode(HttpStatus.CREATED)
   @Post('multiple')
   public async createMultipleChatroom(
     @Body() createMultipleChatroom: CreateMultipleChatroomDto,
@@ -84,19 +82,14 @@ export class ChatroomController {
     return '创建成功';
   }
 
-  @ApiOperation({
-    description: '获取聊天室成员',
-    operationId: 'findChatroomMembers',
-    tags: ['chatroom'],
+  @ApiDoc({
+    operation: {
+      description: '获取聊天室成员',
+      operationId: 'findChatroomMembers',
+      tags: ['chatroom'],
+    },
+    response: { type: User, isArray: true },
   })
-  @ApiBearerAuth()
-  @ApiQuery({
-    name: 'chatroomId',
-    type: Number,
-    description: '聊天室id',
-    example: 0,
-  })
-  @ApiOkResponse({ type: User, isArray: true })
   @Get('member')
   public async findChatroomMember(
     @Query() { chatroomId }: ChatroomMemberQueryDto,
@@ -104,22 +97,23 @@ export class ChatroomController {
     return await this.chatroomService.findChatroomMember(chatroomId);
   }
 
-  @ApiOperation({
-    description: '获取所有聊天室',
-    operationId: 'findAllChatroom',
-    tags: ['chatroom'],
-  })
-  @ApiExtraModels(ChatRoom, ChatRoomUserId)
-  @ApiBearerAuth()
-  @ApiOkResponse({
-    content: {
-      'application/json': {
-        schema: {
-          type: 'array',
-          allOf: [
-            { $ref: getSchemaPath(ChatRoom) },
-            { $ref: getSchemaPath(ChatRoomUserId) },
-          ],
+  @ApiDoc({
+    operation: {
+      description: '获取所有聊天室',
+      operationId: 'findAllChatroom',
+      tags: ['chatroom'],
+    },
+    extraModels: [ChatRoom, ChatRoomUserId],
+    response: {
+      content: {
+        'application/json': {
+          schema: {
+            type: 'array',
+            allOf: [
+              { $ref: getSchemaPath(ChatRoom) },
+              { $ref: getSchemaPath(ChatRoomUserId) },
+            ],
+          },
         },
       },
     },
@@ -129,27 +123,22 @@ export class ChatroomController {
     return await this.chatroomService.findAllChatroom(userId);
   }
 
-  @ApiOperation({
-    description: '获取单个聊天室详情',
-    operationId: 'findOneChatroom',
-    tags: ['chatroom'],
-  })
-  @ApiBearerAuth()
-  @ApiExtraModels(ChatRoom, ChatRoomUser)
-  @ApiParam({
-    name: 'id',
-    type: Number,
-    description: '聊天室id',
-    example: 0,
-  })
-  @ApiOkResponse({
-    content: {
-      'application/json': {
-        schema: {
-          allOf: [
-            { $ref: getSchemaPath(ChatRoom) },
-            { $ref: getSchemaPath(ChatRoomUser) },
-          ],
+  @ApiDoc({
+    operation: {
+      description: '获取单个聊天室详情',
+      operationId: 'findOneChatroom',
+      tags: ['chatroom'],
+    },
+    extraModels: [ChatRoom, ChatRoomUser],
+    response: {
+      content: {
+        'application/json': {
+          schema: {
+            allOf: [
+              { $ref: getSchemaPath(ChatRoom) },
+              { $ref: getSchemaPath(ChatRoomUser) },
+            ],
+          },
         },
       },
     },
@@ -159,20 +148,14 @@ export class ChatroomController {
     return await this.chatroomService.findChatroom(id);
   }
 
-  @ApiOperation({
-    description: '加入群聊',
-    operationId: 'joinChatroom',
-    tags: ['chatroom'],
+  @ApiDoc({
+    operation: {
+      description: '加入群聊',
+      operationId: 'joinChatroom',
+      tags: ['chatroom'],
+    },
+    response: { type: String, description: '加入成功' },
   })
-  @ApiBearerAuth()
-  @ApiParam({
-    name: 'id',
-    type: Number,
-    description: '聊天室id',
-    example: 0,
-  })
-  @ApiOkResponse({ description: '加入成功', type: String })
-  @HttpCode(HttpStatus.OK)
   @Put(':id/join')
   public async joinChatroom(
     @Param() { id }: ChatroomMemberInfoDto,
@@ -184,20 +167,14 @@ export class ChatroomController {
     return '加入成功';
   }
 
-  @ApiOperation({
-    description: '退出群聊',
-    operationId: 'quitChatroom',
-    tags: ['chatroom'],
+  @ApiDoc({
+    operation: {
+      description: '退出群聊',
+      operationId: 'quitChatroom',
+      tags: ['chatroom'],
+    },
+    response: { type: String, description: '退出成功' },
   })
-  @ApiBearerAuth()
-  @ApiParam({
-    name: 'id',
-    type: Number,
-    description: '聊天室id',
-    example: 0,
-  })
-  @ApiOkResponse({ description: '退出成功', type: String })
-  @HttpCode(HttpStatus.OK)
   @Put(':id/quit')
   public async quitChatroom(
     @Param() { id }: ChatroomMemberInfoDto,

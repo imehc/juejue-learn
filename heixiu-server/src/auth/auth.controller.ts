@@ -2,7 +2,6 @@ import {
   Body,
   Controller,
   Get,
-  HttpCode,
   HttpException,
   HttpStatus,
   Inject,
@@ -10,12 +9,6 @@ import {
   Query,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import {
-  ApiBody,
-  ApiOkResponse,
-  ApiOperation,
-  ApiQuery,
-} from '@nestjs/swagger';
 import { EmailDto } from 'src/user/dto/email.dto';
 import { EmailService } from 'src/email/email.service';
 import { RedisService } from 'src/redis/redis.service';
@@ -25,7 +18,8 @@ import { RegisterDto } from './dto/register.dto';
 import { Auth } from './vo/auth.vo';
 import { LoginDto } from './dto/login.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
-import { RequireLogin, UserInfo } from 'src/helper/custom.decorator';
+import { UserInfo } from 'src/helper/custom.decorator';
+import { ApiDoc } from 'src/helper/custom.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -37,18 +31,15 @@ export class AuthController {
   @Inject(RedisService)
   private readonly redisService: RedisService;
 
-  @ApiOperation({
-    description: '用户发送注册验证码',
-    operationId: 'sendRegisterCaptcha',
-    tags: ['auth'],
+  @ApiDoc({
+    operation: {
+      description: '用户发送注册验证码',
+      operationId: 'sendRegisterCaptcha',
+      tags: ['auth'],
+    },
+    response: { type: String, description: '发送成功' },
+    noBearerAuth: true,
   })
-  @ApiQuery({
-    name: 'email',
-    type: String,
-    description: '邮箱地址',
-    example: 'xxx@xx.com',
-  })
-  @ApiOkResponse({ description: '发送成功', type: String })
   @Get('register/captcha')
   public async registerCaptcha(@Query() { email }: EmailDto) {
     const hasCaptcha = await this.redisService.get(registerWrapper(email));
@@ -69,18 +60,15 @@ export class AuthController {
     return '发送成功';
   }
 
-  @ApiOperation({
-    description: '用户发送找回密码验证码',
-    operationId: 'sendForgotPasswordCaptcha',
-    tags: ['auth'],
+  @ApiDoc({
+    operation: {
+      description: '用户发送找回密码验证码',
+      operationId: 'sendForgotPasswordCaptcha',
+      tags: ['auth'],
+    },
+    response: { type: String, description: '发送成功' },
+    noBearerAuth: true,
   })
-  @ApiQuery({
-    name: 'email',
-    type: String,
-    description: '邮箱地址',
-    example: 'xxx@xx.com',
-  })
-  @ApiOkResponse({ description: '发送成功', type: String })
   @Get('forget-password/captcha')
   public async forgetPasswordCaptcha(@Query() { email }: EmailDto) {
     const hasCaptcha = await this.redisService.get(
@@ -103,14 +91,15 @@ export class AuthController {
     return '发送成功';
   }
 
-  @ApiOperation({
-    description: '用户找回密码',
-    operationId: 'forgetPassword',
-    tags: ['auth'],
+  @ApiDoc({
+    operation: {
+      description: '用户找回密码',
+      operationId: 'forgetPassword',
+      tags: ['auth'],
+    },
+    response: { type: String, description: '重置密码成功' },
+    noBearerAuth: true,
   })
-  @ApiBody({ type: ForgetPasswordDto })
-  @ApiOkResponse({ description: '重置密码成功', type: String })
-  @HttpCode(HttpStatus.OK)
   @Post('forget-password')
   public async forgetPassword(@Body() { captcha, ...data }: ForgetPasswordDto) {
     await this.authService.updateUser({
@@ -120,57 +109,58 @@ export class AuthController {
     return '重置密码成功';
   }
 
-  @ApiOperation({
-    description: '用户注册',
-    operationId: 'register',
-    tags: ['auth'],
+  @ApiDoc({
+    operation: {
+      summary: '用户注册',
+      operationId: 'register',
+      tags: ['auth'],
+    },
+    response: { type: Auth },
+    noBearerAuth: true,
   })
-  @ApiBody({ type: RegisterDto })
-  @ApiOkResponse({ type: Auth })
-  @HttpCode(HttpStatus.OK)
   @Post('register')
   public async register(@Body() registerUser: RegisterDto) {
     const user = await this.authService.register(registerUser);
     return this.authService.getTokens(user.id, user.username);
   }
 
-  @ApiOperation({
-    description: '用户登录',
-    operationId: 'login',
-    tags: ['auth'],
+  @ApiDoc({
+    operation: {
+      summary: '用户登录',
+      operationId: 'login',
+      tags: ['auth'],
+    },
+    response: { type: Auth },
+    noBearerAuth: true,
   })
-  @ApiBody({ type: LoginDto })
-  @ApiOkResponse({ type: Auth })
-  @HttpCode(HttpStatus.OK)
   @Post('login')
   public async login(@Body() loginUser: LoginDto) {
     const user = await this.authService.login(loginUser);
     return this.authService.getTokens(user.id, user.username);
   }
 
-  @ApiOperation({
-    description: '用户登出',
-    operationId: 'logout',
-    tags: ['auth'],
+  @ApiDoc({
+    operation: {
+      description: '用户登出',
+      operationId: 'logout',
+      tags: ['auth'],
+    },
+    response: { type: String, description: '退出成功' },
   })
-  @ApiOkResponse({ type: String, description: '退出成功' })
-  @HttpCode(HttpStatus.OK)
-  @RequireLogin()
   @Get('logout')
   public async logout(@UserInfo('userId') userId: number) {
     await this.authService.logout(userId);
     return '退出成功';
   }
 
-  @ApiOperation({
-    description: '使用refreshToken获取新的token',
-    operationId: 'refresh',
-    tags: ['auth'],
+  @ApiDoc({
+    operation: {
+      summary: '使用refreshToken获取新的token',
+      operationId: 'refresh',
+      tags: ['auth'],
+    },
+    response: { type: Auth },
   })
-  @ApiQuery({ type: LoginDto })
-  @ApiOkResponse({ type: Auth })
-  @HttpCode(HttpStatus.OK)
-  @RequireLogin()
   @Get('refresh')
   public async refreshToken(@Query() { refreshToken }: RefreshTokenDto) {
     return await this.authService.refreshToken(refreshToken);
