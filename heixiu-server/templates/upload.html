@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="https://unpkg.com/axios@0.24.0/dist/axios.min.js"></script>
+  <script src="https://unpkg.com/spark-md5@3.0.2/spark-md5.min.js"></script>
+</head>
+
+<body>
+  <input id="file" type="file" />
+  <input type="button" id="upload" value="上传">
+  <input type="button" id="continue" value="继续上传" disabled>
+  <!-- <script>
+    const fileEle = document.querySelector('#file');
+    const uploadBtn = document.querySelector('#upload');
+    const continueBtn = document.querySelector('#continue');
+
+    uploadBtn.addEventListener('click', async () => {
+      console.log('点击了上传按钮');
+      const file = fileEle.files[0];
+      if (!file) alert("请选择文件")
+      const hash = await getHash(file);
+      console.log(hash);
+      // uploadHandler(file)
+    })
+    continueBtn.addEventListener('click', async () => {
+      console.log("点击了继续上传按钮")
+    })
+
+    const chunkSize = 20 * 1024; // 使用单独常量保存预设切片大小 20KB
+    // 获取文件hash值
+    const getHash = (file) => {
+      return new Promise((resolve) => {
+        const fileReader = new FileReader();
+        fileReader.readAsArrayBuffer(file);
+        fileReader.onload = function (e) {
+          const fileMD5 = SparkMD5.ArrayBuffer.hash(e.target.result);
+          resolve(fileMD5);
+        }
+      })
+    }
+    // 文件切片
+    const createChunks = (file, fileHash) => {
+      // 使用单独常量保存预设切片大小 1MB
+      const chunkSize = 1024 * 1024 * 1;
+      // 接受一个文件对象，要把这个文件对象切片，返回一个切片数组
+      const chunks = [];
+      // 文件大小.slice(开始位置,结束位置)
+      let start = 0;
+      let index = 0;
+      while (start < file.size) {
+        let curChunk = file.slice(start, start + chunkSize);
+        chunks.push({
+          file: curChunk,
+          fileHash,
+          chunkIndex: index,
+        });
+        index++;
+        start += chunkSize;
+      }
+      return chunks;
+    }
+
+    // 单个文件上传
+    const uploadHandler = (chunk) => {
+      return new Promise(async (resolve, reject) => {
+        try {
+          const formData = new FormData();
+          formData.append('file', chunk.file);
+          formData.append('fileHash', chunk.fileHash);
+          formData.append('chunkIndex', chunk.chunkIndex);
+          const result = await fetch('http://localhost:6020/upload-file', {
+            method: "POST",
+            body: formData,
+          }).then((res) => res.json())
+          resolve(result)
+        } catch (error) {
+          reject(error)
+        }
+      })
+    }
+
+    // 批量上传切片
+    const uploadChunks = (chunks, maxRequest = 6) => {
+      return new Promise(async (resolve, reject) => {
+        if (chunks.length == 0) {
+          resolve([]);
+        }
+        let requestSliceArr = []
+        let start = 0;
+        while (start < chunks.length) {
+          requestSliceArr.push(chunks.slice(start, start + maxRequest))
+          start += maxRequest;
+        }
+        let index = 0;
+        let requestReaults = [];// 请求结果
+        let requestErrReaults = [];// 请求错误结果
+
+        const request = async () => {
+          if (index > requestSliceArr.length - 1) {
+            resolve(requestReaults);
+            return;
+          }
+          const sliceChunks = requestSliceArr[index];
+          Promise.all(sliceChunks.map(uploadHandler)).then((res) => {
+            requestReaults.push(...(Array.isArray(res) ? res : []))
+            index++;
+            request()
+          }).catch((error) => {
+            requestErrReaults.push(...(Array.isArray(error) ? error : []))
+          })
+        };
+
+        request()
+      })
+    }
+  </script> -->
+  <script>
+    const fileEle = document.querySelector('#file');
+    const uploadBtn = document.querySelector('#upload');
+    const continueBtn = document.querySelector('#continue');
+    uploadBtn.addEventListener('click', async () => {
+      console.log('点击了上传按钮');
+      const file = fileEle.files[0];
+      if (!file) alert("请选择文件")
+      uploadHandler(file)
+    })
+
+
+    const chunkSize = 20 * 1024; // 20KB
+    // TODO: 断点、错误续传
+
+    const uploadHandler = async (file) => {
+      const chunks = [];
+      let startPos = 0;
+      while (startPos < file.size) {
+        chunks.push(file.slice(startPos, startPos + chunkSize));
+        startPos += chunkSize;
+      }
+
+      const randomStr = Math.random().toString().slice(2, 8)
+      const tasks = [];
+      chunks.map((chunk, index) => {
+        const data = new FormData();
+        data.set('name', randomStr + '_' + file.name + '-' + index)
+        data.append('files', chunk);
+        tasks.push(axios.post('http://localhost:6020/upload-file', data));
+      })
+      await Promise.all(tasks);
+      axios.get('http://localhost:6020/merge-file?name=' + randomStr + '_' + file.name);
+    }
+
+  </script>
+</body>
+
+</html>

@@ -22,7 +22,6 @@ import { AuthModule } from './auth/auth.module';
     // https://docs.nestjs.com/security/rate-limiting 速率限制
     ThrottlerModule.forRoot([
       {
-        name: 'short',
         ttl: 1000, // 毫秒
         limit: 3,
       },

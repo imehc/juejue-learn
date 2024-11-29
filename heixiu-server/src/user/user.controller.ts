@@ -8,9 +8,7 @@ import { UserService } from './user.service';
 import { UserInfo } from 'src/helper/custom.decorator';
 import { UpdateUserDto } from './dto/update.dto';
 import { UpdateUserEmailDto } from './dto/update-email.dto';
-import {
-  getSchemaPath,
-} from '@nestjs/swagger';
+import { getSchemaPath } from '@nestjs/swagger';
 import { CreateAt, UserInfo as User } from './vo/info.vo';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { ApiDoc } from 'src/helper/custom.decorator';
