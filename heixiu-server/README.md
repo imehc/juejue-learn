@@ -9,9 +9,9 @@
 # Prisma supports the native connection string format for PostgreSQL, MySQL, SQLite, SQL Server, MongoDB and CockroachDB.
 # See the documentation for all the connection string options: https://pris.ly/d/connection-strings
 -->
-
+ <!-- 注意docker部署时需要指定docker数据库容器名称为部署localhost -->
 ```bash
-DATABASE_URL="postgresql://[用户名]:[密码]@localhost:5432/chat-room?schema=public"
+DATABASE_URL="postgresql://[用户名]:[密码]@[主机]:5432/[数据库]?schema=public"
 ```
 
 > 使用docker启动或配置数据库
@@ -20,7 +20,7 @@ DATABASE_URL="postgresql://[用户名]:[密码]@localhost:5432/chat-room?schema=
 docker run --name chat-room-db \
   -e POSTGRES_USER=[用户名] \
   -e POSTGRES_PASSWORD=[密码] \
-  -e POSTGRES_DB=chat-room \
+  -e POSTGRES_DB=[数据库] \
   -e TZ='Asia/Shanghai' \
   -e ALLOW_IP_RANGE=0.0.0.0/0 \
   # -v 数据卷挂载
@@ -58,11 +58,15 @@ npx prisma generate
 
 ## 开发阶段
 
-> 需要正确配置`.env.dev.yaml`文件,结构参照`.env.yaml`文件
+> 添加`.env.dev.yaml`文件,结构参照`.env.example.yaml`文件
+
+> 添加`.env`文件,结构参照`.env.example`文件
 
 ## 生产阶段
 
-> 需要正确配置`.env.yaml`文件
+> 添加`.env.production.yaml`文件，文件格式参考`.env.example.yaml`
+
+> 添加`.env.production`文件，文件格式参考`.env.example`，用于`docker`部署配置文件
 
 # 工具
 
@@ -70,6 +74,6 @@ npx prisma generate
 
 # TODO
 
-- [ ]  双刷token
+- [x]  双刷token
 - [ ]  返回的token不宜过长
-- [ ]  获取新token原token失效
+- [x]  获取新token原token失效
