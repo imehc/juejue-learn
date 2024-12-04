@@ -10,9 +10,47 @@ import { writeFileSync } from 'fs';
 import { dump } from 'js-yaml';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import path from 'path';
+import { utilities, WinstonModule } from 'nest-winston';
+import { format, transports } from 'winston';
+import 'winston-daily-rotate-file';
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+    logger: WinstonModule.createLogger({
+      transports: [
+        new transports.Console({
+          format: format.combine(
+            format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+            format.ms(),
+            utilities.format.nestLike('HeiXiu', {
+              colors: true,
+              prettyPrint: true,
+              processId: true,
+              appName: true,
+            }),
+          ),
+        }),
+        new transports.DailyRotateFile({
+          format:format.combine(
+            format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+            format.ms(),
+            utilities.format.nestLike('HeiXiu', {
+              colors: false,
+              prettyPrint: true,
+              processId: true,
+              appName: true,
+            }),
+          ),
+          frequency:"12h",
+          level: 'error',
+          dirname: 'logs',
+          filename: 'error-%DATE%.log',
+          datePattern: 'YYYY-MM-DD-HH-mm',
+          maxSize: '2M'
+      })
+      ],
+    }),
+  });
   app.useGlobalPipes(
     new ValidationPipe({ transform: true, stopAtFirstError: true }),
   ); // 全局启用
