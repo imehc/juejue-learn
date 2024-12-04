@@ -15,6 +15,8 @@ import {
   type ApiResponseOptions,
 } from '@nestjs/swagger';
 
+// createParamDecorator 自定义参数装饰器
+
 /** 需要登录 */
 export const RequireLogin = () => SetMetadata('require-login', true);
 /** 获取用户信息 */
@@ -44,7 +46,7 @@ export function ApiDoc({
   extraModels,
   response,
 }: ApiDocOptions) {
-  // ⚠️ 未使用dto的需要手动添加如queru、params、body或者在这儿扩充
+  // ⚠️ 未使用dto的需要手动添加如query、params、body或者在这儿扩充
   const decorators = [
     ApiOperation(operation),
     !noBearerAuth && ApiBearerAuth(),

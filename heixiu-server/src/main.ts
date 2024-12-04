@@ -8,18 +8,26 @@ import { CommonExceptionFilter } from './helper/common-exception.filter';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { writeFileSync } from 'fs';
 import { dump } from 'js-yaml';
+import { NestExpressApplication } from '@nestjs/platform-express';
+import path from 'path';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.useGlobalPipes(
     new ValidationPipe({ transform: true, stopAtFirstError: true }),
   ); // 全局启用
+
+  app.useStaticAssets(path.join(__dirname, '..', 'uploads'), {
+    prefix: '/uploads',
+  }); // 设置目录为静态文件目录
 
   const configService = app.get(ConfigService<ConfigurationImpl>);
   // 处理其它错误响应
   app.useGlobalFilters(new CommonExceptionFilter());
   // 处理HTTP错误响应
   app.useGlobalFilters(new HttpExceptionFilter());
+
+  app.enableCors();
 
   initConfig(app, configService);
 
@@ -35,6 +43,7 @@ function initConfig(
     .addServer(cs.get('nest-server.doc-url'))
     .addBearerAuth({ type: 'http' })
     .addTag('auth', 'auth')
+    .addTag('file', '文件')
     .addTag('user', '用户')
     .addTag('friendship', '好友')
     .addTag('chatroom', '群聊')

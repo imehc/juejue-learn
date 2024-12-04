@@ -1,0 +1,27 @@
+version: '3.8'
+services:
+  postgresql-container:
+    container_name: postgresql-container
+    image: postgres
+    # 本地映射 具体本地地址以主机路径为准
+    volumes:
+      - /Users/tom/person/learning/postgresql-data:/var/lib/postgresql
+    env_file:
+      - ./heixiu-server/.env.production
+    # 注意 environment 和 env_file 都拥有相同环境变量时 后者优先
+    # environment:
+    #   POSTGRES_USER: ${POSTGRES_USER:?error}
+    #   POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?error}
+    #   POSTGRES_DB: ${POSTGRES_DB:?error}
+      # TZ: 'Asia/Shanghai'
+      # ALLOW_IP_RANGE: '0.0.0.0/0'
+    # ports:
+    #   - '5432:5432'
+    networks:
+      - common-network
+    restart: always
+  
+# 需要保证容器网络处于同一网络，否则容器之间无法访问
+networks:
+  common-network:
+    driver: bridge
