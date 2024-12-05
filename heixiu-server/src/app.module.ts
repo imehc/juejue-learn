@@ -12,6 +12,8 @@ import { FriendshipModule } from './friendship/friendship.module';
 import { ChatroomModule } from './chatroom/chatroom.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { AuthModule } from './auth/auth.module';
+import { TaskModule } from './task/task.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -33,6 +35,8 @@ import { AuthModule } from './auth/auth.module';
     FriendshipModule,
     ChatroomModule,
     AuthModule,
+    ScheduleModule.forRoot(),
+    TaskModule,
   ],
   controllers: [AppController],
   providers: [

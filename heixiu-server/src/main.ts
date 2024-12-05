@@ -18,36 +18,9 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     logger: WinstonModule.createLogger({
       transports: [
-        new transports.Console({
-          format: format.combine(
-            format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-            format.ms(),
-            utilities.format.nestLike('HeiXiu', {
-              colors: true,
-              prettyPrint: true,
-              processId: true,
-              appName: true,
-            }),
-          ),
-        }),
-        new transports.DailyRotateFile({
-          format:format.combine(
-            format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-            format.ms(),
-            utilities.format.nestLike('HeiXiu', {
-              colors: false,
-              prettyPrint: true,
-              processId: true,
-              appName: true,
-            }),
-          ),
-          frequency:"12h",
-          level: 'error',
-          dirname: 'logs',
-          filename: 'error-%DATE%.log',
-          datePattern: 'YYYY-MM-DD-HH-mm',
-          maxSize: '2M'
-      })
+        initLog({ init: true }),
+        initLog({ level: 'error' }),
+        initLog({ level: 'warn' }),
       ],
     }),
   });
@@ -92,4 +65,46 @@ function initConfig(
   // http://localhost:6020/api
   SwaggerModule.setup('api', app, document);
   // 学习更多 https://wanago.io/2020/09/21/api-nestjs-refresh-tokens-jwt/
+}
+
+type Level = 'error' | 'warn' | 'info' | 'http' | 'verbose' | 'debug' | 'silly';
+function initLog({
+  level = 'debug',
+  init = false,
+}: {
+  level?: Level;
+  init?: boolean;
+}) {
+  // TODO: 生产环境需要哪些日志
+  if (init) {
+    return new transports.Console({
+      format: format.combine(
+        format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+        format.ms(),
+        utilities.format.nestLike('HeiXiu', {
+          colors: true,
+          prettyPrint: true,
+          processId: true,
+          appName: true,
+        }),
+      ),
+    });
+  }
+  return new transports.DailyRotateFile({
+    format: format.combine(
+      format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+      format.ms(),
+      utilities.format.nestLike('HeiXiu', {
+        colors: false,
+        prettyPrint: true,
+        processId: true,
+        appName: true,
+      }),
+    ),
+    frequency: '12h',
+    level: level,
+    dirname: 'logs',
+    filename: `${level}-%DATE%.log`,
+    maxSize: '2M',
+  });
 }
