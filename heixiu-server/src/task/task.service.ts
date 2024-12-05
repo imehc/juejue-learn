@@ -8,7 +8,7 @@ export class TaskService {
   private readonly logger = new Logger();
 
   /** 每天凌晨四点清除未能成功合并的文件 */
-  @Cron(CronExpression.EVERY_DAY_AT_4AM)
+  @Cron(CronExpression.EVERY_DAY_AT_4AM, { timeZone: 'Asia/Shanghai' })
   public clearTempFolder() {
     const prefix = 'chunks_'; // 要删除的文件夹前缀，约定为该前缀为大文件上传切片的临时文件夹前缀
     const uploadsDir = path.join(path.join(__dirname, '..', '..', 'uploads')); // 所在的文件夹
@@ -27,7 +27,7 @@ export class TaskService {
   }
 
   /** 每天凌晨五点清除没有内容的日志文件 */
-  @Cron(CronExpression.EVERY_DAY_AT_5AM)
+  @Cron(CronExpression.EVERY_DAY_AT_5AM, { timeZone: 'Asia/Shanghai' })
   public clearEmptyLogs() {
     try {
       const logsDir = path.join(process.cwd(), 'logs');
