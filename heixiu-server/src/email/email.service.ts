@@ -14,6 +14,7 @@ import { join, resolve } from 'path';
 import { readFileSync } from 'fs';
 import { RedisService } from 'src/redis/redis.service';
 import { forgetPasswordWrapper, registerWrapper } from 'src/helper/helper';
+import { CaptchaType, getCaptchaType } from 'src/helper/email';
 
 @Injectable()
 export class EmailService {
@@ -77,25 +78,11 @@ export class EmailService {
     const source = readFileSync(filePath, 'utf-8').toString();
     const template = compile(source);
     const replacements = {
-      type: this.getCaptchaType(type),
+      type: getCaptchaType(type),
       code,
       validity: ttl, // 分钟
     };
     return template(replacements);
   }
-
-  public getCaptchaType(type: CaptchaType) {
-    switch (type) {
-      case 'register':
-        return '感谢您注册Heixiu聊天室！';
-      case 'forget-password':
-        return '您正在重置密码！';
-      case 'login':
-        return '您正在登录Heixiu聊天室！';
-      default:
-        return '感谢您的使用！';
-    }
-  }
 }
 
-type CaptchaType = 'register' | 'login' | 'forget-password';

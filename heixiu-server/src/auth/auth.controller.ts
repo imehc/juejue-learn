@@ -10,7 +10,6 @@ import {
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { EmailDto } from 'src/user/dto/email.dto';
-import { EmailService } from 'src/email/email.service';
 import { RedisService } from 'src/redis/redis.service';
 import { forgetPasswordWrapper, registerWrapper } from 'src/helper/helper';
 import { ForgetPasswordDto } from './dto/forget-password.dto';
@@ -20,13 +19,15 @@ import { LoginDto } from './dto/login.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { UserInfo } from 'src/helper/custom.decorator';
 import { ApiDoc } from 'src/helper/custom.decorator';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { getCaptchaType } from 'src/helper/email';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Inject(EmailService)
-  private readonly emailService: EmailService;
+  @Inject(EventEmitter2)
+  private eventEmitter: EventEmitter2;
 
   @Inject(RedisService)
   private readonly redisService: RedisService;
@@ -50,9 +51,9 @@ export class AuthController {
     const ttl = 5 * 60; // 五分钟有效期
     const code = Math.random().toString().slice(2, 8);
     await this.redisService.set(registerWrapper(email), code, ttl);
-    await this.emailService.sendMail({
+    await this.eventEmitter.emitAsync('send-email', {
       to: email,
-      subject: this.emailService.getCaptchaType('register'),
+      subject: getCaptchaType('register'),
       text: code,
       type: 'register',
       ttl: ttl / 60,
@@ -81,9 +82,9 @@ export class AuthController {
     const ttl = 5 * 60; // 五分钟有效期
     const code = Math.random().toString().slice(2, 8);
     await this.redisService.set(forgetPasswordWrapper(email), code, ttl);
-    await this.emailService.sendMail({
+    await this.eventEmitter.emitAsync('send-email',{
       to: email,
-      subject: this.emailService.getCaptchaType('forget-password'),
+      subject: getCaptchaType('forget-password'),
       text: code,
       type: 'forget-password',
       ttl: ttl / 60,
