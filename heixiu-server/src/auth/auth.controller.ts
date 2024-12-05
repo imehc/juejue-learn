@@ -27,7 +27,7 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Inject(EventEmitter2)
-  private eventEmitter: EventEmitter2;
+  private readonly eventEmitter: EventEmitter2;
 
   @Inject(RedisService)
   private readonly redisService: RedisService;
