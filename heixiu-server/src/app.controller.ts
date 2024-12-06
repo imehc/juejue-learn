@@ -4,21 +4,38 @@ import {
   Controller,
   Get,
   HttpStatus,
+  Inject,
+  Logger,
+  Param,
   Post,
   Query,
   UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common';
-import { AppService } from './app.service';
 import { SkipThrottle } from '@nestjs/throttler';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import fs from 'fs';
-import { FileDto, File } from './app.dto';
+import { FileDto, WeatherDto } from './app.dto';
 import { ApiDoc } from './helper/custom.decorator';
+import { pinyin } from 'pinyin-pro';
+import { HttpService } from '@nestjs/axios';
+import { firstValueFrom } from 'rxjs';
+import { ConfigService } from '@nestjs/config';
+import { FileVo, Weather, WeatherVo, Location } from './app.vo';
+import { RedisService } from './redis/redis.service';
+import { weatherWrapper } from './helper/helper';
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  constructor(private readonly configService: ConfigService) {}
+
+  private readonly logger = new Logger();
+
+  @Inject(HttpService)
+  private httpService: HttpService;
+
+  @Inject(RedisService)
+  private redisService: RedisService;
 
   // TODO: 断点、错误续传
   // 前端切片上传参考： /templates/upload.html
@@ -53,7 +70,7 @@ export class AppController {
       operationId: 'mergeFile',
       tags: ['file'],
     },
-    response: { type: File },
+    response: { type: FileVo },
     noBearerAuth: process.env.NODE_ENVIRONMENT !== 'production',
   })
   @Get('merge-file')
@@ -88,6 +105,98 @@ export class AppController {
       };
     } catch (error) {
       throw new BadRequestException('上传失败');
+    }
+  }
+
+  @ApiDoc({
+    operation: {
+      description: '获取未来24小时天气信息',
+      operationId: 'getWeatherForecast',
+      tags: ['weather'],
+    },
+    extraModels: [Weather, Location],
+    response: {
+      content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            required: ['code', 'data'],
+            properties: {
+              location: {
+                $ref: '#/components/schemas/Location',
+              },
+              data: {
+                type: 'array',
+                items: {
+                  $ref: '#/components/schemas/Weather',
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    noBearerAuth: true,
+  })
+  @Get('weather/:city')
+  public async weather(@Param() { city }: WeatherDto) {
+    const handleResponse = (code: string) => {
+      // TODO: https://dev.qweather.com/docs/resource/error-code/#error-code-v2
+      // 当前为v1版本 https://dev.qweather.com/docs/resource/error-code/#error-code-v1
+      switch (code) {
+        case '200':
+          return true;
+        case '204':
+          throw new Error('查询的地区暂时没有你需要的数据');
+        case '400':
+          throw new Error('可能包含错误的请求参数或缺少必选的请求参数');
+        case '401':
+          throw new Error('可能使用了错误的KEY、KEY的类型错误');
+        case '402':
+          throw new Error('超过访问次数或余额不足以支持继续访问服务');
+        case '403':
+          throw new Error(
+            '无访问权限，可能是绑定的PackageName、BundleID、域名IP地址不一致，或者是需要额外付费的数据',
+          );
+        case '404':
+          throw new Error('查询的数据或地区不存在');
+        case '404':
+          throw new Error('超过限定的QPM（每分钟访问次数）');
+        default:
+          throw new Error('接口服务异常');
+      }
+    };
+
+    const cy = pinyin(city, { toneType: 'none', type: 'array' }).join('');
+    const cacheData = (await this.redisService.get(
+      weatherWrapper(cy),
+    )) as unknown as { location: Location; data?: Weather[] } | undefined;
+    if (cacheData?.data?.length) {
+      return cacheData;
+    }
+    const baseURL = 'https://geoapi.qweather.com/v2/city/lookup';
+    // doc https://dev.qweather.com/docs/api/weather/weather-daily-forecast/
+    const baseURL2 = 'https://devapi.qweather.com/v7/weather/3d'; // 免费订阅地址
+    const url = `${baseURL}?location=${cy}&key=${this.configService.get('weather.key')}`;
+    const { data } = await firstValueFrom(this.httpService.get(url));
+    if (handleResponse(data.code)) {
+      const location = data?.['location']?.[0] as Location | undefined;
+      if (!location) {
+        throw new BadRequestException('没有对应的城市信息');
+      }
+      const url2 = `${baseURL2}?location=${location.id}&key=${this.configService.get('weather.key')}`;
+      const { data: weatherData } = await firstValueFrom(
+        this.httpService.get<WeatherVo>(url2),
+      );
+      if (handleResponse(weatherData.code)) {
+        const value = {
+          location,
+          data: weatherData.daily,
+        };
+        // 定时任务 清除天气数据
+        await this.redisService.set(weatherWrapper(cy), JSON.stringify(value));
+        return value;
+      }
     }
   }
 }

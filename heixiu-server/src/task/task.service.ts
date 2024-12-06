@@ -1,15 +1,26 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import fs from 'fs';
 import path from 'path';
+import { weatherWrapper } from 'src/helper/helper';
+import { RedisService } from 'src/redis/redis.service';
 
 @Injectable()
 export class TaskService {
   private readonly logger = new Logger();
 
+  @Inject(RedisService)
+  private redisService: RedisService;
+
+  /** 当天23:59:59清除天气缓存数据 */
+  @Cron('59 59 23 * * *', { timeZone: 'Asia/Shanghai' })
+  protected async clearWeatherCache() {
+    await this.redisService.delByPattern(weatherWrapper());
+  }
+
   /** 每天凌晨四点清除未能成功合并的文件 */
   @Cron(CronExpression.EVERY_DAY_AT_4AM, { timeZone: 'Asia/Shanghai' })
-  public clearTempFolder() {
+  protected clearTempFolder() {
     const prefix = 'chunks_'; // 要删除的文件夹前缀，约定为该前缀为大文件上传切片的临时文件夹前缀
     const uploadsDir = path.join(path.join(__dirname, '..', '..', 'uploads')); // 所在的文件夹
     try {
@@ -28,7 +39,7 @@ export class TaskService {
 
   /** 每天凌晨五点清除没有内容的日志文件 */
   @Cron(CronExpression.EVERY_DAY_AT_5AM, { timeZone: 'Asia/Shanghai' })
-  public clearEmptyLogs() {
+  protected clearEmptyLogs() {
     try {
       const logsDir = path.join(process.cwd(), 'logs');
       const files = fs.readdirSync(logsDir);

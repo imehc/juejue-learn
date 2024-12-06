@@ -7,7 +7,8 @@ export class FileDto {
   name: string;
 }
 
-export class File {
-  @ApiProperty({ description: '文件路径' })
-  path: string;
+export class WeatherDto {
+  @ApiProperty({ description: '城市名称' })
+  @IsNotEmpty({ message: '城市名不能为空' })
+  city: string;
 }

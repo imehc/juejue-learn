@@ -15,6 +15,7 @@ import { AuthModule } from './auth/auth.module';
 import { TaskModule } from './task/task.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
   imports: [
@@ -38,6 +39,9 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
     AuthModule,
     ScheduleModule.forRoot(),
     EventEmitterModule.forRoot(),
+    HttpModule.register({
+      timeout: 5000,
+    }),
     TaskModule,
   ],
   controllers: [AppController],

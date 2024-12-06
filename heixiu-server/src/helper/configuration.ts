@@ -3,7 +3,9 @@ import * as yaml from 'js-yaml';
 import { resolve } from 'path';
 
 const YAML_CONFIG_FILENAME =
-  process.env.NODE_ENVIRONMENT === 'production' ? '.env.production.yaml' : '.env.dev.yaml';
+  process.env.NODE_ENVIRONMENT === 'production'
+    ? '.env.production.yaml'
+    : '.env.dev.yaml';
 
 export default () => {
   return yaml.load(
@@ -17,7 +19,13 @@ type NodemailerConfig = `nodemailer-server.${baseKeys | 'user' | 'pass'}`;
 type NestServerConfig = `nest-server.${'port' | 'doc-url'}`;
 type JwtConfig =
   `jwt.${'access-token-secret' | 'refresh-token-secret' | 'access-token-expires-time' | 'refresh-token-expires-time'}`;
+type WeatherConfig = `weather.${'key'}`;
 
 export declare type ConfigurationImpl = {
-  [K in RedisConfig | NodemailerConfig | NestServerConfig | JwtConfig]: string;
+  [K in
+    | RedisConfig
+    | NodemailerConfig
+    | NestServerConfig
+    | JwtConfig
+    | WeatherConfig]: string;
 };

@@ -58,6 +58,7 @@ function initConfig(
     .addTag('user', '用户')
     .addTag('friendship', '好友')
     .addTag('chatroom', '群聊')
+    .addTag('weather', '天气')
     .setVersion('1.0')
     .build();
   const document = SwaggerModule.createDocument(app, config);

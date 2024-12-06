@@ -11,10 +11,15 @@ const jwtWrapper = (userId: number) => `jwt_${userId}`;
 /** jwt refresh */
 const jwtRefreshWrapper = (userId: number) => `jwt_refresh_${userId}`;
 
+/** weather */
+const weatherWrapper = (city?: string) =>
+  city ? `weather_${city}` : `weather_`;
+
 export {
   registerWrapper,
   forgetPasswordWrapper,
   updateEmailWrapper,
   jwtWrapper,
   jwtRefreshWrapper,
+  weatherWrapper,
 };
