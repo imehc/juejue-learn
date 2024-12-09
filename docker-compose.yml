@@ -17,6 +17,11 @@ services:
       # ALLOW_IP_RANGE: '0.0.0.0/0'
     # ports:
     #   - '5432:5432'
+    # 4种重启策略：
+    #   no：容器退出不自动重启（默认）
+    #   always：容器退出总是自动重启，除非 docker stop
+    #   on-failure：容器非正常退出才自动重启，还可以指定重启次数，如 on-failure:5
+    #   unless-stopped：除非手动停止，否则总是会重启
     restart: always
     networks:
       - common-network
