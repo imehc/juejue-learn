@@ -35,6 +35,7 @@ export class AuthController {
   @ApiDoc({
     operation: {
       description: '用户发送注册验证码',
+      summary: '发送注册验证码',
       operationId: 'sendRegisterCaptcha',
       tags: ['auth'],
     },
@@ -64,6 +65,7 @@ export class AuthController {
   @ApiDoc({
     operation: {
       description: '用户发送找回密码验证码',
+      summary: '发送找回密码验证码',
       operationId: 'sendForgotPasswordCaptcha',
       tags: ['auth'],
     },
@@ -95,6 +97,7 @@ export class AuthController {
   @ApiDoc({
     operation: {
       description: '用户找回密码',
+      summary: '用户找回密码',
       operationId: 'forgetPassword',
       tags: ['auth'],
     },
@@ -112,6 +115,7 @@ export class AuthController {
 
   @ApiDoc({
     operation: {
+      description: '用户注册',
       summary: '用户注册',
       operationId: 'register',
       tags: ['auth'],
@@ -127,6 +131,7 @@ export class AuthController {
 
   @ApiDoc({
     operation: {
+      description: '用户登录',
       summary: '用户登录',
       operationId: 'login',
       tags: ['auth'],
@@ -143,6 +148,7 @@ export class AuthController {
   @ApiDoc({
     operation: {
       description: '用户登出',
+      summary: '用户登出',
       operationId: 'logout',
       tags: ['auth'],
     },
@@ -156,6 +162,7 @@ export class AuthController {
 
   @ApiDoc({
     operation: {
+      description: '使用refreshToken获取新的token',
       summary: '使用refreshToken获取新的token',
       operationId: 'refresh',
       tags: ['auth'],

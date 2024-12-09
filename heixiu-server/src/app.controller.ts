@@ -42,6 +42,7 @@ export class AppController {
   @ApiDoc({
     operation: {
       description: '文件切片上传',
+      summary: '文件切片上传',
       operationId: 'uploadFile',
       tags: ['file'],
     },
@@ -67,6 +68,7 @@ export class AppController {
   @ApiDoc({
     operation: {
       description: '文件切片合并',
+      summary: '文件切片合并',
       operationId: 'mergeFile',
       tags: ['file'],
     },
@@ -111,6 +113,7 @@ export class AppController {
   @ApiDoc({
     operation: {
       description: '获取未来24小时天气信息',
+      summary: '获取未来24小时天气信息',
       operationId: 'getWeatherForecast',
       tags: ['weather'],
     },

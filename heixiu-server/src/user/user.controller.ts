@@ -20,6 +20,7 @@ export class UserController {
   @ApiDoc({
     operation: {
       description: '用户获取个人信息',
+      summary: '获取个人信息',
       operationId: 'findInfo',
       tags: ['user'],
     },
@@ -45,6 +46,7 @@ export class UserController {
   @ApiDoc({
     operation: {
       description: '用户修改密码',
+      summary: '用户修改密码',
       operationId: 'updatePassword',
       tags: ['user'],
     },
@@ -65,6 +67,7 @@ export class UserController {
   @ApiDoc({
     operation: {
       description: '用户更新信息',
+      summary: '用户更新信息',
       operationId: 'updateInfo',
       tags: ['user'],
     },
@@ -85,6 +88,7 @@ export class UserController {
   @ApiDoc({
     operation: {
       description: '用户修改邮箱',
+      summary: '用户修改邮箱',
       operationId: 'updateEmail',
       tags: ['user'],
     },
