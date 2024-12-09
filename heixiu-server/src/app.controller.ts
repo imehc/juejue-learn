@@ -21,7 +21,7 @@ import { pinyin } from 'pinyin-pro';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
 import { ConfigService } from '@nestjs/config';
-import { FileVo, Weather, WeatherVo, Location } from './app.vo';
+import { FileVo, WeatherWithDay, WeatherVo, Location } from './app.vo';
 import { RedisService } from './redis/redis.service';
 import { weatherWrapper } from './helper/helper';
 
@@ -112,18 +112,18 @@ export class AppController {
 
   @ApiDoc({
     operation: {
-      description: '获取未来24小时天气信息',
-      summary: '获取未来24小时天气信息',
-      operationId: 'getWeatherForecast',
+      description: '获取未来三天天气信息',
+      summary: '获取未来三天天气信息',
+      operationId: 'getThreeDayForecast',
       tags: ['weather'],
     },
-    extraModels: [Weather, Location],
+    extraModels: [WeatherWithDay, Location],
     response: {
       content: {
         'application/json': {
           schema: {
             type: 'object',
-            required: ['code', 'data'],
+            required: ['location', 'data'],
             properties: {
               location: {
                 $ref: '#/components/schemas/Location',
@@ -131,7 +131,7 @@ export class AppController {
               data: {
                 type: 'array',
                 items: {
-                  $ref: '#/components/schemas/Weather',
+                  $ref: '#/components/schemas/WeatherWithDay',
                 },
               },
             },
@@ -173,7 +173,7 @@ export class AppController {
     const cy = pinyin(city, { toneType: 'none', type: 'array' }).join('');
     const cacheData = (await this.redisService.get(
       weatherWrapper(cy),
-    )) as unknown as { location: Location; data?: Weather[] } | undefined;
+    )) as unknown as { location: Location; data?: WeatherWithDay[] } | undefined;
     if (cacheData?.data?.length) {
       return cacheData;
     }

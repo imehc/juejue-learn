@@ -57,7 +57,7 @@ export class Location {
   fxLink: string;
 }
 
-export class Weather {
+export class WeatherWithHour {
   @ApiProperty({ description: '预报时间' })
   fxTime: string;
   @ApiProperty({ description: '温度，默认单位：摄氏度' })
@@ -117,6 +117,147 @@ export class Weather {
   dew: string;
 }
 
+export class WeatherWithDay {
+  @ApiProperty({ description: '预报日期' })
+  fxDate: string;
+  @ApiProperty({
+    description: '日出时间',
+    required: false,
+    externalDocs: {
+      url: 'https://dev.qweather.com/docs/resource/sun-moon-info/#sunrise-and-sunset',
+    },
+  })
+  sunrise: string;
+  @ApiProperty({
+    description: '日落时间',
+    required: false,
+    externalDocs: {
+      url: 'https://dev.qweather.com/docs/resource/sun-moon-info/#sunrise-and-sunset',
+    },
+  })
+  sunset: string;
+  @ApiProperty({
+    description: '当天月升时间',
+    required: false,
+    externalDocs: {
+      url: 'https://dev.qweather.com/docs/resource/sun-moon-info/#moonrise-and-moonset',
+    },
+  })
+  moonrise: string;
+  @ApiProperty({
+    description: '当天月落时间',
+    required: false,
+    externalDocs: {
+      url: 'https://dev.qweather.com/docs/resource/sun-moon-info/#moonrise-and-moonset',
+    },
+  })
+  moonset: string;
+  @ApiProperty({
+    description: '月相名称',
+    externalDocs: {
+      url: 'https://dev.qweather.com/docs/resource/sun-moon-info/#moon-phase',
+    },
+  })
+  moonPhase: string;
+  @ApiProperty({
+    description: '月相图标代码',
+    externalDocs: {
+      url: 'https://dev.qweather.com/docs/resource/icons/',
+    },
+  })
+  moonPhaseIcon: string;
+  @ApiProperty({ description: '预报当天最高温度' })
+  tempMax: string;
+  @ApiProperty({ description: ' 预报当天最低温度' })
+  tempMin: string;
+  @ApiProperty({
+    description: '预报白天天气状况的图标代码',
+    externalDocs: { url: 'https://dev.qweather.com/docs/resource/icons/' },
+  })
+  iconDay: string;
+  @ApiProperty({
+    description: '预报白天天气状况文字描述，包括阴晴雨雪等天气状态的描述',
+  })
+  textDay: string;
+  @ApiProperty({
+    description: '预报夜间天气状况的图标代码',
+    externalDocs: { url: 'https://dev.qweather.com/docs/resource/icons/' },
+  })
+  iconNight: string;
+  @ApiProperty({
+    description: '预报晚间天气状况文字描述，包括阴晴雨雪等天气状态的描述',
+  })
+  textNight: string;
+  @ApiProperty({
+    description: '预报白天风向360角度',
+    externalDocs: {
+      url: 'https://dev.qweather.com/docs/resource/wind-info/#wind-direction',
+    },
+  })
+  wind360Day: string;
+  @ApiProperty({
+    description: '预报白天风向',
+    externalDocs: {
+      url: 'https://dev.qweather.com/docs/resource/wind-info/#wind-direction',
+    },
+  })
+  windDirDay: string;
+  @ApiProperty({
+    description: '预报白天风力等级',
+    externalDocs: {
+      url: 'https://dev.qweather.com/docs/resource/wind-info/#wind-scale',
+    },
+  })
+  windScaleDay: string;
+  @ApiProperty({
+    description: '预报白天风速，公里/小时',
+    externalDocs: {
+      url: 'https://dev.qweather.com/docs/resource/wind-info/#wind-speed',
+    },
+  })
+  windSpeedDay: string;
+  @ApiProperty({
+    description: '预报夜间风向360角度',
+    externalDocs: {
+      url: 'https://dev.qweather.com/docs/resource/wind-info/#wind-direction',
+    },
+  })
+  wind360Night: string;
+  @ApiProperty({
+    description: '预报夜间当天风向',
+    externalDocs: {
+      url: 'https://dev.qweather.com/docs/resource/wind-info/#wind-direction',
+    },
+  })
+  windDirNight: string;
+  @ApiProperty({
+    description: '预报夜间风力等级',
+    externalDocs: {
+      url: 'https://dev.qweather.com/docs/resource/wind-info/#wind-scale',
+    },
+  })
+  windScaleNight: string;
+  @ApiProperty({
+    description: '预报夜间风速，公里/小时',
+    externalDocs: {
+      url: 'https://dev.qweather.com/docs/resource/wind-info/#wind-speed',
+    },
+  })
+  windSpeedNight: string;
+  @ApiProperty({ description: '预报当天总降水量，默认单位：毫米' })
+  precip: string;
+  @ApiProperty({ description: '紫外线强度指数' })
+  uvIndex: string;
+  @ApiProperty({ description: '相对湿度，百分比数值' })
+  humidity: string;
+  @ApiProperty({ description: '大气压强，默认单位：百帕' })
+  pressure: string;
+  @ApiProperty({ description: '能见度，默认单位：公里' })
+  vis: string;
+  @ApiProperty({ description: '云量，百分比数值', required: false })
+  cloud: string;
+}
+
 export class WeatherRefer {
   @ApiProperty({ description: '原始数据来源或数据源说明', required: false })
   sources: string[];
@@ -137,6 +278,6 @@ export class WeatherVo {
   @ApiProperty({ description: '当前数据的响应式页面，便于嵌入网站或应用' })
   fxLink: string;
   @ApiProperty({ isArray: true })
-  daily: Weather[];
+  daily: WeatherWithDay[];
   refer: WeatherRefer;
 }
