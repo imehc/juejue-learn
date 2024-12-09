@@ -2,7 +2,6 @@ import {
   Body,
   Controller,
   Get,
-  HttpCode,
   HttpStatus,
   Param,
   Post,
@@ -10,23 +9,13 @@ import {
   Query,
 } from '@nestjs/common';
 import { ChatroomService } from './chatroom.service';
-import { ApiDoc, RequireLogin, UserInfo } from 'src/helper/custom.decorator';
+import { ApiDoc, UserInfo } from 'src/helper/custom.decorator';
 import { CreateSingleChatroomDto } from './dto/create-single.dto';
 import { CreateMultipleChatroomDto } from './dto/create-multiple.dto';
 import { ChatroomMemberQueryDto } from './dto/member-query.dto';
 import { ChatroomMemberInfoDto } from './dto/info.dto';
 import { ChatroomQueryDto } from './dto/query.dto';
-import {
-  ApiBearerAuth,
-  ApiBody,
-  ApiOkResponse,
-  ApiOperation,
-  ApiParam,
-  ApiQuery,
-  getSchemaPath,
-  ApiExtraModels,
-  ApiResponse,
-} from '@nestjs/swagger';
+import { getSchemaPath } from '@nestjs/swagger';
 import { UserInfo as User } from '../user/vo/info.vo';
 import { ChatRoom, ChatRoomUser, ChatRoomUserId } from './vo/room.vo';
 

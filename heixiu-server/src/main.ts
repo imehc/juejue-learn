@@ -52,7 +52,7 @@ function initConfig(
 ) {
   const config = new DocumentBuilder()
     .addServer(cs.get('nest-server.doc-url'))
-    .addBearerAuth({ type: 'http' })
+    .addBearerAuth({ type: 'http', description: '基于JWT认证' })
     .addTag('auth', 'auth')
     .addTag('file', '文件')
     .addTag('user', '用户')
