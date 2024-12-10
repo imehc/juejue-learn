@@ -35,7 +35,6 @@ export class AuthController {
   @ApiDoc({
     operation: {
       description: '用户发送注册验证码',
-      summary: '发送注册验证码',
       operationId: 'sendRegisterCaptcha',
       tags: ['auth'],
     },
@@ -65,7 +64,6 @@ export class AuthController {
   @ApiDoc({
     operation: {
       description: '用户发送找回密码验证码',
-      summary: '发送找回密码验证码',
       operationId: 'sendForgotPasswordCaptcha',
       tags: ['auth'],
     },
@@ -84,7 +82,7 @@ export class AuthController {
     const ttl = 5 * 60; // 五分钟有效期
     const code = Math.random().toString().slice(2, 8);
     await this.redisService.set(forgetPasswordWrapper(email), code, ttl);
-    await this.eventEmitter.emitAsync('send-email',{
+    await this.eventEmitter.emitAsync('send-email', {
       to: email,
       subject: getCaptchaType('forget-password'),
       text: code,
@@ -97,7 +95,6 @@ export class AuthController {
   @ApiDoc({
     operation: {
       description: '用户找回密码',
-      summary: '用户找回密码',
       operationId: 'forgetPassword',
       tags: ['auth'],
     },
@@ -116,7 +113,6 @@ export class AuthController {
   @ApiDoc({
     operation: {
       description: '用户注册',
-      summary: '用户注册',
       operationId: 'register',
       tags: ['auth'],
     },
@@ -132,11 +128,10 @@ export class AuthController {
   @ApiDoc({
     operation: {
       description: '用户登录',
-      summary: '用户登录',
       operationId: 'login',
       tags: ['auth'],
     },
-    response: { type: Auth },
+    response: { type: Auth, status: HttpStatus.OK },
     noBearerAuth: true,
   })
   @Post('login')
@@ -148,7 +143,6 @@ export class AuthController {
   @ApiDoc({
     operation: {
       description: '用户登出',
-      summary: '用户登出',
       operationId: 'logout',
       tags: ['auth'],
     },
@@ -163,7 +157,6 @@ export class AuthController {
   @ApiDoc({
     operation: {
       description: '使用refreshToken获取新的token',
-      summary: '使用refreshToken获取新的token',
       operationId: 'refresh',
       tags: ['auth'],
     },

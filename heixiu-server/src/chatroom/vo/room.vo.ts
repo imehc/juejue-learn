@@ -14,10 +14,10 @@ export class ChatRoom {
     enum: ChatroomType,
     enumName: 'ChatroomType',
   })
-  status: ChatroomType;
+  type: ChatroomType;
 
   @ApiProperty({ description: '创建时间' })
-  createdAt: Date;
+  createAt: Date;
 }
 
 export class ChatRoomUserId {

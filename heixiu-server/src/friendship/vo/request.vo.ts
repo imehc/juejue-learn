@@ -19,7 +19,7 @@ export class FriendApplication {
   status: FriendRequestStatus;
 
   @ApiProperty({ description: '申请时间' })
-  createdAt: Date;
+  createAt: Date;
 
   @ApiProperty({ description: '更新时间' })
   updateAt: Date;

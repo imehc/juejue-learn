@@ -23,7 +23,6 @@ export class FriendshipController {
   @ApiDoc({
     operation: {
       description: '添加好友',
-      summary: '添加好友',
       operationId: 'addFriend',
       tags: ['friendship'],
     },
@@ -45,7 +44,6 @@ export class FriendshipController {
   @ApiDoc({
     operation: {
       description: '获取好友列表',
-      summary: '获取好友列表',
       operationId: 'findFriendList',
       tags: ['friendship'],
     },
@@ -59,7 +57,6 @@ export class FriendshipController {
   @ApiDoc({
     operation: {
       description: '获取好友申请列表',
-      summary: '获取好友申请列表',
       operationId: 'findFriendRequestList',
       tags: ['friendship'],
     },
@@ -73,7 +70,6 @@ export class FriendshipController {
   @ApiDoc({
     operation: {
       description: '拒绝好友申请',
-      summary: '拒绝好友申请',
       operationId: 'rejectFriendRequest',
       tags: ['friendship'],
     },
@@ -91,7 +87,6 @@ export class FriendshipController {
   @ApiDoc({
     operation: {
       description: '同意好友申请',
-      summary: '同意好友申请',
       operationId: 'agreeFriendRequest',
       tags: ['friendship'],
     },
@@ -109,7 +104,6 @@ export class FriendshipController {
   @ApiDoc({
     operation: {
       description: '删除好友',
-      summary: '删除好友',
       operationId: 'delectFriend',
       tags: ['friendship'],
     },

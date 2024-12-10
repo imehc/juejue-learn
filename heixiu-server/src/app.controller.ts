@@ -42,10 +42,11 @@ export class AppController {
   @ApiDoc({
     operation: {
       description: '文件切片上传',
-      summary: '文件切片上传',
       operationId: 'uploadFile',
       tags: ['file'],
     },
+    consumes: ['multipart/form-data'],
+    body: { type: FileDto },
     response: { status: HttpStatus.CREATED },
     noBearerAuth: process.env.NODE_ENVIRONMENT !== 'production',
   })
@@ -68,7 +69,6 @@ export class AppController {
   @ApiDoc({
     operation: {
       description: '文件切片合并',
-      summary: '文件切片合并',
       operationId: 'mergeFile',
       tags: ['file'],
     },
@@ -113,7 +113,6 @@ export class AppController {
   @ApiDoc({
     operation: {
       description: '获取未来三天天气信息',
-      summary: '获取未来三天天气信息',
       operationId: 'getThreeDayForecast',
       tags: ['weather'],
     },
@@ -173,7 +172,9 @@ export class AppController {
     const cy = pinyin(city, { toneType: 'none', type: 'array' }).join('');
     const cacheData = (await this.redisService.get(
       weatherWrapper(cy),
-    )) as unknown as { location: Location; data?: WeatherWithDay[] } | undefined;
+    )) as unknown as
+      | { location: Location; data?: WeatherWithDay[] }
+      | undefined;
     if (cacheData?.data?.length) {
       return cacheData;
     }

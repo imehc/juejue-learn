@@ -26,7 +26,6 @@ export class ChatroomController {
   @ApiDoc({
     operation: {
       description: '创建一对一聊天室',
-      summary: '创建一对一聊天室',
       operationId: 'createOneToOneChatroom',
       tags: ['chatroom'],
     },
@@ -51,7 +50,6 @@ export class ChatroomController {
   @ApiDoc({
     operation: {
       description: '创建多人聊天室',
-      summary: '创建多人聊天室',
       operationId: 'createMultipleChatroom',
       tags: ['chatroom'],
     },
@@ -76,7 +74,6 @@ export class ChatroomController {
   @ApiDoc({
     operation: {
       description: '获取聊天室成员',
-      summary: '获取聊天室成员',
       operationId: 'findChatroomMembers',
       tags: ['chatroom'],
     },
@@ -92,7 +89,6 @@ export class ChatroomController {
   @ApiDoc({
     operation: {
       description: '获取所有聊天室',
-      summary: '获取所有聊天室',
       operationId: 'findAllChatroom',
       tags: ['chatroom'],
     },
@@ -102,10 +98,12 @@ export class ChatroomController {
         'application/json': {
           schema: {
             type: 'array',
-            allOf: [
-              { $ref: getSchemaPath(ChatRoom) },
-              { $ref: getSchemaPath(ChatRoomUserId) },
-            ],
+            items: {
+              allOf: [
+                { $ref: getSchemaPath(ChatRoom) },
+                { $ref: getSchemaPath(ChatRoomUserId) },
+              ],
+            },
           },
         },
       },
@@ -119,7 +117,6 @@ export class ChatroomController {
   @ApiDoc({
     operation: {
       description: '获取单个聊天室详情',
-      summary: '获取单个聊天室详情',
       operationId: 'findOneChatroom',
       tags: ['chatroom'],
     },
@@ -145,7 +142,6 @@ export class ChatroomController {
   @ApiDoc({
     operation: {
       description: '加入群聊',
-      summary: '加入群聊',
       operationId: 'joinChatroom',
       tags: ['chatroom'],
     },
@@ -165,7 +161,6 @@ export class ChatroomController {
   @ApiDoc({
     operation: {
       description: '退出群聊',
-      summary: '退出群聊',
       operationId: 'quitChatroom',
       tags: ['chatroom'],
     },

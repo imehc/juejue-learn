@@ -13,7 +13,7 @@ export class UserInfo {
   @ApiProperty({ description: '昵称' })
   nickname: string;
 
-  @ApiProperty({ description: '头像' })
+  @ApiProperty({ description: '头像', required: false })
   headPic: string;
 }
 
