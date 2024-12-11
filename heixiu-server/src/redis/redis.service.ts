@@ -28,26 +28,26 @@ export class RedisService {
     return await this.redisClient.del(key);
   }
 
-/**
- * 根据指定的模式删除键
- * 该方法用于删除符合给定模式的所有键，通常用于清理或重置存储空间
- * @param pattern 指定的模式，例如以某个特定前缀开始的键名
- */
-public async delByPattern(pattern: string) {
-  try {
-    // 使用async for...of循环遍历所有匹配的键
-    for await (const key of this.scanKeys(pattern)) {
-      // 检查键是否为字符串类型，确保其有效性
-      if (typeof key === 'string') {
-        // 异步删除每个匹配的键
-        await this.redisClient.del(key);
+  /**
+   * 根据指定的模式删除键
+   * 该方法用于删除符合给定模式的所有键，通常用于清理或重置存储空间
+   * @param pattern 指定的模式，例如以某个特定前缀开始的键名
+   */
+  public async delByPattern(pattern: string) {
+    try {
+      // 使用async for...of循环遍历所有匹配的键
+      for await (const key of this.scanKeys(pattern)) {
+        // 检查键是否为字符串类型，确保其有效性
+        if (typeof key === 'string') {
+          // 异步删除每个匹配的键
+          await this.redisClient.del(key);
+        }
       }
+    } catch (error) {
+      // 捕获并记录任何发生的错误
+      this.logger.error(error, RedisService);
     }
-  } catch (error) {
-    // 捕获并记录任何发生的错误
-    this.logger.error(error, RedisService);
   }
-}
 
   /**
    * 异步生成器函数，用于扫描Redis中匹配指定模式的键

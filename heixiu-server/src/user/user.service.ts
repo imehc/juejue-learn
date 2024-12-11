@@ -6,9 +6,7 @@ import {
   Logger,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import {
-  updateEmailWrapper,
-} from 'src/helper/helper';
+import { updateEmailWrapper } from 'src/helper/helper';
 import { md5 } from 'src/helper/utils';
 import { User } from '@prisma/client';
 import { UpdatePasswordDto } from './dto/update-password.dto';

@@ -12,15 +12,16 @@ import {
   jwtWrapper,
   registerWrapper,
 } from 'src/helper/helper';
-import { md5 } from 'src/helper/utils';
+import { md5, noop } from 'src/helper/utils';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { RedisService } from 'src/redis/redis.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { ConfigurationImpl } from 'src/helper/configuration';
+import { type ConfigurationImpl } from 'src/helper/configuration';
 import ms from 'ms';
+import { testByUser } from './auth.service.spec';
 
 @Injectable()
 export class AuthService {
@@ -193,7 +194,7 @@ export class AuthService {
     };
   }
 
-  public async refreshToken(refreshToken: string) {
+  public async refreshToken(refreshToken: string, test = false) {
     try {
       const { userId, exp } = await this.jwtService.verifyAsync<{
         userId: number;
@@ -201,17 +202,25 @@ export class AuthService {
       }>(refreshToken, {
         secret: this.configService.get('jwt.refresh-token-secret'),
       });
-      const user = await this.prismaService.user.findUniqueOrThrow({
-        where: { id: userId },
-        select: { id: true, username: true },
-      });
+      let user: { id: number; username: string };
+      // 测试环境模拟用户不需要查询数据库
+      if (!test) {
+        user = await this.prismaService.user.findUniqueOrThrow({
+          where: { id: userId },
+          select: { id: true, username: true },
+        });
+      } else {
+        user = testByUser;
+      }
       const cacheExp = await this.redisServer.get(jwtRefreshWrapper(userId));
       if (+cacheExp == exp) {
         return await this.getTokens(user.id, user.username);
       }
       throw new Error('refreshToken无效');
     } catch (error) {
-      this.logger.error(error, AuthService);
+      if (noop) {
+        this.logger.error(error, AuthService);
+      }
       throw new BadRequestException('refreshToken无效');
     }
   }

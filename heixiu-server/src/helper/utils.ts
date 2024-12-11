@@ -6,3 +6,6 @@ export function md5(str: string) {
   hash.update(str); // 传入要加密的字符串
   return hash.digest('hex'); // 返回加密后的字符串
 }
+
+/** 不打印日志 */
+export const noop = process.env.NODE_ENV && !['test'].includes(process.env.NODE_ENV)
