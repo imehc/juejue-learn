@@ -33,7 +33,11 @@ export class TaskService {
         }
       }
     } catch (error) {
-      this.logger.error('Error reading uploads directory:', error);
+      this.logger.error(
+        'Error reading uploads directory:',
+        error,
+        TaskService.name,
+      );
     }
   }
 

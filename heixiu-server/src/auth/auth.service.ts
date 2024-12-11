@@ -21,7 +21,7 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { type ConfigurationImpl } from 'src/helper/configuration';
 import ms from 'ms';
-import { testByUser } from './auth.service.spec';
+import { testByUser } from './auth.test';
 
 @Injectable()
 export class AuthService {
@@ -76,7 +76,7 @@ export class AuthService {
       });
       return user;
     } catch (error) {
-      this.logger.error(error, AuthService);
+      this.logger.error(error, AuthService.name);
       throw new InternalServerErrorException('服务异常');
     } finally {
       this.redisServer.del(registerWrapper(data.email));
@@ -141,7 +141,7 @@ export class AuthService {
         data: { password: md5(config.data.password) },
       });
     } catch (error) {
-      this.logger.error(error, AuthService);
+      this.logger.error(error, AuthService.name);
       throw new InternalServerErrorException('服务异常');
     } finally {
       this.redisServer.del(forgetPasswordWrapper(config.data.email));
@@ -219,7 +219,7 @@ export class AuthService {
       throw new Error('refreshToken无效');
     } catch (error) {
       if (noop) {
-        this.logger.error(error, AuthService);
+        this.logger.error(error, AuthService.name);
       }
       throw new BadRequestException('refreshToken无效');
     }

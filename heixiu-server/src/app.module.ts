@@ -7,7 +7,7 @@ import { RedisModule } from './redis/redis.module';
 import { EmailModule } from './email/email.module';
 import { ConfigModule } from '@nestjs/config';
 import configuration from './helper/configuration';
-import { APP_GUARD } from '@nestjs/core';
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { FriendshipModule } from './friendship/friendship.module';
 import { ChatroomModule } from './chatroom/chatroom.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
@@ -16,6 +16,7 @@ import { TaskModule } from './task/task.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { HttpModule } from '@nestjs/axios';
+import { RequestLogInterceptor } from './request-log.interceptor';
 
 @Module({
   imports: [
@@ -49,6 +50,7 @@ import { HttpModule } from '@nestjs/axios';
     AppService,
     PrismaModule,
     { provide: APP_GUARD, useClass: ThrottlerGuard },
+    { provide: APP_INTERCEPTOR, useClass: RequestLogInterceptor },
   ],
 })
 export class AppModule {}

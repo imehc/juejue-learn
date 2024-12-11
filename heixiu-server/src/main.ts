@@ -19,6 +19,7 @@ async function bootstrap() {
     logger: WinstonModule.createLogger({
       transports: [
         initLog({ init: true }),
+        initLog({ level: 'debug' }),
         initLog({ level: 'error' }),
         initLog({ level: 'warn' }),
       ],

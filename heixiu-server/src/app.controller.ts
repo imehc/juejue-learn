@@ -37,6 +37,11 @@ export class AppController {
   @Inject(RedisService)
   private redisService: RedisService;
 
+  @Get('')
+  async hello(){
+    return 'hello'
+  }
+
   // TODO: 断点、错误续传
   // 前端切片上传参考： /templates/upload.html
   @ApiDoc({

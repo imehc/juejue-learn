@@ -1,8 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from './auth.service';
 import { JwtModule, JwtService } from '@nestjs/jwt';
-import { APP_GUARD } from '@nestjs/core';
-import { AuthGuard } from './auth.guard';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { RedisModule } from 'src/redis/redis.module';
 import { PrismaModule } from 'src/prisma/prisma.module';
@@ -11,11 +9,7 @@ import { RedisService } from 'src/redis/redis.service';
 import { JwtUserData } from 'src/helper/global';
 import { jwtRefreshWrapper, jwtWrapper } from 'src/helper/helper';
 import { BadRequestException } from '@nestjs/common';
-
-export const testByUser = {
-  id: 1,
-  username: 'test',
-};
+import { testByUser } from './auth.test';
 
 describe('AuthService', () => {
   let auth: AuthService;

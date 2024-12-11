@@ -59,7 +59,7 @@ export class ChatroomService {
         });
       });
     } catch (error) {
-      this.logger.error(error, ChatroomService);
+      this.logger.error(error, ChatroomService.name);
       throw new InternalServerErrorException('服务异常');
     }
   }
@@ -85,7 +85,7 @@ export class ChatroomService {
         });
       });
     } catch (error) {
-      this.logger.error(error, ChatroomService);
+      this.logger.error(error, ChatroomService.name);
       throw new InternalServerErrorException('服务异常');
     }
   }

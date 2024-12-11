@@ -70,7 +70,7 @@ export class FriendshipService {
         },
       });
     } catch (error) {
-      this.logger.error(error, FriendshipService);
+      this.logger.error(error, FriendshipService.name);
       throw new InternalServerErrorException('服务异常');
     }
   }
@@ -160,7 +160,7 @@ export class FriendshipService {
         throw new BadRequestException('拒绝好友申请失败');
       }
     } catch (error) {
-      this.logger.error(error, FriendshipService);
+      this.logger.error(error, FriendshipService.name);
       throw new InternalServerErrorException('服务异常');
     }
   }
@@ -214,7 +214,7 @@ export class FriendshipService {
         throw new BadRequestException('同意好友申请失败');
       }
     } catch (error) {
-      this.logger.error(error, FriendshipService);
+      this.logger.error(error, FriendshipService.name);
       throw new InternalServerErrorException('服务异常');
     }
     const friendships = await this.prismaService.friendship.findMany({
@@ -248,7 +248,7 @@ export class FriendshipService {
         });
       }
     } catch (error) {
-      this.logger.error(error, FriendshipService);
+      this.logger.error(error, FriendshipService.name);
       throw new InternalServerErrorException('服务异常');
     }
   }
@@ -281,7 +281,7 @@ export class FriendshipService {
         throw new BadRequestException('删除好友失败');
       }
     } catch (error) {
-      this.logger.error(error, FriendshipService);
+      this.logger.error(error, FriendshipService.name);
       throw new InternalServerErrorException('服务异常');
     }
   }

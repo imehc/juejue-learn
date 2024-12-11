@@ -45,7 +45,7 @@ export class RedisService {
       }
     } catch (error) {
       // 捕获并记录任何发生的错误
-      this.logger.error(error, RedisService);
+      this.logger.error(error, RedisService.name);
     }
   }
 

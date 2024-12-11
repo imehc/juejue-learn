@@ -67,7 +67,7 @@ export class EmailService {
         default:
           break;
       }
-      this.logger.error(error, EmailService);
+      this.logger.error(error, EmailService.name);
       throw new HttpException('请检查该邮箱是否存在', HttpStatus.BAD_REQUEST);
     }
   }

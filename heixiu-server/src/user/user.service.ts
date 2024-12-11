@@ -58,7 +58,7 @@ export class UserService {
             data: { password: md5(config.data.password) },
           });
         } catch (error) {
-          this.logger.error(error, UserService);
+          this.logger.error(error, UserService.name);
           throw new InternalServerErrorException('服务异常');
         }
         break;
@@ -71,7 +71,7 @@ export class UserService {
             data: { nickname, headPic },
           });
         } catch (error) {
-          this.logger.error(error, UserService);
+          this.logger.error(error, UserService.name);
           throw new InternalServerErrorException('服务异常');
         }
         break;
@@ -98,7 +98,7 @@ export class UserService {
             data: { email: config.data.email },
           });
         } catch (error) {
-          this.logger.error(error, UserService);
+          this.logger.error(error, UserService.name);
           throw new InternalServerErrorException('服务异常');
         } finally {
           this.redisServer.del(updateEmailWrapper(config.data.email));
