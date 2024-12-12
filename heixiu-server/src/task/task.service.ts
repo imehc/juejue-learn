@@ -3,6 +3,7 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 import fs from 'fs';
 import path from 'path';
 import { weatherWrapper } from 'src/helper/helper';
+import { UniqueCodeService } from 'src/helper/service/unique-code.service';
 import { RedisService } from 'src/redis/redis.service';
 
 @Injectable()
@@ -10,7 +11,10 @@ export class TaskService {
   private readonly logger = new Logger();
 
   @Inject(RedisService)
-  private redisService: RedisService;
+  private readonly redisService: RedisService;
+
+  @Inject(UniqueCodeService)
+  private readonly uniqueCodeService: UniqueCodeService;
 
   /** 当天23:59:59清除天气缓存数据 */
   @Cron('59 59 23 * * *', { timeZone: 'Asia/Shanghai' })
@@ -78,5 +82,11 @@ export class TaskService {
     } else {
       this.logger.warn(`Folder does not exist: ${folderPath}`);
     }
+  }
+
+  /** 每天凌晨3点生成一批唯一短码 */
+  @Cron(CronExpression.EVERY_DAY_AT_3AM, { timeZone: 'Asia/Shanghai' })
+  protected async generateCode() {
+    await this.uniqueCodeService.generateCode();
   }
 }

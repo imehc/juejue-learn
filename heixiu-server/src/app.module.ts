@@ -16,7 +16,7 @@ import { TaskModule } from './task/task.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { HttpModule } from '@nestjs/axios';
-import { RequestLogInterceptor } from './request-log.interceptor';
+import { RequestLogInterceptor } from './helper/interceptor/request-log.interceptor';
 
 @Module({
   imports: [

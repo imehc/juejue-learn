@@ -6,10 +6,11 @@ import {
   Logger,
   NestInterceptor,
 } from '@nestjs/common';
-import { catchError, of, tap } from 'rxjs';
+import { tap } from 'rxjs';
 import requestIp from 'request-ip';
 import { HttpService } from '@nestjs/axios';
 import iconv from 'iconv-lite';
+import { isProduction } from '../utils';
 
 @Injectable()
 export class RequestLogInterceptor implements NestInterceptor {
@@ -48,26 +49,29 @@ export class RequestLogInterceptor implements NestInterceptor {
     const now = Date.now();
 
     return next.handle().pipe(
-      tap(async (res) => {
-        // this.logger.debug(
-        //   `${method} ${path} ${clientIp} ${userAgent}: ${response.statusCode}: ${Date.now() - now}ms`,
-        // );
-        if (
-          path === '/auth/login' &&
-          method === 'POST' &&
-          response.statusCode === 200
-        ) {
-          // const city = await this.ipToCity(clientIp);
-          // TDDO: 登录成功后，记录该用户登录信息，比如userAgent、IP、city,避免多次请求
-        }
-      }),
-      catchError((err) => {
-        const message =
-          err.response?.message instanceof Array
-            ? err.response?.message?.at(0)
-            : err.response?.message;
-        this.logger.error(message);
-        return of(message);
+      tap({
+        next: () => {
+          if (
+            path === '/auth/login' &&
+            method === 'POST' &&
+            response.statusCode === 200
+          ) {
+            // const city = await this.ipToCity(clientIp);
+            // TDDO: 登录成功后，记录该用户登录信息，比如userAgent、IP、city,避免多次请求
+          }
+          if (!isProduction) {
+            this.logger.debug(
+              `${method} ${path} ${clientIp} ${userAgent}: ${response.statusCode}: ${Date.now() - now}ms`,
+            );
+          }
+        },
+        error: (err) => {
+          const message =
+            err.response?.message instanceof Array
+              ? err.response?.message?.at(0)
+              : err.response?.message;
+          this.logger.error(message);
+        },
       }),
     );
   }

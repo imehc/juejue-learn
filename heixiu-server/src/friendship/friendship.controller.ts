@@ -9,11 +9,11 @@ import {
   Put,
 } from '@nestjs/common';
 import { FriendshipService } from './friendship.service';
-import { UserInfo } from 'src/helper/custom.decorator';
+import { UserInfo } from 'src/helper/decorator/custom.decorator';
 import { AddFriendDto } from './dto/add.dto';
 import { UserInfo as User } from '../user/vo/info.vo';
 import { FriendApplication } from './vo/request.vo';
-import { ApiDoc } from 'src/helper/custom.decorator';
+import { ApiDoc } from 'src/helper/decorator/custom.decorator';
 import { RejectFriendDto } from './dto/reject.dto';
 
 @Controller('friendship')

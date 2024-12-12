@@ -9,7 +9,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { ChatroomService } from './chatroom.service';
-import { ApiDoc, UserInfo } from 'src/helper/custom.decorator';
+import { ApiDoc, UserInfo } from 'src/helper/decorator/custom.decorator';
 import { CreateSingleChatroomDto } from './dto/create-single.dto';
 import { CreateMultipleChatroomDto } from './dto/create-multiple.dto';
 import { ChatroomMemberQueryDto } from './dto/member-query.dto';

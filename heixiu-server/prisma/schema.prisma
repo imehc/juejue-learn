@@ -46,6 +46,8 @@ enum FriendRequestStatus {
   PENDING // 待处理
   ACCEPTED // 已同意
   REJECTED // 已拒绝
+
+  @@map("friend_request_status")
 }
 
 // 好友申请
@@ -58,7 +60,7 @@ model FriendRequest {
   // 添加理由
   reason     String              @db.VarChar(100)
   // 状态 
-  status     FriendRequestStatus
+  status     FriendRequestStatus @default(PENDING)
   createAt   DateTime            @default(now()) @map("created_at")
   updateAt   DateTime            @updatedAt @map("updated_at")
 
@@ -68,6 +70,8 @@ model FriendRequest {
 enum ChatroomType {
   SINGLE // 单聊
   MULTIPLE // 群聊
+
+  @@map("chatroom_type")
 }
 
 // 聊天室
@@ -88,4 +92,31 @@ model UserChatroom {
 
   @@id([userId, chatroomId])
   @@map("user_chatrooms")
+}
+
+enum UniqueCodeStatus {
+  USED // 已使用
+  UNUSED // 未使用
+
+  @@map("unique_code_status")
+}
+
+// 唯一码
+model UniqueCode {
+  id     Int              @id @default(autoincrement())
+  code   String           @unique @db.VarChar(10)
+  status UniqueCodeStatus @default(UNUSED)
+
+  @@map("unique_codes")
+}
+
+model ShortLongMap {
+  id         Int    @id @default(autoincrement())
+  shortUrl   String @unique @map("short_url") @db.VarChar(10)
+  longUrl    String @map("long_url") @db.VarChar(200)
+  visitCount Int    @default(0) @map("visit_count")
+
+  createAt DateTime @default(now()) @map("created_at")
+
+  @@map("short_long_maps")
 }

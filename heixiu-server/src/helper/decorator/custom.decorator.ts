@@ -6,7 +6,7 @@ import {
   HttpStatus,
   SetMetadata,
 } from '@nestjs/common';
-import { JwtUserData } from './global';
+import { JwtUserData } from '../global';
 import {
   ApiBearerAuth,
   ApiBody,

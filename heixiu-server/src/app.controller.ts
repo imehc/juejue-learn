@@ -9,14 +9,15 @@ import {
   Param,
   Post,
   Query,
+  Redirect,
   UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common';
 import { SkipThrottle } from '@nestjs/throttler';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import fs from 'fs';
-import { FileDto, WeatherDto } from './app.dto';
-import { ApiDoc } from './helper/custom.decorator';
+import { CodeDto, FileDto, UrlDto, WeatherDto } from './app.dto';
+import { ApiDoc } from './helper/decorator/custom.decorator';
 import { pinyin } from 'pinyin-pro';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
@@ -24,6 +25,7 @@ import { ConfigService } from '@nestjs/config';
 import { FileVo, WeatherWithDay, WeatherVo, Location } from './app.vo';
 import { RedisService } from './redis/redis.service';
 import { weatherWrapper } from './helper/helper';
+import { ShortLongMapService } from './helper/service/short-long-map.service';
 
 @Controller()
 export class AppController {
@@ -37,10 +39,8 @@ export class AppController {
   @Inject(RedisService)
   private redisService: RedisService;
 
-  @Get('')
-  async hello(){
-    return 'hello'
-  }
+  @Inject(ShortLongMapService)
+  private shortLongMapService: ShortLongMapService;
 
   // TODO: 断点、错误续传
   // 前端切片上传参考： /templates/upload.html
@@ -207,5 +207,53 @@ export class AppController {
         return value;
       }
     }
+  }
+
+  @ApiDoc({
+    operation: {
+      description: '生成短链接',
+      operationId: 'generateShortUrl',
+      tags: ['url'],
+    },
+    response: {
+      content: {
+        'application/json': {
+          schema: {
+            properties: {
+              url: { type: 'string' },
+            },
+          },
+        },
+      },
+    },
+    noBearerAuth: true,
+  })
+  @Get('short-url')
+  public async generateShortUrl(@Query() { url }: UrlDto) {
+    const shortUrl = await this.shortLongMapService.generate(url);
+    return {
+      url: shortUrl,
+    };
+  }
+
+  @ApiDoc({
+    operation: {
+      description: '短链接重定向',
+      operationId: 'redirect',
+      tags: ['url'],
+    },
+    response: { status: 302 },
+    noBearerAuth: true,
+  })
+  // 添加一个短的且不会被使用的前缀，避免影响其他路由
+  @Get('v/:code')
+  @Redirect()
+  public async redirect(@Param() { code }: CodeDto) {
+    const url = await this.shortLongMapService.getLongUrl(code);
+    // return res.status(302).redirect(url);
+    return {
+      url,
+      status: 302,
+    };
   }
 }

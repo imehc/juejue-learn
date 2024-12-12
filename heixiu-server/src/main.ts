@@ -3,8 +3,8 @@ import { AppModule } from './app.module';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ConfigurationImpl } from './helper/configuration';
-import { HttpExceptionFilter } from './helper/http-exception.filter';
-import { CommonExceptionFilter } from './helper/common-exception.filter';
+import { HttpExceptionFilter } from './helper/filter/http-exception.filter';
+import { CommonExceptionFilter } from './helper/filter/common-exception.filter';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { writeFileSync } from 'fs';
 import { dump } from 'js-yaml';
@@ -19,7 +19,6 @@ async function bootstrap() {
     logger: WinstonModule.createLogger({
       transports: [
         initLog({ init: true }),
-        initLog({ level: 'debug' }),
         initLog({ level: 'error' }),
         initLog({ level: 'warn' }),
       ],
@@ -56,6 +55,7 @@ function initConfig(
     .addBearerAuth({ type: 'http', description: '基于JWT认证' })
     .addTag('auth', 'auth')
     .addTag('file', '文件')
+    .addTag('url', 'url')
     .addTag('user', '用户')
     .addTag('friendship', '好友')
     .addTag('chatroom', '群聊')

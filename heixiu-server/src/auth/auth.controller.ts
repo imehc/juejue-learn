@@ -17,8 +17,8 @@ import { RegisterDto } from './dto/register.dto';
 import { Auth } from './vo/auth.vo';
 import { LoginDto } from './dto/login.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
-import { UserInfo } from 'src/helper/custom.decorator';
-import { ApiDoc } from 'src/helper/custom.decorator';
+import { UserInfo } from 'src/helper/decorator/custom.decorator';
+import { ApiDoc } from 'src/helper/decorator/custom.decorator';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { getCaptchaType } from 'src/helper/email';
 

@@ -15,3 +15,16 @@ export class WeatherDto {
   @IsNotEmpty({ message: '城市名不能为空' })
   city: string;
 }
+
+export class UrlDto {
+  @ApiProperty({ description: 'url' })
+  @IsNotEmpty({ message: 'url不能为空' })
+  url: string;
+}
+
+export class CodeDto {
+  @ApiProperty({ description: 'code' })
+  @IsNotEmpty({ message: 'code不能为空' })
+  code: string;
+}
+
