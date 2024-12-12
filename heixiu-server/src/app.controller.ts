@@ -256,4 +256,22 @@ export class AppController {
       status: 302,
     };
   }
+
+  /** sse */
+  // @Sse('events')
+  // public async getEvents() {
+  //   return new Observable((observer) => {
+  //     observer.next('aaa');
+  //     setTimeout(() => {
+  //       observer.next('bbb');
+  //     }, 2000);
+  //     /**
+  //      * 浏览器端
+  //      * const eventSource = new EventSource('http://192.168.100.42:6020/events');
+  //      * eventSource.onmessage = ({ data }) => {
+  //      *   console.log('New message', data);
+  //      * };
+  //      */
+  //   });
+  // }
 }
