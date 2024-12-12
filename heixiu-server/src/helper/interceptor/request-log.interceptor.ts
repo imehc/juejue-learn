@@ -10,7 +10,7 @@ import { tap } from 'rxjs';
 import requestIp from 'request-ip';
 import { HttpService } from '@nestjs/axios';
 import iconv from 'iconv-lite';
-import { isProduction } from '../utils';
+import { isDevelopment } from '../utils';
 
 @Injectable()
 export class RequestLogInterceptor implements NestInterceptor {
@@ -59,7 +59,7 @@ export class RequestLogInterceptor implements NestInterceptor {
             // const city = await this.ipToCity(clientIp);
             // TDDO: 登录成功后，记录该用户登录信息，比如userAgent、IP、city,避免多次请求
           }
-          if (!isProduction) {
+          if (isDevelopment) {
             this.logger.debug(
               `${method} ${path} ${clientIp} ${userAgent}: ${response.statusCode}: ${Date.now() - now}ms`,
             );

@@ -13,15 +13,21 @@ import path from 'path';
 import { utilities, WinstonModule } from 'nest-winston';
 import { format, transports } from 'winston';
 import 'winston-daily-rotate-file';
+import { isDevelopment, isProduction } from './helper/utils';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     logger: WinstonModule.createLogger({
       transports: [
         initLog({ init: true }),
-        initLog({ level: 'error' }),
-        initLog({ level: 'warn' }),
-      ],
+        isDevelopment && initLog({ level: 'debug' }),
+        isProduction && [
+          initLog({ level: 'error' }),
+          initLog({ level: 'warn' }),
+        ],
+      ]
+        .flat()
+        .filter(Boolean),
     }),
   });
   app.useGlobalPipes(
