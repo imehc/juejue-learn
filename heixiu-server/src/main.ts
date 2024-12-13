@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { INestApplication, ValidationPipe } from '@nestjs/common';
+import { INestApplication, Logger, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ConfigurationImpl } from './helper/configuration';
 import { HttpExceptionFilter } from './helper/filter/http-exception.filter';
@@ -47,6 +47,9 @@ async function bootstrap() {
   app.enableCors();
 
   initConfig(app, configService);
+
+  const logger = new Logger();
+  logger.log(`NODE_ENVIRONMENT: ${process.env.NODE_ENV} PORT: ${configService.get('nest-server.port')} `);
 
   await app.listen(configService.get('nest-server.port'));
 }
