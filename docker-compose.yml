@@ -42,7 +42,7 @@ services:
     container_name: minio-container
     image: "bitnami/minio:latest"
     ports:
-      # - "9000:9000"
+      - "9000:9000"
       - "9001:9001"
     env_file:
       - ./heixiu-server/.env.production
@@ -62,15 +62,17 @@ services:
       - postgresql-container
       - redis-container
       - minio-container
-    environment:
-      - NODE_ENVIRONMENT=production
+    # Dockerfile里面也可以指定环境变量
+    # environment:
+    #   - NODE_ENV=production
     env_file:
       - ./heixiu-server/.env.production
-    ports:
-      - 6020:6020
+    # ports:
+    #   - 6020:6020
     # 本地映射 具体本地地址以主机路径为准 一般文件使用OSS对象存储，这里图片存放到主机
     volumes:
-      - /Users/tom/person/learning/uploads:/uploads
+      - /Users/tom/person/learning/uploads:/app/uploads
+      - /Users/tom/person/learning/logs:/app/logs
     # restart: always
     networks:
       - common-network

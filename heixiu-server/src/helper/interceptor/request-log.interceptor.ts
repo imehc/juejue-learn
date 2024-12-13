@@ -44,7 +44,6 @@ export class RequestLogInterceptor implements NestInterceptor {
     const { ip, method, path } = request;
     // 获取客户端真实IP, 比如nginx代理转发的ip
     const clientIp = requestIp.getClientIp(request) || ip;
-    this.logger.debug(`${context.getClass().name}---- ${path} invoked...`);
 
     const now = Date.now();
 

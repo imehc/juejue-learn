@@ -75,5 +75,7 @@ npx prisma generate
 # TODO
 
 - [x]  双刷token
-- [ ]  返回的token不宜过长
 - [x]  获取新token原token失效
+- [ ]  使用nginx代理minio
+- [ ]  使用nginx代理minio管理
+- [ ]  重新部署api数据库历史数据不丢失

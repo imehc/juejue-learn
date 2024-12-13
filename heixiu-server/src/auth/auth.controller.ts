@@ -51,13 +51,19 @@ export class AuthController {
     const ttl = 5 * 60; // 五分钟有效期
     const code = Math.random().toString().slice(2, 8);
     await this.redisService.set(registerWrapper(email), code, ttl);
-    await this.eventEmitter.emitAsync('send-email', {
+    const results = await this.eventEmitter.emitAsync('send-email', {
       to: email,
       subject: getCaptchaType('register'),
       text: code,
       type: 'register',
       ttl: ttl / 60,
     });
+
+    // 需要考虑更多情况
+    const result = results?.at(0);
+    if (result?.responseCode) {
+      throw new HttpException(result?.response, result.responseCode);
+    }
     return '发送成功';
   }
 
@@ -82,13 +88,19 @@ export class AuthController {
     const ttl = 5 * 60; // 五分钟有效期
     const code = Math.random().toString().slice(2, 8);
     await this.redisService.set(forgetPasswordWrapper(email), code, ttl);
-    await this.eventEmitter.emitAsync('send-email', {
+    const results = await this.eventEmitter.emitAsync('send-email', {
       to: email,
       subject: getCaptchaType('forget-password'),
       text: code,
       type: 'forget-password',
       ttl: ttl / 60,
     });
+
+    // 需要考虑更多情况
+    const result = results?.at(0);
+    if (result?.responseCode) {
+      throw new HttpException(result?.response, result.responseCode);
+    }
     return '发送成功';
   }
 

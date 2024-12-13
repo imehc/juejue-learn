@@ -11,7 +11,7 @@ import { Client } from 'minio';
 import { ConfigurationImpl } from 'src/helper/configuration';
 import { MINIO_CLIENT } from 'src/helper/const';
 import { ApiDoc } from 'src/helper/decorator/custom.decorator';
-import { isDevelopment } from 'src/helper/utils';
+import { isDevelopment, isProduction } from 'src/helper/utils';
 import { PresignedUrlVo } from './vo/presigned-url.vo';
 import { OssQueryDto } from './oss.dto';
 
@@ -44,12 +44,19 @@ export class OssController {
       this.configService.get('minio-server.expires') ?? 60 * 60
     );
     try {
-      const presignedPutUrl = await this.minioClient.presignedPutObject(
+      let presignedPutUrl = await this.minioClient.presignedPutObject(
         // 需要确保存储桶（bucket）存在，不存在则去9001端口创建
         this.configService.get('minio-server.bucket-name'),
         name,
         expiresIn,
       );
+      if (isProduction) {
+        const url = new URL(presignedPutUrl);
+        // 此处由于使用docker部署，且使用nginx代理，因此需要修改
+        // TODO: 待优化
+        url.hostname = 'localhost'
+        presignedPutUrl = url.href;
+      }
       return {
         presignedPutUrl,
         expiresIn: Math.floor(expiresIn + new Date().getTime() / 1000), // 到期具体时间
