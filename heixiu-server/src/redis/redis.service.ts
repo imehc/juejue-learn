@@ -7,7 +7,7 @@ export class RedisService {
   @Inject(REDIS_ClIENT)
   private readonly redisClient: RedisClientType;
 
-  private readonly logger = new Logger();
+  private readonly logger = new Logger(RedisService.name);
 
   public async get(key: string, parse?: boolean) {
     const data = await this.redisClient.get(key);
@@ -45,7 +45,7 @@ export class RedisService {
       }
     } catch (error) {
       // 捕获并记录任何发生的错误
-      this.logger.error(error, RedisService.name);
+      this.logger.error(error);
     }
   }
 

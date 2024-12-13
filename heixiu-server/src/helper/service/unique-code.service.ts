@@ -8,7 +8,7 @@ export class UniqueCodeService {
   @Inject(PrismaService)
   private readonly prismaService: PrismaService;
 
-  private readonly logger = new Logger();
+  private readonly logger = new Logger(UniqueCodeService.name);
 
   /** 向数据库插入一批唯一码 */
   public async generateCode(num = 10, len = 6) {
@@ -41,7 +41,7 @@ export class UniqueCodeService {
       });
       return uniqueCodes;
     } catch (error) {
-      this.logger.error(error, UniqueCodeService.name);
+      this.logger.error(error);
     }
   }
 }

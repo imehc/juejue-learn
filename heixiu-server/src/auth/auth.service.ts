@@ -36,7 +36,7 @@ export class AuthService {
   @Inject(RedisService)
   private readonly redisServer: RedisService;
 
-  private readonly logger = new Logger();
+  private readonly logger = new Logger(AuthService.name);
 
   public async register({ captcha, ...data }: RegisterDto) {
     const cacheCaptcha = await this.redisServer.get(
@@ -76,7 +76,7 @@ export class AuthService {
       });
       return user;
     } catch (error) {
-      this.logger.error(error, AuthService.name);
+      this.logger.error(error);
       throw new InternalServerErrorException('服务异常');
     } finally {
       this.redisServer.del(registerWrapper(data.email));
@@ -141,7 +141,7 @@ export class AuthService {
         data: { password: md5(config.data.password) },
       });
     } catch (error) {
-      this.logger.error(error, AuthService.name);
+      this.logger.error(error);
       throw new InternalServerErrorException('服务异常');
     } finally {
       this.redisServer.del(forgetPasswordWrapper(config.data.email));
@@ -219,7 +219,7 @@ export class AuthService {
       throw new Error('refreshToken无效');
     } catch (error) {
       if (noop) {
-        this.logger.error(error, AuthService.name);
+        this.logger.error(error);
       }
       throw new BadRequestException('refreshToken无效');
     }

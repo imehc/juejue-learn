@@ -15,7 +15,7 @@ export class ChatroomService {
   @Inject(PrismaService)
   private readonly prismaService: PrismaService;
 
-  private readonly logger = new Logger();
+  private readonly logger = new Logger(ChatroomService.name);
 
   /** 创建单聊 */
   public async createSingleChatroom(
@@ -59,7 +59,7 @@ export class ChatroomService {
         });
       });
     } catch (error) {
-      this.logger.error(error, ChatroomService.name);
+      this.logger.error(error);
       throw new InternalServerErrorException('服务异常');
     }
   }
@@ -85,7 +85,7 @@ export class ChatroomService {
         });
       });
     } catch (error) {
-      this.logger.error(error, ChatroomService.name);
+      this.logger.error(error);
       throw new InternalServerErrorException('服务异常');
     }
   }

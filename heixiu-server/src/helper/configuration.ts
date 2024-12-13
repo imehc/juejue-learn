@@ -20,6 +20,8 @@ type NestServerConfig = `nest-server.${'port' | 'doc-url'}`;
 type JwtConfig =
   `jwt.${'access-token-secret' | 'refresh-token-secret' | 'access-token-expires-time' | 'refresh-token-expires-time'}`;
 type WeatherConfig = `weather.${'key'}`;
+type MinioConfig =
+  `minio-server.${'endpoint' | 'port' | 'access-key' | 'secret-key' | 'bucket-name' | 'expires'}`;
 
 export declare type ConfigurationImpl = {
   [K in
@@ -27,5 +29,6 @@ export declare type ConfigurationImpl = {
     | NodemailerConfig
     | NestServerConfig
     | JwtConfig
-    | WeatherConfig]: string;
+    | WeatherConfig
+    | MinioConfig]: string;
 };

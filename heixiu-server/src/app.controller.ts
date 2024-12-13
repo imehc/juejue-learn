@@ -26,6 +26,7 @@ import { FileVo, WeatherWithDay, WeatherVo, Location } from './app.vo';
 import { RedisService } from './redis/redis.service';
 import { weatherWrapper } from './helper/helper';
 import { ShortLongMapService } from './helper/service/short-long-map.service';
+import { isDevelopment } from './helper/utils';
 
 @Controller()
 export class AppController {
@@ -53,7 +54,7 @@ export class AppController {
     consumes: ['multipart/form-data'],
     body: { type: FileDto },
     response: { status: HttpStatus.CREATED },
-    noBearerAuth: process.env.NODE_ENVIRONMENT !== 'production',
+    noBearerAuth: isDevelopment,
   })
   @SkipThrottle()
   @Post('upload-file')
@@ -78,7 +79,7 @@ export class AppController {
       tags: ['file'],
     },
     response: { type: FileVo },
-    noBearerAuth: process.env.NODE_ENVIRONMENT !== 'production',
+    noBearerAuth: isDevelopment,
   })
   @Get('merge-file')
   public async mergeFile(@Query() { name }: FileDto) {

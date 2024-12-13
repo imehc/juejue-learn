@@ -8,7 +8,7 @@ import { RedisService } from 'src/redis/redis.service';
 
 @Injectable()
 export class TaskService {
-  private readonly logger = new Logger();
+  private readonly logger = new Logger(TaskService.name);
 
   @Inject(RedisService)
   private readonly redisService: RedisService;
@@ -37,11 +37,7 @@ export class TaskService {
         }
       }
     } catch (error) {
-      this.logger.error(
-        'Error reading uploads directory:',
-        error,
-        TaskService.name,
-      );
+      this.logger.error(`Error reading uploads directory: ${error}`);
     }
   }
 
@@ -63,7 +59,7 @@ export class TaskService {
         }
       }
     } catch (error) {
-      this.logger.warn('Error deleting folder:', error);
+      this.logger.warn(`Error deleting folder: ${error}`);
     }
   }
 

@@ -14,7 +14,7 @@ export class FriendshipService {
   @Inject(PrismaService)
   private readonly prismaService: PrismaService;
 
-  private readonly logger = new Logger();
+  private readonly logger = new Logger(FriendshipService.name);
 
   public async add(friend: AddFriendDto, userId: number) {
     // 查找该用户是否存在
@@ -70,7 +70,7 @@ export class FriendshipService {
         },
       });
     } catch (error) {
-      this.logger.error(error, FriendshipService.name);
+      this.logger.error(error);
       throw new InternalServerErrorException('服务异常');
     }
   }
@@ -160,7 +160,7 @@ export class FriendshipService {
         throw new BadRequestException('拒绝好友申请失败');
       }
     } catch (error) {
-      this.logger.error(error, FriendshipService.name);
+      this.logger.error(error);
       throw new InternalServerErrorException('服务异常');
     }
   }
@@ -214,7 +214,7 @@ export class FriendshipService {
         throw new BadRequestException('同意好友申请失败');
       }
     } catch (error) {
-      this.logger.error(error, FriendshipService.name);
+      this.logger.error(error);
       throw new InternalServerErrorException('服务异常');
     }
     const friendships = await this.prismaService.friendship.findMany({
@@ -248,7 +248,7 @@ export class FriendshipService {
         });
       }
     } catch (error) {
-      this.logger.error(error, FriendshipService.name);
+      this.logger.error(error);
       throw new InternalServerErrorException('服务异常');
     }
   }
@@ -281,7 +281,7 @@ export class FriendshipService {
         throw new BadRequestException('删除好友失败');
       }
     } catch (error) {
-      this.logger.error(error, FriendshipService.name);
+      this.logger.error(error);
       throw new InternalServerErrorException('服务异常');
     }
   }

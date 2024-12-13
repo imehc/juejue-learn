@@ -2,9 +2,11 @@ const REDIS_ClIENT = 'REDIS_CLIENT' as const;
 
 const CREATED = 'CREATED' as const;
 
+const MINIO_CLIENT = 'MINIO_CLIENT' as const;
+
 const AUTH = {
   JWT: 'jwt',
   JWT_REFRESH: 'jwt-refresh',
 } as const;
 
-export { CREATED, REDIS_ClIENT, AUTH };
+export { CREATED, REDIS_ClIENT, MINIO_CLIENT, AUTH };

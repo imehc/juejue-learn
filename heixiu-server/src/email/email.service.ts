@@ -20,7 +20,7 @@ import { CaptchaType, getCaptchaType } from 'src/helper/email';
 export class EmailService {
   private readonly transporter: Transporter;
 
-  private readonly logger = new Logger();
+  private readonly logger = new Logger(EmailService.name);
 
   @Inject(RedisService)
   private readonly redisService: RedisService;
@@ -67,7 +67,7 @@ export class EmailService {
         default:
           break;
       }
-      this.logger.error(error, EmailService.name);
+      this.logger.error(error);
       throw new HttpException('请检查该邮箱是否存在', HttpStatus.BAD_REQUEST);
     }
   }

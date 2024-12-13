@@ -38,20 +38,19 @@ services:
     networks:
       - common-network
 
-  # minio-container:
-  #   container_name: minio-container
-  #   image: "bitnami/minio:latest"
-  #   ports:
-  #     # - "9000:9000"
-  #     - "9001:9001"
-  #   environment:
-  #     - MINIO_ROOT_USER=admin # 账号必须大于等于5位
-  #     - MINIO_ROOT_PASSWORD=12345678 # 密码必须大于等于8位
-  #   # volumes:
-  #   #   - /Users/tom/person/learning/minio-data:/bitnami/minio/data
-  #   restart: always
-  #   networks:
-  #     - common-network
+  minio-container:
+    container_name: minio-container
+    image: "bitnami/minio:latest"
+    ports:
+      # - "9000:9000"
+      - "9001:9001"
+    env_file:
+      - ./heixiu-server/.env.production
+    volumes:
+      - /Users/tom/person/learning/minio-data:/bitnami/minio/data
+    restart: always
+    networks:
+      - common-network
 
   nest-api:
     container_name: nest-api
@@ -62,7 +61,7 @@ services:
     depends_on:
       - postgresql-container
       - redis-container
-      # - minio-container
+      - minio-container
     environment:
       - NODE_ENVIRONMENT=production
     env_file:

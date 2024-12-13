@@ -10,10 +10,10 @@ export function md5(str: string) {
 
 /**
  * 生成指定长度的随机字符串
- * 
+ *
  * 该函数通过生成随机数并将其转换为Base62编码来生成随机字符串Base62编码使用0-9、a-z、A-Z共62个字符
  * 主要用于生成唯一标识符或简短的随机代码，如短链接服务中的链接代码
- * 
+ *
  * @param len 生成随机字符串的长度
  * @returns 返回生成的随机字符串
  */
@@ -32,5 +32,7 @@ export function generateRandomStr(len: number) {
 export const noop =
   process.env.NODE_ENV && !['test'].includes(process.env.NODE_ENV);
 
+/** 是否是生产环境 */
 export const isProduction = process.env.NODE_ENV === 'production';
+/** 是否是开发环境 */
 export const isDevelopment = process.env.NODE_ENV === 'development';

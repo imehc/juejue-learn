@@ -10,7 +10,7 @@ import { UniqueCodeService } from './unique-code.service';
 
 @Injectable()
 export class ShortLongMapService {
-  private readonly logger = new Logger();
+  private readonly logger = new Logger(ShortLongMapService.name);
 
   @Inject(PrismaService)
   private readonly prismaService: PrismaService;
@@ -38,7 +38,7 @@ export class ShortLongMapService {
       ]);
       return uniqueCode.code;
     } catch (error) {
-      this.logger.error(error, ShortLongMapService.name);
+      this.logger.error(error);
     }
   }
 

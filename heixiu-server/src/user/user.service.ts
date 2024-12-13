@@ -20,7 +20,7 @@ export class UserService {
   @Inject(RedisService)
   private readonly redisServer: RedisService;
 
-  private readonly logger = new Logger();
+  private readonly logger = new Logger(UserService.name);
 
   public async findUserById(userId: number) {
     const user = await this.prismaService.user.findUnique({
@@ -58,7 +58,7 @@ export class UserService {
             data: { password: md5(config.data.password) },
           });
         } catch (error) {
-          this.logger.error(error, UserService.name);
+          this.logger.error(error);
           throw new InternalServerErrorException('服务异常');
         }
         break;
@@ -71,7 +71,7 @@ export class UserService {
             data: { nickname, headPic },
           });
         } catch (error) {
-          this.logger.error(error, UserService.name);
+          this.logger.error(error);
           throw new InternalServerErrorException('服务异常');
         }
         break;
@@ -98,7 +98,7 @@ export class UserService {
             data: { email: config.data.email },
           });
         } catch (error) {
-          this.logger.error(error, UserService.name);
+          this.logger.error(error);
           throw new InternalServerErrorException('服务异常');
         } finally {
           this.redisServer.del(updateEmailWrapper(config.data.email));

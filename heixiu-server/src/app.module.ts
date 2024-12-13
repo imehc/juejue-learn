@@ -17,6 +17,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { HttpModule } from '@nestjs/axios';
 import { RequestLogInterceptor } from './helper/interceptor/request-log.interceptor';
+import { OssModule } from './oss/oss.module';
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { RequestLogInterceptor } from './helper/interceptor/request-log.intercep
       timeout: 5000,
     }),
     TaskModule,
+    OssModule,
   ],
   controllers: [AppController],
   providers: [
