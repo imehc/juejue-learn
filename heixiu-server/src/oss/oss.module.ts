@@ -1,7 +1,4 @@
 import { Global, Module } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { ConfigurationImpl } from 'src/helper/configuration';
-import { MINIO_CLIENT } from 'src/helper/const';
 import { Client } from 'minio';
 import { OssController } from './oss.controller';
 
@@ -9,21 +6,20 @@ import { OssController } from './oss.controller';
 @Module({
   providers: [
     {
-      provide: MINIO_CLIENT,
-      async useFactory(configService: ConfigService<ConfigurationImpl>) {
+      provide: 'MINIO_CLIENT',
+      async useFactory() {
         const client = new Client({
-          endPoint: configService.get('minio-server.endpoint'),
-          port: +configService.get('minio-server.port'),
+          endPoint: 'localhost',
+          port: 9000,
           useSSL: false,
-          accessKey: configService.get('minio-server.access-key'),
-          secretKey: configService.get('minio-server.secret-key'),
+          accessKey: 'xxxxxxxxxx',
+          secretKey:'xxxxxxxxxxxxxxxxxxxx',
         });
         return client;
       },
-      inject: [ConfigService],
     },
   ],
-  exports: [MINIO_CLIENT],
+  exports: ['MINIO_CLIENT'],
   controllers: [OssController],
 })
 export class OssModule {}

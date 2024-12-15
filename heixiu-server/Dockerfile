@@ -3,22 +3,12 @@
 # 阶段 1：构建阶段
 FROM node:20.1.0-alpine AS build
 
-# 设置工作目录
-WORKDIR /app
-
-# 复制 package.json 和 pnpm-lock.yaml
-COPY package.json pnpm-lock.yaml ./
-COPY prisma .env.production.yaml ./
-COPY logs ./
-COPY templates/captcha.html ./templates/captcha.html
-
-# 安装构建依赖
 RUN corepack enable pnpm
-RUN pnpm install --frozen-lockfile --development
 
 # 复制应用代码
 COPY . .
 
+RUN pnpm install
 # 构建 NestJS 应用
 RUN pnpm build
 
@@ -29,11 +19,9 @@ FROM node:20.1.0-alpine AS production
 WORKDIR /app
 
 # 只复制需要的文件（避免复制多余的开发依赖和构建工具）
-COPY --from=build /app/package.json /app/pnpm-lock.yaml /app/
-COPY --from=build /app/prisma /app/templates/captcha.html /app/.env.production.yaml /app/
-COPY --from=build /app/logs /app/
-COPY --from=build /app/templates/captcha.html /app/templates/captcha.html
-COPY --from=build /app/dist /app/dist
+COPY --from=build /package.json /pnpm-lock.yaml /app/
+COPY --from=build .env.production .env.production.yaml /app/
+COPY --from=build dist /app/dist
 
 # 安装生产环境依赖
 RUN corepack enable pnpm
@@ -49,4 +37,4 @@ EXPOSE 6020
 ENV PORT 6020
 
 # 启动应用
-CMD ["pnpm", "start:migrate:prod"]
+CMD ["pnpm", "start:prod"]
