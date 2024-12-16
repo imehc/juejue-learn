@@ -1,70 +1,39 @@
 version: '3.8'
 services:
-  # postgresql-container:
-  #   container_name: postgresql-container
-  #   image: postgres
-  #   env_file:
-  #     - ./heixiu-server/.env.production
-  #   ports:
-  #     - '5432:5432'
-  #   restart: always
-  #   networks:
-  #     - common-network
-
-  # redis-container:
-  #   container_name: redis-container
-  #   image: redis
-  #   ports:
-  #     - '6379:6379'
-  #   restart: always
-  #   networks:
-  #     - common-network
-
-  minio-container:
-    container_name: minio-container
-    image: quay.io/minio/minio
-    command: server /data --console-address ":9001"
-    # ports:
-    #   - "9000:9000"
-    #   - "9001:9001"
-    env_file:
-      - ./heixiu-server/.env.production
-    # environment:
-    #   - MINIO_ROOT_USER=heixiu
-    #   - MINIO_ROOT_PASSWORD=12345678
-    volumes:
-      - /Users/tom/person/learning/minio-data:/data
-    restart: always
-    networks:
-      - common-network
-
-  heixiu-api:
-    container_name: heixiu-api
-    build:
-      context: ./heixiu-server
-      dockerfile: ./Dockerfile
-    depends_on:
-      - minio-container
-    #    - postgresql-container
-    #    - redis-container
-    # ports:
-    #   - 3000:3000
-    networks:
-      - common-network
-
   nginx:
-    # 容器名称
-    container_name: nginx-proxy
-    image: nginx:alpine
-    depends_on:
-      - heixiu-api
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    container_name: nginx
+    image: nginx
+    restart: unless-stopped
     ports:
       - 80:80
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+      - D:\warehouse\heixiu\nginx-log:/var/log/nginx/
+  minio:
+    image: minio/minio
+    container_name: minio
+    volumes:
+      - D:\warehouse\heixiu\minio-data:/data
+    command: server /data --address ':9000' --console-address ':9001'
+    environment:
+      MINIO_SERVER_URL: "http://localhost/"
+      MINIO_BROWSER_REDIRECT_URL: "http://localhost/console/"    
+      MINIO_ROOT_USER: heixiu
+      MINIO_ROOT_PASSWORD: 12345678
+    # ports:
+    #   - 9000
+    #   - 9001
     restart: always
-    networks:
-      - common-network
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "10"
+        max-size: 20m
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
 
 networks:
   common-network:
