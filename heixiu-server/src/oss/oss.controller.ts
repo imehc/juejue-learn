@@ -30,7 +30,8 @@ export class OssController {
       };
     } catch (error) {
       this.logger.log(error);
-      throw new InternalServerErrorException('服务异常');
+      return error
+      // throw new InternalServerErrorException('服务异常');
     }
   }
 }

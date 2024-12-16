@@ -9,11 +9,11 @@ import { OssController } from './oss.controller';
       provide: 'MINIO_CLIENT',
       async useFactory() {
         const client = new Client({
-          endPoint: 'localhost',
+          endPoint: 'minio-container',
           port: 9000,
           useSSL: false,
-          accessKey: 'xxxxxxxxxx',
-          secretKey:'xxxxxxxxxxxxxxxxxxxx',
+          accessKey: '9y41oEm6fqOlJ2hPn9Yj',
+          secretKey:'SDpZdIyCTmSvjz0D0mw1PVAAGfFcDoAvVQJIYVFW',
         });
         return client;
       },

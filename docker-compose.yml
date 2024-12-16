@@ -1,47 +1,54 @@
 version: '3.8'
 services:
-  postgresql-container:
-    container_name: postgresql-container
-    image: postgres
-    env_file:
-      - ./heixiu-server/.env.production
-    ports:
-      - '5432:5432'
-    restart: always
-    networks:
-      - common-network
+  # postgresql-container:
+  #   container_name: postgresql-container
+  #   image: postgres
+  #   env_file:
+  #     - ./heixiu-server/.env.production
+  #   ports:
+  #     - '5432:5432'
+  #   restart: always
+  #   networks:
+  #     - common-network
 
-  redis-container:
-    container_name: redis-container
-    image: redis
-    ports:
-      - '6379:6379'
-    restart: always
-    networks:
-      - common-network
+  # redis-container:
+  #   container_name: redis-container
+  #   image: redis
+  #   ports:
+  #     - '6379:6379'
+  #   restart: always
+  #   networks:
+  #     - common-network
 
   minio-container:
     container_name: minio-container
-    image: "bitnami/minio:latest"
-    ports:
-      - "9000:9000"
-      - "9001:9001"
+    image: quay.io/minio/minio
+    command: server /data --console-address ":9001"
+    # ports:
+    #   - "9000:9000"
+    #   - "9001:9001"
     env_file:
       - ./heixiu-server/.env.production
+    # environment:
+    #   - MINIO_ROOT_USER=heixiu
+    #   - MINIO_ROOT_PASSWORD=12345678
+    volumes:
+      - /Users/tom/person/learning/minio-data:/data
     restart: always
     networks:
       - common-network
 
-  nest-api:
-    container_name: nest-api
+  heixiu-api:
+    container_name: heixiu-api
     build:
       context: ./heixiu-server
       dockerfile: ./Dockerfile
     depends_on:
-       - postgresql-container
-       - redis-container
-    ports:
-      - 6020:6020
+      - minio-container
+    #    - postgresql-container
+    #    - redis-container
+    # ports:
+    #   - 3000:3000
     networks:
       - common-network
 
@@ -50,7 +57,9 @@ services:
     container_name: nginx-proxy
     image: nginx:alpine
     depends_on:
-      - nest-api
+      - heixiu-api
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
     ports:
       - 80:80
     restart: always

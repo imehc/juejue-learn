@@ -31,10 +31,10 @@ ENV DATABASE_URL=$DATABASE_URL
 ENV NODE_ENV=production
 
 # 暴露应用端口
-EXPOSE 6020
+EXPOSE 3000
 
 # 设置环境变量
-ENV PORT 6020
+ENV PORT 3000
 
 # 启动应用
 CMD ["pnpm", "start:prod"]
