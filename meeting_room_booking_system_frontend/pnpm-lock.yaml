@@ -90,8 +90,8 @@ importers:
         specifier: ~11.14.4
         version: 11.14.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       i18next:
-        specifier: ^24.1.0
-        version: 24.1.0(typescript@5.7.2)
+        specifier: ^24.1.2
+        version: 24.1.2(typescript@5.7.2)
       intl-messageformat:
         specifier: ^10.7.10
         version: 10.7.10
@@ -139,7 +139,7 @@ importers:
         version: 2.0.2(zod@3.24.1)
       zod-i18n-map:
         specifier: ^2.27.0
-        version: 2.27.0(i18next@24.1.0(typescript@5.7.2))(zod@3.24.1)
+        version: 2.27.0(i18next@24.1.2(typescript@5.7.2))(zod@3.24.1)
 
 packages:
 
@@ -2256,8 +2256,8 @@ packages:
     resolution: {integrity: sha512-0hJU9SCPvmMzIBdZFqNPXWa6dqh7WdH0cII9y+CyS8rG3nL48Bclra9HmKhVVUHyPWNH5Y7xDwAB7bfgSjkUMQ==}
     engines: {node: '>= 0.4'}
 
-  i18next@24.1.0:
-    resolution: {integrity: sha512-suKlX82AlptkMUO5YRfaAeH4FQyyKvR66jNaubTMiyPPMx7INU6PXAiy3PGULc0q6K+t9nxmDf/TRj9KjAivmw==}
+  i18next@24.1.2:
+    resolution: {integrity: sha512-th/075GW0Ub1gYDMHLiZXMGSfGv1aP1VqjT3fma/12hNHCNlH8oJMftvlDzycT/R+KoULWk+xLU8H1JRwV85qw==}
     peerDependencies:
       typescript: ^5
     peerDependenciesMeta:
@@ -6379,7 +6379,7 @@ snapshots:
     dependencies:
       function-bind: 1.1.2
 
-  i18next@24.1.0(typescript@5.7.2):
+  i18next@24.1.2(typescript@5.7.2):
     dependencies:
       '@babel/runtime': 7.24.7
     optionalDependencies:
@@ -7348,9 +7348,9 @@ snapshots:
     dependencies:
       zod: 3.24.1
 
-  zod-i18n-map@2.27.0(i18next@24.1.0(typescript@5.7.2))(zod@3.24.1):
+  zod-i18n-map@2.27.0(i18next@24.1.2(typescript@5.7.2))(zod@3.24.1):
     dependencies:
-      i18next: 24.1.0(typescript@5.7.2)
+      i18next: 24.1.2(typescript@5.7.2)
       zod: 3.24.1
 
   zod@3.24.1: {}
