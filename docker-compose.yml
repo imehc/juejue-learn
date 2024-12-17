@@ -40,15 +40,26 @@ services:
 
   minio-container:
     container_name: minio-container
-    image: "bitnami/minio:latest"
+    image: quay.io/minio/minio
     ports:
-      - "9000:9000"
-      - "9001:9001"
+      - 9000:9000
+      - 9001:9001
     env_file:
       - ./heixiu-server/.env.production
     volumes:
-      - /Users/tom/person/learning/minio-data:/bitnami/minio/data
+      - /Users/tom/person/learning/heixiu/minio-data:/data
+    command: server /data --address ':9000' --console-address ':9001'
     restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "10"
+        max-size: 20m
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
     networks:
       - common-network
 
@@ -84,7 +95,8 @@ services:
     depends_on:
       - nest-api
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+      - /Users/tom/person/learning/heixiu/nginx-log:/var/log/nginx/
     ports:
       - 80:80
     restart: always

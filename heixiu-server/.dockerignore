@@ -1,0 +1,12 @@
+.git/
+.gitignore
+node_modules/
+dist/
+.prettierrc
+eslint.config.js
+.DS_Store
+.dockerignore
+.env
+
+Dockerfile
+README.md
