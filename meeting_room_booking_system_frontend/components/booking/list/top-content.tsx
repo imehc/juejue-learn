@@ -116,6 +116,7 @@ export const BookingListTopContent = forwardRef<
         }}
       />
       <DatePicker
+        disableAnimation
         showMonthAndYearPickers
         className="max-w-sm"
         granularity="minute"
@@ -126,15 +127,14 @@ export const BookingListTopContent = forwardRef<
           setQueryState((state) => {
             return {
               ...state,
-              startAt: bookingListSchema.shape.startAt.parse(
-                new Date(evt.toString()),
-              ),
+              startAt: bookingListSchema.shape.startAt.parse(evt?.toString()),
               skip: 0,
             };
           });
         }}
       />
       <DatePicker
+        disableAnimation
         showMonthAndYearPickers
         className="max-w-sm"
         granularity="minute"
@@ -145,9 +145,7 @@ export const BookingListTopContent = forwardRef<
           setQueryState((state) => {
             return {
               ...state,
-              endAt: bookingListSchema.shape.endAt.parse(
-                new Date(evt.toString()),
-              ),
+              endAt: bookingListSchema.shape.endAt.parse(evt?.toString()),
               skip: 0,
             };
           });
@@ -156,7 +154,7 @@ export const BookingListTopContent = forwardRef<
       <Button
         className="h-14"
         color="secondary"
-        onClick={() => {
+        onPress={() => {
           setQueryState((state) => {
             return {
               ...state,

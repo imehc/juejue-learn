@@ -259,7 +259,7 @@ const SystemMeetingRoomOption: React.FC<SystemMeetingRoomOptionProps> = ({
   return (
     <>
       <ButtonGroup>
-        <Button color="danger" variant="light" onClick={onOpen}>
+        <Button color="danger" variant="light" onPress={onOpen}>
           删除
         </Button>
         <Button

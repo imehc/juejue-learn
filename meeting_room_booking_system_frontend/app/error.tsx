@@ -22,7 +22,7 @@ export default function Error({
       <Button
         color="danger"
         size="md"
-        onClick={
+        onPress={
           // Attempt to recover by trying to re-render the segment
           () => reset()
         }

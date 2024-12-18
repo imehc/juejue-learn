@@ -199,7 +199,7 @@ const TableItem: FC<{ columnKey: string; user: User }> = ({
             color="danger"
             isDisabled={user.isFrozen}
             variant="light"
-            onClick={onOpen}
+            onPress={onOpen}
           >
             冻结
           </Button>

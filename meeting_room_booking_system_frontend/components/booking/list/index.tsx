@@ -263,7 +263,7 @@ const NormalAction: React.FC<NormalActionProps> = ({
             color="warning"
             size="sm"
             variant="bordered"
-            onClick={() => {
+            onPress={() => {
               setStatus(BookingStatusEnum.Unbind);
               onOpen();
             }}
@@ -277,7 +277,7 @@ const NormalAction: React.FC<NormalActionProps> = ({
             color="danger"
             size="sm"
             variant="bordered"
-            onClick={() => {
+            onPress={() => {
               urgeExecute({ bookingId: item.id });
             }}
           >
@@ -374,7 +374,7 @@ const SystemAction: FC<SystemActionProps> = ({
             color="success"
             size="sm"
             variant="bordered"
-            onClick={() => {
+            onPress={() => {
               setStatus(BookingStatusEnum.Pass);
               onOpen();
             }}
@@ -388,7 +388,7 @@ const SystemAction: FC<SystemActionProps> = ({
             color="danger"
             size="sm"
             variant="bordered"
-            onClick={() => {
+            onPress={() => {
               setStatus(BookingStatusEnum.Reject);
               onOpen();
             }}
@@ -402,7 +402,7 @@ const SystemAction: FC<SystemActionProps> = ({
             color="warning"
             size="sm"
             variant="bordered"
-            onClick={() => {
+            onPress={() => {
               setStatus(BookingStatusEnum.Unbind);
               onOpen();
             }}

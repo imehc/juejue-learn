@@ -34,6 +34,7 @@ export function Statistics({ userBooking, meetingRoomUsed }: Props) {
     <div className="h-full flex flex-col">
       <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
         <DatePicker
+          disableAnimation
           showMonthAndYearPickers
           className="max-w-sm"
           granularity="minute"
@@ -44,14 +45,13 @@ export function Statistics({ userBooking, meetingRoomUsed }: Props) {
             setQueryState((state) => {
               return {
                 ...state,
-                startAt: statisticsSchema.shape.startAt.parse(
-                  new Date(evt.toString()),
-                ),
+                startAt: statisticsSchema.shape.startAt.parse(evt?.toString()),
               };
             });
           }}
         />
         <DatePicker
+          disableAnimation
           showMonthAndYearPickers
           className="max-w-sm"
           granularity="minute"
@@ -63,9 +63,7 @@ export function Statistics({ userBooking, meetingRoomUsed }: Props) {
             setQueryState((state) => {
               return {
                 ...state,
-                endAt: statisticsSchema.shape.endAt.parse(
-                  new Date(evt.toString()),
-                ),
+                endAt: statisticsSchema.shape.endAt.parse(evt?.toString()),
               };
             });
           }}
