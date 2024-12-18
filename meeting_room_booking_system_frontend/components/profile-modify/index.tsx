@@ -83,7 +83,7 @@ export function ProfileModifyForm({ headPic, nickName, email }: UserDetailVo) {
       if (process.env.NODE_ENV === "development") {
         return headPic.startsWith("uploads/")
           ? BASE_PATH + "/" + headPic
-          : `http://localhost:9000/${headPic}`;
+          : `http://localhost:9000${headPic}`;
       }
 
       return `http://localhost/oss${headPic}`;
@@ -140,7 +140,6 @@ export function ProfileModifyForm({ headPic, nickName, email }: UserDetailVo) {
       <div className="grid w-full max-w-sm grid-cols-6 gap-4 mb-4">
         <Input
           fullWidth
-          isRequired
           className="col-span-4"
           errorMessage={profileModifyState?.validationErrors?.captcha?.join(
             " ",

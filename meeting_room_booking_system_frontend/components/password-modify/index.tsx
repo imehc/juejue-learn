@@ -57,7 +57,6 @@ export function PasswordModifyForm({ email }: UserDetailVo) {
       <div className="grid w-full max-w-sm grid-cols-6 gap-4 mb-4">
         <Input
           fullWidth
-          isRequired
           className="col-span-4"
           errorMessage={passwordModifyState?.validationErrors?.captcha?.join(
             " ",

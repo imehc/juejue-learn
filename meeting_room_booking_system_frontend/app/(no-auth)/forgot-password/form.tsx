@@ -69,7 +69,6 @@ export function ForgotPasswordForm() {
       <div className="grid max-w-sm grid-cols-6 gap-4 mb-4">
         <Input
           fullWidth
-          isRequired
           className="col-span-4"
           errorMessage={forgotPasswordState?.validationErrors?.captcha?.join(
             " ",
