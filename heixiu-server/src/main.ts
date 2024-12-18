@@ -59,6 +59,7 @@ function initConfig(
   app: INestApplication<any>,
   cs: ConfigService<ConfigurationImpl, false>,
 ) {
+  if (!isDevelopment) return;
   const config = new DocumentBuilder()
     .addServer(cs.get('nest-server.doc-url'))
     .addBearerAuth({ type: 'http', description: '基于JWT认证' })

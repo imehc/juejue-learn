@@ -60,8 +60,6 @@ services:
       interval: 30s
       timeout: 20s
       retries: 3
-    networks:
-      - common-network
 
   nest-api:
     container_name: nest-api
