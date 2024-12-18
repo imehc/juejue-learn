@@ -5,7 +5,7 @@ services:
     image: postgres
     # 本地映射 具体本地地址以主机路径为准
     volumes:
-      - /Users/tom/person/learning/postgresql-data:/var/lib/postgresql
+      - /Users/tom/person/learning/heixiu/postgresql-data:/var/lib/postgresql
     # https://docs.docker.com/compose/how-tos/environment-variables/variable-interpolation/
     env_file:
       - ./heixiu-server/.env.production
@@ -80,8 +80,8 @@ services:
     #   - 6020:6020
     # 本地映射 具体本地地址以主机路径为准 一般文件使用OSS对象存储，这里图片存放到主机
     volumes:
-      - /Users/tom/person/learning/uploads:/app/uploads
-      - /Users/tom/person/learning/logs:/app/logs
+      - /Users/tom/person/learning/heixiu/uploads:/app/uploads
+      - /Users/tom/person/learning/heixiu/logs:/app/logs
     # restart: always
     networks:
       - common-network
