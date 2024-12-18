@@ -23,7 +23,6 @@ WORKDIR /app
 # 只复制需要的文件（避免复制多余的开发依赖和构建工具）
 COPY --from=build /app/package.json /app/pnpm-lock.yaml /app/
 COPY --from=build /app/prisma /app/.env.production.yaml /app/
-COPY --from=build /app/logs /app/
 COPY --from=build /app/templates/captcha.html /app/templates/captcha.html
 COPY --from=build /app/dist /app/dist
 
