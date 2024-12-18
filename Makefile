@@ -9,8 +9,9 @@ init-data: check_docker_init
 	docker compose down && \
 	docker compose up -d
 
+# docker-compose down --rmi all 会移除所有与项目相关的镜像，而不仅仅是那些没有被其他容器使用的镜像
 check_docker_init:
-	@docker compose down
+	@docker-compose down --rmi all 
 	@echo "Starting docker-compose with initialization file..."
 	@docker compose -f docker-compose-init.yml up -d
 	@echo "Waiting for the container to start..."

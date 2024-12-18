@@ -47,7 +47,7 @@ export class EmailService {
     ttl: number;
   }) {
     try {
-      await this.transporter.sendMail({
+      return await this.transporter.sendMail({
         from: {
           name: 'Heixiu聊天室',
           address: this.configService.get('nodemailer-server.user'),
@@ -68,7 +68,7 @@ export class EmailService {
           break;
       }
       this.logger.error(error);
-      throw new HttpException('请检查该邮箱是否存在', HttpStatus.BAD_REQUEST);
+      return error;
     }
   }
 

@@ -1,11 +1,11 @@
 import { readFileSync } from 'fs';
 import * as yaml from 'js-yaml';
 import { resolve } from 'path';
+import { isProduction } from './utils';
 
-const YAML_CONFIG_FILENAME =
-  process.env.NODE_ENVIRONMENT === 'production'
-    ? '.env.production.yaml'
-    : '.env.dev.yaml';
+const YAML_CONFIG_FILENAME = isProduction
+  ? '.env.production.yaml'
+  : '.env.dev.yaml';
 
 export default () => {
   return yaml.load(
@@ -30,5 +30,6 @@ export declare type ConfigurationImpl = {
     | NestServerConfig
     | JwtConfig
     | WeatherConfig
-    | MinioConfig]: string;
+    | MinioConfig
+    ]: string;
 };

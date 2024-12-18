@@ -55,7 +55,7 @@ export class OssController {
         expiresIn: Math.floor(expiresIn + new Date().getTime() / 1000), // 到期具体时间
       };
     } catch (error) {
-      this.logger.log(error);
+      this.logger.error(error);
       throw new InternalServerErrorException('服务异常');
     }
   }
