@@ -78,4 +78,3 @@ npx prisma generate
 - [x]  获取新token原token失效
 - [ ]  使用nginx代理minio
 - [ ]  使用nginx代理minio管理
-- [ ]  重新部署api数据库历史数据不丢失
