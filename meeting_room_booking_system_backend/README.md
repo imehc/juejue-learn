@@ -10,7 +10,7 @@ docker run -d \
   -e MYSQL_ROOT_PASSWORD=admin \
   -e MYSQL_DATABASE=meeting_room_booking_system \
   -p 3306:3306 \
-  -v /d/warehouse/mysql:/var/lib/mysql \
+  -v /Users/tom/person/learning/mysql-data:/var/lib/mysql \
   mysql:latest --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
 ```
 
@@ -18,4 +18,16 @@ docker run -d \
 #### 创建
 ``` bash
  docker run -d --name meeting-room-booking-system-redis -p 6379:6379 redis
+ ```
+
+### Minio
+#### 创建
+``` bash
+ docker run -d \
+  --name meeting-room-booking-syste-minio \
+  -p 9000:9000 \
+  -p 9001:9001 \
+  --env-file .env \
+  -v /Users/tom/person/learning/minio-data:/bitnami/minio/data \
+  bitnami/minio
  ```

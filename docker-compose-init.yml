@@ -6,9 +6,8 @@ services:
     # 本地映射 具体本地地址以主机路径为准
     volumes:
       - /Users/tom/person/learning/mysql-data:/var/lib/mysql
-    environment:
-      MYSQL_DATABASE: meeting_room_booking_system
-      MYSQL_ROOT_PASSWORD: admin
+    env_file:
+      - ./meeting_room_booking_system_backend/.env
     ports:
       - '3306:3306'
     networks:

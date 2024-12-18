@@ -8,9 +8,8 @@ services:
       - /Users/tom/person/learning/mysql-data:/var/lib/mysql
     # 启动时执行的命令
     command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_general_ci # 设置默认字符集
-    environment:
-      MYSQL_DATABASE: meeting_room_booking_system
-      MYSQL_ROOT_PASSWORD: admin
+    env_file:
+      - ./meeting_room_booking_system_backend/.env
     # ports:
     #   - '3306:3306'
     restart: always
@@ -31,13 +30,12 @@ services:
 
   minio-container:
     container_name: minio-container
-    image: "bitnami/minio:latest"
+    image: bitnami/minio
     ports:
-      # - "9000:9000"
+      - "9000:9000"
       - "9001:9001"
-    environment:
-      - MINIO_ROOT_USER=admin # 账号必须大于等于5位
-      - MINIO_ROOT_PASSWORD=12345678 # 密码必须大于等于8位
+    env_file:
+      - ./meeting_room_booking_system_backend/.env
     volumes:
       - /Users/tom/person/learning/minio-data:/bitnami/minio/data
     restart: always
