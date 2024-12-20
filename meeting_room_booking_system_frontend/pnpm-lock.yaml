@@ -99,8 +99,8 @@ importers:
         specifier: 15.1.1
         version: 15.1.1(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       next-nprogress-bar:
-        specifier: ^2.4.2
-        version: 2.4.2
+        specifier: ^2.4.3
+        version: 2.4.3
       next-safe-action:
         specifier: ^7.10.2
         version: 7.10.2(next@15.1.1(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(zod@3.24.1)
@@ -2556,8 +2556,8 @@ packages:
   natural-compare@1.4.0:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
 
-  next-nprogress-bar@2.4.2:
-    resolution: {integrity: sha512-esXEm+t0JnhfXEVmwN9JJ8/awLMbLJ0dPMiOOPLMPwpyhd+wikkNLaXGOt/vuBaeGKHC/gGYFKMv+R6zkd6RCw==}
+  next-nprogress-bar@2.4.3:
+    resolution: {integrity: sha512-069WmFALkpCyKiIy89q6dWcPiHhUmXh6EZz6oLpOS7zsIunNOYLscloKFALjIQNCOg3ZO9dWRPowYW4ULho4HQ==}
 
   next-safe-action@7.10.2:
     resolution: {integrity: sha512-Tpho8EolopnbJFYNuRuA1sXvUxndGuWhk17HbrPl701uuNOA+fs9zQx4vWCjkGWRvfZap67HqKOBueX7/x2Tug==}
@@ -6649,7 +6649,7 @@ snapshots:
 
   natural-compare@1.4.0: {}
 
-  next-nprogress-bar@2.4.2:
+  next-nprogress-bar@2.4.3:
     dependencies:
       nprogress-v2: 1.0.4
 
