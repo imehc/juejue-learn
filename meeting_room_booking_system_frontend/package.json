@@ -11,7 +11,7 @@
 	},
 	"dependencies": {
 		"@internationalized/date": "^3.6.0",
-		"@nextui-org/react": "^2.6.10",
+		"@nextui-org/react": "^2.6.11",
 		"@nivo/bar": "^0.88.0",
 		"@nivo/core": "^0.88.0",
 		"@nivo/pie": "^0.88.0",
