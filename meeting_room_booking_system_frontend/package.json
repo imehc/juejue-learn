@@ -10,7 +10,7 @@
 		"gen:apis": "openapi-generator generate -g typescript-fetch -c ./openapi-generator.config.yaml -o ./meeting-room-booking-api -i ../meeting_room_booking_system_backend/openapi.yaml"
 	},
 	"dependencies": {
-		"@internationalized/date": "^3.6.0",
+		"@internationalized/date": "^3.7.0",
 		"@nextui-org/react": "^2.6.11",
 		"@nivo/bar": "^0.88.0",
 		"@nivo/core": "^0.88.0",
