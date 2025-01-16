@@ -16,7 +16,7 @@
 		"@nivo/core": "^0.88.0",
 		"@nivo/pie": "^0.88.0",
 		"@react-aria/ssr": "3.9.7",
-		"@react-aria/visually-hidden": "3.8.18",
+		"@react-aria/visually-hidden": "3.8.19",
 		"@types/node": "22.10.6",
 		"@types/react": "19.0.7",
 		"@types/react-dom": "19.0.3",
