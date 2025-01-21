@@ -109,8 +109,8 @@ importers:
         version: 5.0.0(winston@3.17.0)
     devDependencies:
       '@nestjs/cli':
-        specifier: ^11.0.0
-        version: 11.0.0(@types/node@22.10.7)
+        specifier: ^11.0.1
+        version: 11.0.1(@types/node@22.10.7)
       '@nestjs/schematics':
         specifier: ^11.0.0
         version: 11.0.0(chokidar@4.0.3)(typescript@5.7.3)
@@ -662,8 +662,8 @@ packages:
   '@microsoft/tsdoc@0.15.0':
     resolution: {integrity: sha512-HZpPoABogPvjeJOdzCOSJsXeL/SMCBgBZMVC3X3d7YYp2gf31MfxhUoYUNwf1ERPJOnQc0wkFn9trqI6ZEdZuA==}
 
-  '@nestjs/cli@11.0.0':
-    resolution: {integrity: sha512-53Hparhbz4nNQNttf6EFfYNeFxSLdshqnvaiWy3MBnZxgAuqtAZP3xsiNHPId5dYtzGCjdK60FN4Vcspx3Y+aw==}
+  '@nestjs/cli@11.0.1':
+    resolution: {integrity: sha512-W1pS3mKBb5L2T0Sk9/bAFTS3XctcaAn9q1veXCIKSaGwGk7pjqEa1AwzX8/Lq10NJgjJno/Lhw1kZrX32VImFA==}
     engines: {node: '>= 20.11'}
     hasBin: true
     peerDependencies:
@@ -1733,8 +1733,8 @@ packages:
     engines: {node: '>=0.10.0'}
     hasBin: true
 
-  electron-to-chromium@1.5.83:
-    resolution: {integrity: sha512-LcUDPqSt+V0QmI47XLzZrz5OqILSMGsPFkDYus22rIbgorSvBYEFqq854ltTmUdHkY92FSdAAvsh4jWEULMdfQ==}
+  electron-to-chromium@1.5.84:
+    resolution: {integrity: sha512-I+DQ8xgafao9Ha6y0qjHHvpZ9OfyA1qKlkHkjywxzniORU2awxyz7f/iVJcULmrF2yrM3nHQf+iDjJtbbexd/g==}
 
   emittery@0.13.1:
     resolution: {integrity: sha512-DeWwawk6r5yR9jFgnDKYt4sLS0LmHJJi3ZOnb5/JdbYwj3nW+FxQnHIjhBKz8YLC7oRNPVM9NQ47I3CVx34eqQ==}
@@ -4413,7 +4413,7 @@ snapshots:
 
   '@microsoft/tsdoc@0.15.0': {}
 
-  '@nestjs/cli@11.0.0(@types/node@22.10.7)':
+  '@nestjs/cli@11.0.1(@types/node@22.10.7)':
     dependencies:
       '@angular-devkit/core': 19.1.2(chokidar@4.0.3)
       '@angular-devkit/schematics': 19.1.2(chokidar@4.0.3)
@@ -5243,7 +5243,7 @@ snapshots:
   browserslist@4.24.4:
     dependencies:
       caniuse-lite: 1.0.30001695
-      electron-to-chromium: 1.5.83
+      electron-to-chromium: 1.5.84
       node-releases: 2.0.19
       update-browserslist-db: 1.1.2(browserslist@4.24.4)
 
@@ -5578,7 +5578,7 @@ snapshots:
     dependencies:
       jake: 10.9.2
 
-  electron-to-chromium@1.5.83: {}
+  electron-to-chromium@1.5.84: {}
 
   emittery@0.13.1: {}
 
