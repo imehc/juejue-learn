@@ -40,7 +40,7 @@
 		"i18next": "^24.2.2",
 		"intl-messageformat": "^10.7.15",
 		"next": "15.1.7",
-		"next-nprogress-bar": "^2.4.5",
+		"next-nprogress-bar": "^2.4.7",
 		"next-safe-action": "^7.10.4",
 		"next-themes": "^0.4.4",
 		"nuqs": "^2.3.2",

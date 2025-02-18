@@ -99,8 +99,8 @@ importers:
         specifier: 15.1.7
         version: 15.1.7(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       next-nprogress-bar:
-        specifier: ^2.4.5
-        version: 2.4.5
+        specifier: ^2.4.7
+        version: 2.4.7
       next-safe-action:
         specifier: ^7.10.4
         version: 7.10.4(next@15.1.7(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(zod@3.24.2)
@@ -2638,8 +2638,8 @@ packages:
   natural-compare@1.4.0:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
 
-  next-nprogress-bar@2.4.5:
-    resolution: {integrity: sha512-VkPMp+Cnazu0jpABVFVRTnUxGwFblHVxmBiJoVj4xl5tRw+K6jKqP0GNxACeB1ub0RfxKsVGlZ0HNqkwYjJK+Q==}
+  next-nprogress-bar@2.4.7:
+    resolution: {integrity: sha512-OeveNQYFBhQhZ+RgrDnvHNUEQfHCmipymmD4AfAVE9pFV4jeWi7/nNK5f0lIk7ODRrtjyyr/n2YpkRbs5kUoMg==}
 
   next-safe-action@7.10.4:
     resolution: {integrity: sha512-rZE89DTNgiTJ8oPQBOZm+jd0Uf/pLkN+GE3PndER6vWqHGYGN7HMLvhpggkbE8W4TGp+qM7CPyrXye1wCjZLVg==}
@@ -2696,8 +2696,8 @@ packages:
     resolution: {integrity: sha512-bdok/XvKII3nUpklnV6P2hxtMNrCboOjAcyBuQnWEhO665FwrSNRxU+AqpsyvO6LgGYPspN+lu5CLtw4jPRKNA==}
     engines: {node: '>=0.10.0'}
 
-  nprogress-v2@1.0.4:
-    resolution: {integrity: sha512-HPhTEgqsQMFXXuaftvu6bevqEXvcQ/hogvkAswlcNyS9eRGjvo7wZY1O4H3aZS4Uq8oWSO6sL3dOj6Oq/ZJN5A==}
+  nprogress-v2@1.1.10:
+    resolution: {integrity: sha512-MypWLNIPIM07SS0bAc/oac0vhVFz9vAHm7d1sj//Pnf3J03LQ3CuWrlDteIu6exq0fIvkDJ6tUDRWLaifsIt5w==}
 
   nuqs@2.3.2:
     resolution: {integrity: sha512-WeG78r8e3a30JY3P8npldvNiAZwGIk499lnpeRs3UYA3PpSvs2/PLunKGgjuF/JMw4BOowD3K2xgGEOZ3PeODA==}
@@ -6837,9 +6837,9 @@ snapshots:
 
   natural-compare@1.4.0: {}
 
-  next-nprogress-bar@2.4.5:
+  next-nprogress-bar@2.4.7:
     dependencies:
-      nprogress-v2: 1.0.4
+      nprogress-v2: 1.1.10
 
   next-safe-action@7.10.4(next@15.1.7(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(zod@3.24.2):
     dependencies:
@@ -6883,7 +6883,7 @@ snapshots:
 
   normalize-range@0.1.2: {}
 
-  nprogress-v2@1.0.4: {}
+  nprogress-v2@1.1.10: {}
 
   nuqs@2.3.2(next@15.1.7(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react@19.0.0):
     dependencies:
