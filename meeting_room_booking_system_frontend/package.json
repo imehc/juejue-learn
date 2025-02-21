@@ -36,7 +36,7 @@
 		"eslint-plugin-react": "^7.37.4",
 		"eslint-plugin-react-hooks": "^5.1.0",
 		"eslint-plugin-unused-imports": "^4.1.4",
-		"framer-motion": "~12.4.5",
+		"framer-motion": "~12.4.7",
 		"i18next": "^24.2.2",
 		"intl-messageformat": "^10.7.15",
 		"next": "15.1.7",
