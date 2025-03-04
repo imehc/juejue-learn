@@ -17,7 +17,7 @@
 		"@nivo/pie": "^0.88.0",
 		"@react-aria/ssr": "3.9.7",
 		"@react-aria/visually-hidden": "3.8.19",
-		"@types/node": "22.13.8",
+		"@types/node": "22.13.9",
 		"@types/react": "19.0.10",
 		"@types/react-dom": "19.0.4",
 		"@typescript-eslint/eslint-plugin": "^7.18.0",
