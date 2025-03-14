@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { User } from './user.entity';
+import { BaseService } from 'src/common/base.service';
+import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { BaseService } from 'src/common/base.service';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { CreateUserDto } from './dto/create-user.dto';
 
 @Injectable()
 export class UserService extends BaseService<User> {
@@ -13,7 +15,15 @@ export class UserService extends BaseService<User> {
     return this.userModel;
   }
 
-  getHello(): string {
-    return 'Hello World!';
+  create(user: CreateUserDto) {
+    console.log(user);
+  }
+
+  update(id: number, user: UpdateUserDto) {
+    console.log(id, user);
+  }
+
+  remove(id: number) {
+    console.log(id);
   }
 }

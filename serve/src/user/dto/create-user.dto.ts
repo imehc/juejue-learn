@@ -1,9 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { VNumber, VRequired, VString } from 'src/common/validation.decorator';
+import { VRequired, VString, VNumber } from 'src/common/validation.decorator';
 
-export class UserDto {
-  id: number;
-
+export class CreateUserDto {
   @ApiProperty({
     description: '姓名',
   })

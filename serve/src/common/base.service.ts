@@ -2,21 +2,17 @@ import { FindOptionsOrder, FindOptionsWhere, Repository } from 'typeorm';
 import { BaseEntity } from './base.entity';
 
 export abstract class BaseService<T extends BaseEntity> {
-  abstract getModel(): Repository<T>;
+  protected abstract getModel(): Repository<T>;
 
-  async create(entity: T) {
+  protected async save(entity: T): Promise<T | void> {
     return await this.getModel().save(entity);
   }
 
-  async edit(entity: T): Promise<T | void> {
-    return await this.getModel().save(entity);
-  }
-
-  async remove(entity: T) {
+  protected async delete(entity: T) {
     await this.getModel().remove(entity);
   }
 
-  async getById(id: string): Promise<T | null> {
+  async findOne(id: string | number): Promise<T | null> {
     return await this.getModel()
       .createQueryBuilder('model')
       .where('model.id = :id', { id })
@@ -33,10 +29,10 @@ export abstract class BaseService<T extends BaseEntity> {
       take: pageSize,
     });
 
-    return { data, total };
+    return { data, meta: { page, pageSize, total } };
   }
 
-  async list(where?: FindOptionsWhere<T>) {
+  async findAll(where?: FindOptionsWhere<T>) {
     const order = { create_time: 'desc' } as FindOptionsOrder<T>;
     const data = await this.getModel().find({
       where,
