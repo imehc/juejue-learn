@@ -1,0 +1,10 @@
+{
+  "isNotEmpty": "{property}不能为空",
+  "isString": "{property}必须是字符串",
+  "isNumber": "{property}必须是数字",
+  "isEmail": "{property}必须是有效的电子邮件",
+  "minLength": "{property}长度不能小于{constraints.0}个字符",
+  "maxLength": "{property}长度不能超过{constraints.0}个字符",
+  "min": "{property}必须大于或等于{constraints.0}",
+  "max": "{property}必须小于或等于{constraints.0}"
+}

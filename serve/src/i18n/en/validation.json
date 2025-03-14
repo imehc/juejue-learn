@@ -1,0 +1,10 @@
+{
+    "isNotEmpty": "The {property} field cannot be empty",
+    "isString": "The {property} field must be a string",
+    "isNumber": "The {property} field must be a number",
+    "isEmail": "The {property} field must be a valid email",
+    "minLength": "The {property} field must be at least {constraints.0} characters long",
+    "maxLength": "The {property} field must not exceed {constraints.0} characters",
+    "min": "The {property} field must be greater than or equal to {constraints.0}",
+    "max": "The {property} field must be less than or equal to {constraints.0}"
+}

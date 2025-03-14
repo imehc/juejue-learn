@@ -1,0 +1,61 @@
+openapi: 3.0.0
+paths:
+  /:
+    get:
+      operationId: AppController_getHello
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+        - App
+  /user:
+    get:
+      operationId: UserController_get
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags: &ref_0
+        - User
+    post:
+      operationId: UserController_create
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserDto'
+      responses:
+        '201':
+          description: ''
+      tags: *ref_0
+info:
+  title: exix system
+  description: api 接口文档
+  version: '1.0'
+  contact: {}
+tags: []
+servers:
+  - url: http://127.0.0.1:6020
+components:
+  securitySchemes:
+    bearer:
+      scheme: bearer
+      bearerFormat: JWT
+      type: http
+      description: ''
+  schemas:
+    UserDto:
+      type: object
+      properties:
+        name:
+          type: string
+          description: 姓名
+        age:
+          type: number
+          description: 年龄
+      required:
+        - name
+        - age
