@@ -10,14 +10,6 @@ paths:
       tags:
         - App
   /user:
-    get:
-      operationId: UserController_get
-      parameters: []
-      responses:
-        '200':
-          description: ''
-      tags: &ref_0
-        - User
     post:
       operationId: UserController_create
       parameters: []
@@ -26,9 +18,60 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UserDto'
+              $ref: '#/components/schemas/CreateUserDto'
       responses:
         '201':
+          description: ''
+      tags: &ref_0
+        - User
+    get:
+      operationId: UserController_findAll
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags: *ref_0
+  /user/{id}:
+    get:
+      operationId: UserController_findOne
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+      tags: *ref_0
+    patch:
+      operationId: UserController_update
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserDto'
+      responses:
+        '200':
+          description: ''
+      tags: *ref_0
+    delete:
+      operationId: UserController_remove
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
           description: ''
       tags: *ref_0
 info:
@@ -47,7 +90,7 @@ components:
       type: http
       description: ''
   schemas:
-    UserDto:
+    CreateUserDto:
       type: object
       properties:
         name:
@@ -59,3 +102,12 @@ components:
       required:
         - name
         - age
+    UpdateUserDto:
+      type: object
+      properties:
+        name:
+          type: string
+          description: 姓名
+        age:
+          type: number
+          description: 年龄

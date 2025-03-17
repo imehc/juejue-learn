@@ -1,7 +1,5 @@
 const PROVIDER = {
-    REDIS: 'REDIS_CLIENT'
-} as const
+  REDIS: 'REDIS_CLIENT',
+} as const;
 
-export {
-    PROVIDER
-}
+export { PROVIDER };

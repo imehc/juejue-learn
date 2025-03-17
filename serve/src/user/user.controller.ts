@@ -1,19 +1,35 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
-import { UserDto } from './user.dto';
+import { Controller, Get, Post, Body, Patch, Param } from '@nestjs/common';
 import { UserService } from './user.service';
-import { E } from 'src/common/base.exception';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { User } from './entities/user.entity';
 
 @Controller('user')
 export class UserController {
-  constructor(private readonly appService: UserService) {}
-
-  @Get()
-  get() {
-    E.UnprocessableEntity('出错了');
-  }
+  constructor(private readonly userService: UserService) {}
 
   @Post()
-  create(@Body() body: UserDto): string {
-    return JSON.stringify(body);
+  create(@Body() createUserDto: CreateUserDto) {
+    return this.userService.create(createUserDto);
   }
+
+  @Get()
+  findAll() {
+    return this.userService.findAll();
+  }
+
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.userService.findOne(+id);
+  }
+
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+    return this.userService.edit({ ...updateUserDto, id: +id } as User);
+  }
+
+  // @Delete(':id')
+  // remove(@Param('id') id: string) {
+  //   // return this.userService.remove(+id);
+  // }
 }

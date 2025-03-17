@@ -6,5 +6,6 @@
   "minLength": "{property}长度不能小于{constraints.0}个字符",
   "maxLength": "{property}长度不能超过{constraints.0}个字符",
   "min": "{property}必须大于或等于{constraints.0}",
-  "max": "{property}必须小于或等于{constraints.0}"
+  "max": "{property}必须小于或等于{constraints.0}",
+  "isPhoneNumber": "{property}必须是有效的手机号码"
 }
