@@ -38,7 +38,7 @@
 		"eslint-plugin-unused-imports": "^4.1.4",
 		"framer-motion": "~12.5.0",
 		"i18next": "^24.2.3",
-		"intl-messageformat": "^10.7.15",
+		"intl-messageformat": "^10.7.16",
 		"next": "15.2.3",
 		"next-nprogress-bar": "^2.4.7",
 		"next-safe-action": "^7.10.4",
