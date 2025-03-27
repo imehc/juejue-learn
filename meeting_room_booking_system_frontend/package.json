@@ -47,7 +47,7 @@
 		"postcss": "8.5.3",
 		"react": "19.0.0",
 		"react-dom": "19.0.0",
-		"sonner": "^2.0.1",
+		"sonner": "^2.0.2",
 		"tailwind-variants": "1.0.0",
 		"tailwindcss": "4.0.17",
 		"typescript": "5.8.2",
