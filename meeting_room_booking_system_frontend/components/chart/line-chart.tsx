@@ -10,7 +10,7 @@ interface Props {
 
 export function LineChart({ data, label }: Props) {
   return (
-    <div className="flex justify-center items-center flex-col overflow-hidden">
+    <div className="flex flex-col overflow-hidden">
       <h1 className="mt-4 text-lg font-bold">{label}</h1>
       <ResponsiveBar
         animate
