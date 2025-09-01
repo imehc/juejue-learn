@@ -38,7 +38,7 @@ async function bootstrap() {
 
   await app.listen(configService.get('nest-server.port'));
 }
-bootstrap();
+bootstrap().catch(console.error);
 
 function initConfig(
   app: INestApplication<any>,

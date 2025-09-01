@@ -128,9 +128,9 @@ export class UserServiceMock {
   }
 
   /** 清空权限相关数据 */
-  async clearAuth() {
-    this.permissionRepository.delete({});
-    this.roleRepository.delete({});
-    // this.userRepository.delete({});
+  clearAuth() {
+    this.permissionRepository.delete({}).catch(console.error);
+    this.roleRepository.delete({}).catch(console.error);
+    // this.userRepository.delete({}).catch(console.error);
   }
 }

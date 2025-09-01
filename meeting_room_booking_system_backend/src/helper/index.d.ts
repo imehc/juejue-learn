@@ -1,9 +1,29 @@
+import { type Permission } from 'src/user/vo/login-user.vo';
+
 export interface JwtUserData {
   userId: number;
   username: string;
   email: string;
   roles: string[];
   permissions: Permission[];
+}
+
+/** 第三方登录参数 */
+export interface GoogleRequest {
+  email: string;
+  firstName?: string;
+  lastName?: string;
+  picture: string;
+}
+
+/** 第三方登录参数 */
+export interface GithubRequest {
+  username: string;
+  displayName: string;
+  photos?: {
+    value: string;
+  }[];
+  email: string;
 }
 
 declare global {

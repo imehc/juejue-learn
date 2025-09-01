@@ -12,7 +12,7 @@ export const MINIO_CLIENT = 'MINIO_CLIENT';
   providers: [
     {
       provide: MINIO_CLIENT,
-      async useFactory(configService: ConfigService<ConfigurationImpl>) {
+      useFactory(configService: ConfigService<ConfigurationImpl>) {
         const client = new Client({
           endPoint: configService.get('minio-server.endpoint'),
           port: +(configService.get('minio-server.port') || 9000),

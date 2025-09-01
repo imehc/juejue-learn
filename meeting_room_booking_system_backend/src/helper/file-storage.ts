@@ -7,7 +7,7 @@ const storage = multer.diskStorage({
     // 保存目录
     try {
       fs.mkdirSync('uploads');
-    } catch (error) {
+    } catch {
       cb(null, 'uploads');
     }
   },

@@ -12,7 +12,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { RedisService } from 'src/redis/redis.service';
 import { LoginUserDto } from './dto/login-user.dto';
-import { UserInfo } from './vo/login-user.vo';
+import { Permission, UserInfo } from './vo/login-user.vo';
 import { UserDetailVo } from './vo/user-info.vo';
 import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
 import {
@@ -44,7 +44,9 @@ export class UserService {
     // }
     // 用户填写的验证码与redis验证码比较
     if (!captcha || user.captcha.toString() !== captcha) {
-      this.redisService.del(REGISTER_CAPTCHA(user.email));
+      this.redisService.del(REGISTER_CAPTCHA(user.email)).catch((error) => {
+        console.error('删除失败【用户注册-验证码不正确】', error);
+      });
       throw new HttpException('验证码不正确', HttpStatus.BAD_REQUEST);
     }
 
@@ -52,7 +54,9 @@ export class UserService {
       where: { email: user.email },
     });
     if (u) {
-      this.redisService.del(REGISTER_CAPTCHA(user.email));
+      this.redisService.del(REGISTER_CAPTCHA(user.email)).catch((error) => {
+        console.error('删除失败【用户注册-邮箱已存在】', error);
+      });
       throw new HttpException(
         '邮箱已存在，换个邮箱试试吧',
         HttpStatus.BAD_REQUEST,
@@ -64,7 +68,9 @@ export class UserService {
     });
 
     if (foundUser) {
-      this.redisService.del(REGISTER_CAPTCHA(user.email));
+      this.redisService.del(REGISTER_CAPTCHA(user.email)).catch((error) => {
+        console.error('删除失败【用户注册-用户已存在】', error);
+      });
       throw new HttpException('用户已存在', HttpStatus.BAD_REQUEST);
     }
 
@@ -81,7 +87,9 @@ export class UserService {
       this.logger.error(e, UserService);
       throw new HttpException('注册失败', HttpStatus.INTERNAL_SERVER_ERROR);
     } finally {
-      this.redisService.del(REGISTER_CAPTCHA(user.email));
+      this.redisService.del(REGISTER_CAPTCHA(user.email)).catch((error) => {
+        console.error('删除失败【用户注册-注册成功/失败】', error);
+      });
     }
   }
 
@@ -214,7 +222,7 @@ export class UserService {
             arr.push(permission);
           }
         });
-        return arr;
+        return arr as Permission[];
       }, []),
     };
   }
@@ -265,7 +273,11 @@ export class UserService {
     );
 
     if (!captcha || passwordDto.captcha.toString() !== captcha) {
-      this.redisService.del(FORGOT_PASSWORD_CAPTCHA(passwordDto.email));
+      this.redisService
+        .del(FORGOT_PASSWORD_CAPTCHA(passwordDto.email))
+        .catch((error) => {
+          console.error('删除失败【忘记密码-验证码不正确】', error);
+        });
       throw new HttpException('验证码不正确', HttpStatus.BAD_REQUEST);
     }
 
@@ -273,12 +285,20 @@ export class UserService {
       where: { username: passwordDto.username },
     });
     if (!foundUser) {
-      this.redisService.del(FORGOT_PASSWORD_CAPTCHA(passwordDto.email));
+      this.redisService
+        .del(FORGOT_PASSWORD_CAPTCHA(passwordDto.email))
+        .catch((error) => {
+          console.error('删除失败【忘记密码-没有这个用户】', error);
+        });
       throw new HttpException('没有这个用户', HttpStatus.BAD_REQUEST);
     }
 
     if (foundUser.email !== passwordDto.email) {
-      this.redisService.del(FORGOT_PASSWORD_CAPTCHA(passwordDto.email));
+      this.redisService
+        .del(FORGOT_PASSWORD_CAPTCHA(passwordDto.email))
+        .catch((error) => {
+          console.error('删除失败【忘记密码-邮箱与绑定邮箱不一致】', error);
+        });
       throw new HttpException('邮箱与绑定邮箱不一致', HttpStatus.BAD_REQUEST);
     }
 
@@ -291,7 +311,11 @@ export class UserService {
       this.logger.error(e, UserService);
       throw new HttpException('密码修改失败', HttpStatus.INTERNAL_SERVER_ERROR);
     } finally {
-      this.redisService.del(FORGOT_PASSWORD_CAPTCHA(passwordDto.email));
+      this.redisService
+        .del(FORGOT_PASSWORD_CAPTCHA(passwordDto.email))
+        .catch((error) => {
+          console.error('删除失败【忘记密码-密码修改失败/成功】', error);
+        });
     }
   }
 
@@ -305,7 +329,9 @@ export class UserService {
     );
 
     if (!captcha || passwordDto.captcha.toString() !== captcha) {
-      this.redisService.del(UPDATE_PASSWORD_CAPTCHA(address));
+      this.redisService.del(UPDATE_PASSWORD_CAPTCHA(address)).catch((error) => {
+        console.error('删除失败【更新密码-验证码不正确】', error);
+      });
       throw new HttpException('验证码不正确', HttpStatus.BAD_REQUEST);
     }
 
@@ -322,7 +348,9 @@ export class UserService {
       this.logger.error(e, UserService);
       throw new HttpException('密码修改失败', HttpStatus.INTERNAL_SERVER_ERROR);
     } finally {
-      this.redisService.del(UPDATE_PASSWORD_CAPTCHA(address));
+      this.redisService.del(UPDATE_PASSWORD_CAPTCHA(address)).catch((error) => {
+        console.error('删除失败【更新密码-密码修修改成功/失败】', error);
+      });
     }
   }
 
@@ -369,7 +397,9 @@ export class UserService {
     const captcha = await this.redisService.get(UPDATE_USER_CAPTCHA(address));
 
     if (!captcha || updateUserDto.captcha.toString() !== captcha) {
-      this.redisService.del(UPDATE_USER_CAPTCHA(address));
+      this.redisService.del(UPDATE_USER_CAPTCHA(address)).catch((error) => {
+        console.error('删除失败【更新用户-验证码不正确】', error);
+      });
       throw new HttpException('验证码不正确', HttpStatus.BAD_REQUEST);
     }
 
@@ -396,7 +426,9 @@ export class UserService {
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     } finally {
-      this.redisService.del(UPDATE_USER_CAPTCHA(address));
+      this.redisService.del(UPDATE_USER_CAPTCHA(address)).catch((error) => {
+        console.error('删除失败【更新用户-用户信息修改/失败】', error);
+      });
     }
   }
 
@@ -500,16 +532,15 @@ export class UserService {
     userInfo.isFrozen = user.isFrozen;
     userInfo.isAdmin = user.isAdmin;
     userInfo.roles = user.roles?.map((item) => item.name) ?? [];
-    userInfo.permissions =
-      user.roles?.reduce((arr, item) => {
-        // 去重
-        item.permissions.forEach((permission) => {
-          if (arr.indexOf(permission) === -1) {
-            arr.push(permission);
-          }
-        });
-        return arr;
-      }, []) ?? [];
+    userInfo.permissions = (user.roles?.reduce((arr, item) => {
+      // 去重
+      item.permissions.forEach((permission) => {
+        if (arr.indexOf(permission) === -1) {
+          arr.push(permission);
+        }
+      });
+      return arr as Permission[];
+    }, []) ?? []) as Permission[];
     userInfo.type = 'system';
 
     return userInfo;

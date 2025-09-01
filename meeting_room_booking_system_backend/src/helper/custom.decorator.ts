@@ -12,7 +12,7 @@ export const RequirePermission = (...permissions: string[]) =>
 
 /** 自定义参数装饰器 */
 export const UserInfo = createParamDecorator(
-  (data: string, ctx: ExecutionContext) => {
+  (data: keyof Request['user'] | '', ctx: ExecutionContext) => {
     const request = ctx.switchToHttp().getRequest<Request>();
 
     if (!request.user) {

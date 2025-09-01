@@ -7,7 +7,8 @@ export class RedisService {
   private redisClient: RedisClientType;
 
   async get(key: string) {
-    return await this.redisClient.get(key);
+    const result = await this.redisClient.get(key);
+    return result as string;
   }
 
   async set(key: string, value: string | number, ttl?: number) {

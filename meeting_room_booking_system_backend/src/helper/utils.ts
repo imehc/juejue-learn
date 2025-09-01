@@ -1,5 +1,4 @@
 import { BadRequestException, ParseIntPipe } from '@nestjs/common';
-import { Transform } from 'class-transformer';
 import * as crypto from 'crypto';
 
 /** md5加密 */

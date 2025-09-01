@@ -24,10 +24,10 @@ export class LoginGuard implements CanActivate {
   ): boolean | Promise<boolean> | Observable<boolean> {
     const request: Request = context.switchToHttp().getRequest();
     // 用 reflector 从目标 controller 和 handler 上拿到 require-login 的 metadata。
-    const requireLogin = this.reflector.getAllAndOverride(LOGIN_METADATA, [
-      context.getClass(),
-      context.getHandler(),
-    ]);
+    const requireLogin = this.reflector.getAllAndOverride<boolean>(
+      LOGIN_METADATA,
+      [context.getClass(), context.getHandler()],
+    );
     // 如果没有 metadata，就是不需要登录，返回 true 放行
     if (!requireLogin) {
       return true;
@@ -52,7 +52,7 @@ export class LoginGuard implements CanActivate {
         permissions: data.permissions,
       };
       return true;
-    } catch (e) {
+    } catch {
       throw new UnauthorizedException();
       // throw new UnLoginException('token 失效，请重新登录');
     }

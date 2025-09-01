@@ -43,7 +43,7 @@ export class MeetingRoomServiceMock {
     room3.location = fakerZH_CN.location.streetAddress();
 
     // 确定是插入或更新时，使用insert或update比save更好，可以避免额外查询一次
-    this.repository.insert([room1, room2, room3]);
+    this.repository.insert([room1, room2, room3]).catch(console.error);
   }
 
   /** 清空权限相关数据 */

@@ -72,6 +72,8 @@ import { storage } from 'src/helper/file-storage';
 import { UserServiceMock } from './user.server.mock';
 import { AuthGuard } from '@nestjs/passport';
 import { ConfigurationImpl } from 'src/config/configuration-impl';
+import type { GithubRequest, GoogleRequest, JwtUserData } from 'src/helper';
+import { Response } from 'express';
 
 // @ApiTags('用户管理模块') // 注意：使用这个会导致使用openAPI generate失败
 @Controller('user')
@@ -109,11 +111,11 @@ export class UserController {
     tags: ['auth'],
   })
   @Get('check-token-expiration')
-  async checkTokenExpiration(@Query('token') token: string) {
+  checkTokenExpiration(@Query('token') token: string) {
     try {
       this.jwtService.verify(token);
       return '验证通过';
-    } catch (error) {
+    } catch {
       throw new HttpException('验证不通过', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
@@ -233,7 +235,7 @@ export class UserController {
   })
   @UseGuards(AuthGuard('local'))
   @Post('login')
-  async userLogin(@UserInfo() info: UserInfoVo) {
+  userLogin(@UserInfo() info: UserInfoVo) {
     const vo = new LoginUserVo();
     vo.userInfo = info;
     vo.auth = this.handleJwt({
@@ -288,7 +290,7 @@ export class UserController {
   @Get('refresh')
   async refresh(@Query('refreshToken') refreshToken: string) {
     try {
-      const data = this.jwtService.verify(refreshToken);
+      const data = this.jwtService.verify<JwtUserData>(refreshToken);
 
       const user = await this.userService.findUserById(
         data.userId /** , false */,
@@ -299,9 +301,9 @@ export class UserController {
         username: user.username,
         email: user.email,
         roles: user.roles,
-        permissions: user.permissions,
+        permissions: user.permissions as Permission[],
       });
-    } catch (e) {
+    } catch {
       throw new UnauthorizedException('token 已失效，请重新登录');
     }
   }
@@ -314,7 +316,10 @@ export class UserController {
   @ApiExcludeEndpoint()
   @Get('callback/google')
   @UseGuards(AuthGuard('google'))
-  async googleAuthRedirect(@Req() req, @Res() res) {
+  async googleAuthRedirect(
+    @Req() req: { user: GoogleRequest },
+    @Res() res: Response,
+  ) {
     if (!req.user) {
       throw new BadRequestException('google 登录失败');
     }
@@ -360,7 +365,10 @@ export class UserController {
   @ApiExcludeEndpoint()
   @Get('callback/github')
   @UseGuards(AuthGuard('github'))
-  async githubAuthRedirect(@Req() req, @Res() res) {
+  async githubAuthRedirect(
+    @Req() req: { user: GithubRequest },
+    @Res() res: Response,
+  ) {
     if (!req.user) {
       throw new BadRequestException('github 登录失败');
     }
@@ -582,7 +590,7 @@ export class UserController {
       },
     }),
   )
-  async updateFile(@UploadedFile() file: Express.Multer.File) {
+  updateFile(@UploadedFile() file: Express.Multer.File) {
     console.log('file: ', file);
     return file.path;
   }
@@ -622,7 +630,7 @@ export class UserController {
 
     return {
       accessToken,
-      expiresIn: ms(expiresIn),
+      expiresIn: ms(expiresIn as ms.StringValue),
       refreshToken,
     };
   }

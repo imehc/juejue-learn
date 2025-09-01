@@ -27,7 +27,7 @@ export class AppController {
   @RequirePermission('ddd')
   aaaa(
     @UserInfo('username') username: string,
-    @UserInfo('') userInfo: JwtUserData,
+    @UserInfo() userInfo: JwtUserData,
   ) {
     console.log(username);
     console.log(userInfo);

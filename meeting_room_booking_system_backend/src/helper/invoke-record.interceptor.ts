@@ -16,7 +16,9 @@ export class InvokeRecordInterceptor implements NestInterceptor {
     const request = context.switchToHttp().getRequest<Request>();
     const response = context.switchToHttp().getResponse<Response>();
 
-    const userAgent = request.headers['user-agent'];
+    const userAgent = request.headers[
+      'user-agent' as keyof typeof request.headers
+    ] as string;
 
     const { ip, method, path } = request;
     // 记录下访问的 ip、user agent、请求的 controller、method，接口耗时、响应内容，当前登录用户等信息

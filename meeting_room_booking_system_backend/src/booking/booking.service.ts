@@ -9,6 +9,7 @@ import { CreateBookingDto } from './dto/create-booking.dto';
 import {
   Between,
   EntityManager,
+  FindOperator,
   LessThanOrEqual,
   Like,
   MoreThanOrEqual,
@@ -46,7 +47,17 @@ export class BookingService {
     limit = limit > 100 ? 100 : limit;
     skip = skip < 1 ? 1 : skip;
     const skipCount = (skip - 1) * limit;
-    const condition: Record<string, any> = {};
+    const condition: {
+      user?: {
+        username: FindOperator<string>;
+      };
+      room?: {
+        name?: FindOperator<string>;
+        location?: FindOperator<string>;
+      };
+      status?: BookingStatus;
+      startAt?: FindOperator<Date>;
+    } = {};
 
     if (username) {
       condition.user = {
@@ -159,7 +170,7 @@ export class BookingService {
         { status: BookingStatus.PASS },
       );
       return '审批通过';
-    } catch (error) {
+    } catch {
       throw new InternalServerErrorException();
     }
   }
@@ -172,7 +183,7 @@ export class BookingService {
         { status: BookingStatus.REJECT },
       );
       return '审批驳回';
-    } catch (error) {
+    } catch {
       throw new InternalServerErrorException();
     }
   }
@@ -185,7 +196,7 @@ export class BookingService {
         { status: BookingStatus.UNBIND },
       );
       return '已解除';
-    } catch (error) {
+    } catch {
       throw new InternalServerErrorException();
     }
   }
@@ -219,7 +230,7 @@ export class BookingService {
       });
       await this.redisService.set(URGE(id.toString()), 1, 60 * 30);
       return '催办成功';
-    } catch (error) {
+    } catch {
       throw new InternalServerErrorException();
     }
   }
