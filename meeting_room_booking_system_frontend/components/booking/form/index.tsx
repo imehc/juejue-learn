@@ -2,19 +2,13 @@
 
 import { useRouter } from "next-nprogress-bar";
 import { useActionState, useEffect } from "react";
-import {
-  Button,
-  DatePicker,
-  DateValue,
-  Input,
-  Textarea,
-} from "@nextui-org/react";
+import { Button, DatePicker, DateValue, Input, Textarea } from "@heroui/react";
 import { addHours } from "date-fns";
 
-import { addBookingAction } from "./actions";
+import { MeetingRoom } from "~/meeting-room-booking-api";
+import { parseDate, parseResult } from "~/helper/parse";
 
-import { MeetingRoom } from "@/meeting-room-booking-api";
-import { parseDate, parseResult } from "@/helper/parse";
+import { addBookingAction } from "./actions";
 
 export function AddBookingForm({ id, name }: MeetingRoom) {
   // const { execute } = useStateAction(addBookingAction, {
@@ -55,6 +49,7 @@ export function AddBookingForm({ id, name }: MeetingRoom) {
       />
       {/* TODO: 点击选择日期报错,待适配 https://github.com/nextui-org/nextui/issues/3939 */}
       <DatePicker
+        disableAnimation
         isRequired
         showMonthAndYearPickers
         className="max-w-sm mb-4"
@@ -67,6 +62,7 @@ export function AddBookingForm({ id, name }: MeetingRoom) {
         name="startAt"
       />
       <DatePicker
+        disableAnimation
         isRequired
         showMonthAndYearPickers
         className="max-w-sm mb-4"

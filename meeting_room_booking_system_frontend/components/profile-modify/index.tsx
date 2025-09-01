@@ -2,13 +2,13 @@
 
 import { useActionState, useEffect, useMemo, useState } from "react";
 import { useCountDown } from "ahooks";
-import { Avatar, Button, Input } from "@nextui-org/react";
+import { Avatar, Button, Input } from "@heroui/react";
 import { useRouter } from "next-nprogress-bar";
 
-import { profileModifyAction, profileModifyCaptchaAction } from "./actions";
+import { BASE_PATH, UserDetailVo } from "~/meeting-room-booking-api";
+import { parseResult } from "~/helper/parse";
 
-import { BASE_PATH, UserDetailVo } from "@/meeting-room-booking-api";
-import { parseResult } from "@/helper/parse";
+import { profileModifyAction, profileModifyCaptchaAction } from "./actions";
 
 export function ProfileModifyForm({ headPic, nickName, email }: UserDetailVo) {
   const [

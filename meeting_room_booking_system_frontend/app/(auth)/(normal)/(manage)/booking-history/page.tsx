@@ -1,15 +1,15 @@
-import { unbindBookingAction } from "./actions";
-
-import { BookingList, bookingListSchema } from "@/components/booking";
-import { UnknownError } from "@/components/unknown-error";
-import { apiInstance } from "@/helper/auth";
-import { parseZodErr } from "@/helper/parse";
+import { BookingList, bookingListSchema } from "~/components/booking";
+import { UnknownError } from "~/components/unknown-error";
+import { apiInstance } from "~/helper/auth";
+import { parseZodErr } from "~/helper/parse";
 import {
   BookingApi,
   type BookingApiFindAllBookingRequest,
   UserApi,
-} from "@/meeting-room-booking-api";
-import { BasicPageParams } from "@/types";
+} from "~/meeting-room-booking-api";
+import { BasicPageParams } from "~/types";
+
+import { unbindBookingAction } from "./actions";
 
 export default async function BookingHistoryPage(props: BasicPageParams) {
   const searchParams = await props.searchParams;

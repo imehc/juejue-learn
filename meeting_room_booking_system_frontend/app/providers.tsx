@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { NextUIProvider } from "@nextui-org/react";
+import { HeroUIProvider } from "@heroui/react";
 import { useRouter } from "next-nprogress-bar";
 import {
   ThemeProvider as NextThemesProvider,
@@ -22,7 +22,7 @@ export function Providers({ children, ...themeProps }: ProvidersProps) {
   const router = useRouter();
 
   return (
-    <NextUIProvider
+    <HeroUIProvider
       className="w-full h-full overflow-hidden flex flex-col justify-center items-center"
       navigate={router.push}
     >
@@ -32,10 +32,10 @@ export function Providers({ children, ...themeProps }: ProvidersProps) {
       <Toaster richColors position="top-center" />
       <ProgressBar
         shallowRouting
-        color="hsl(var(--nextui-primary) / var(--nextui-primary-opacity, var(--tw-bg-opacity)));"
+        color="hsl(var(--heroui-primary) / var(--heroui-primary-opacity, var(--tw-bg-opacity)));"
         height="4px"
         options={{ showSpinner: false }}
       />
-    </NextUIProvider>
+    </HeroUIProvider>
   );
 }

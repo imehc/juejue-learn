@@ -1,14 +1,14 @@
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 
-import { ACCESS_TOKEN, basePath } from "./cookie";
-
 import {
   Configuration,
   ConfigurationParameters,
   Middleware,
   ResponseContext,
-} from "@/meeting-room-booking-api";
+} from "~/meeting-room-booking-api";
+
+import { ACCESS_TOKEN, basePath } from "./cookie";
 
 export async function apiInstance<T extends new (conf?: Configuration) => any>(
   Api: T,

@@ -1,4 +1,4 @@
-import { z } from "@/helper/zod";
+import { z } from "~/helper/zod";
 
 export const userListSchema = z.object({
   skip: z.coerce.number().optional().default(0).catch(0),

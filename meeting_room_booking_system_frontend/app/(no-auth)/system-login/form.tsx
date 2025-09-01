@@ -1,11 +1,11 @@
 "use client";
 
 import { useActionState, useEffect } from "react";
-import { Input, Divider, Button } from "@nextui-org/react";
+import { Input, Divider, Button } from "@heroui/react";
+
+import { parseResult } from "~/helper/parse";
 
 import { systemLoginAction } from "./actions";
-
-import { parseResult } from "@/helper/parse";
 
 export function SystemLoginForm() {
   const [loginState, loginFormAction, isPending] = useActionState(

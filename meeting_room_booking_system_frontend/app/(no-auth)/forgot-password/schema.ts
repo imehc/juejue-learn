@@ -1,12 +1,12 @@
 import { zfd } from "zod-form-data";
 
-import { z } from "@/helper/zod";
+import { z } from "~/helper/zod";
 
 export const forgotSchema = zfd
   .formData({
     username: zfd.text(
       z
-        .string({ required_error: "请填写用户名" })
+        .string({ error: "请填写用户名" })
         .trim()
         .min(2, "用户名不能少于2位")
         .max(8, "用户名不能超过8位")
@@ -16,7 +16,7 @@ export const forgotSchema = zfd
     ),
     password: zfd.text(
       z
-        .string({ required_error: "请填写密码" })
+        .string({ error: "请填写密码" })
         .trim()
         .min(6, "密码不能少于6位")
         .refine((value) => /^[A-Za-z0-9]+$/.test(value), {
@@ -25,7 +25,7 @@ export const forgotSchema = zfd
     ),
     confirmPassword: zfd.text(
       z
-        .string({ required_error: "请填写确认密码" })
+        .string({ error: "请填写确认密码" })
         .trim()
         .min(6, "密码不能少于6位")
         .refine((value) => /^[A-Za-z0-9]+$/.test(value), {
@@ -33,13 +33,12 @@ export const forgotSchema = zfd
         }),
     ),
     email: zfd.text(
-      z.string({ required_error: "请填写邮箱" }).trim().email("邮箱格式不合法"),
+      z.string({ error: "请填写邮箱" }).trim().email("邮箱格式不合法"),
     ),
     captcha: zfd.numeric(
       z.coerce
         .number({
-          required_error: "请填写验证码",
-          invalid_type_error: "请填写验证码",
+          error: "请填写验证码",
         })
         .refine((num) => num.toString().length === 6, {
           message: "验证码长度只能为6位",
@@ -56,7 +55,5 @@ export const forgotSchema = zfd
 export type ForgotSchemaFormValues = z.infer<typeof forgotSchema>;
 
 export const forgotPasswordCaptchaSchema = zfd.formData({
-  email: zfd.text(
-    z.string({ required_error: "请填写邮箱" }).email("邮箱格式不正确"),
-  ),
+  email: zfd.text(z.email("邮箱格式不正确")),
 });

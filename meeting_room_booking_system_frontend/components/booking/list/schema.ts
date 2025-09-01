@@ -1,5 +1,5 @@
-import { z } from "@/helper/zod";
-import { BookingStatusEnum } from "@/meeting-room-booking-api";
+import { z } from "~/helper/zod";
+import { BookingStatusEnum } from "~/meeting-room-booking-api";
 
 export const bookingListSchema = z.object({
   skip: z.coerce.number().optional().default(0).catch(0),

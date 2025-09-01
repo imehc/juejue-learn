@@ -1,7 +1,7 @@
 import { differenceInMinutes } from "date-fns";
 import { NextRequest, NextResponse } from "next/server";
 
-import { AuthApi, BASE_PATH } from "@/meeting-room-booking-api";
+import { AuthApi, BASE_PATH } from "~/meeting-room-booking-api";
 
 export const ACCESS_TOKEN = "access-token";
 export const REFRESH_TOKEN = "refresh-token";
@@ -49,7 +49,7 @@ export async function updateAuth(request: NextRequest) {
       setCookie(res, EXPIRES_IN, now.toString(), now);
 
       return res;
-    } catch (error) {
+    } catch {
       return clearCookie(res);
     }
   }

@@ -4,7 +4,7 @@ import {
 } from "@internationalized/date";
 import { useAction } from "next-safe-action/hooks";
 import { toast } from "sonner";
-import { SafeParseReturnType } from "zod";
+import { ZodSafeParseError } from "zod";
 
 /** 格式化日期 */
 export const parseDate = (date?: Date | null) => {
@@ -14,7 +14,7 @@ export const parseDate = (date?: Date | null) => {
     }
 
     return toCalendarDateTime(parseAbsoluteToLocal(date.toISOString()));
-  } catch (error) {
+  } catch {
     return null;
   }
 };
@@ -41,6 +41,6 @@ export const parseResult = (props: ParseResultProps, func?: () => unknown) => {
 };
 
 /** 格式化错误 */
-export const parseZodErr = (parse: SafeParseReturnType<unknown, unknown>) => {
-  return parse.error?.errors.map((item) => item.message).join(",");
+export const parseZodErr = <T>(parse: ZodSafeParseError<T>) => {
+  return parse.error?.issues.map((item) => item.message).join(",");
 };

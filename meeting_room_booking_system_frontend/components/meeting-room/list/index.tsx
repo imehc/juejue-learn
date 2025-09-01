@@ -1,7 +1,5 @@
 "use client";
 
-import type { DelMeetingRoomAction } from "@/app/(auth)/system/(manage)/meeting-room/actions";
-
 import { format } from "date-fns";
 import { parseAsInteger, parseAsString, useQueryStates } from "nuqs";
 import { type FC, useEffect, useTransition } from "react";
@@ -27,16 +25,17 @@ import {
   TableRow,
   Tooltip,
   useDisclosure,
-} from "@nextui-org/react";
+} from "@heroui/react";
 
-import { meetingRoomListSchema } from "./schema";
-
+import type { DelMeetingRoomAction } from "~/app/(auth)/system/(manage)/meeting-room/actions";
 import {
   MeetingRoom,
   MeetingRoomList as MeetingRoomListImpl,
-} from "@/meeting-room-booking-api";
-import { BookingIcon } from "@/components/menu-icon";
-import { parseResult } from "@/helper/parse";
+} from "~/meeting-room-booking-api";
+import { BookingIcon } from "~/components/menu-icon";
+import { parseResult } from "~/helper/parse";
+
+import { meetingRoomListSchema } from "./schema";
 
 type SystemAction = {
   type: "system";

@@ -2,17 +2,17 @@
 
 import { revalidatePath } from "next/cache";
 
-import { apiInstance } from "@/helper/auth";
-import { BookingApi } from "@/meeting-room-booking-api";
-import { actionClient } from "@/helper/safe-action";
-import { z } from "@/helper/zod";
+import { apiInstance } from "~/helper/auth";
+import { BookingApi } from "~/meeting-room-booking-api";
+import { actionClient } from "~/helper/safe-action";
+import { z } from "~/helper/zod";
 
 const unbindBookingschema = z.object({
-  id: z.coerce.number({ invalid_type_error: "id不合法" }),
+  id: z.coerce.number({ error: "id不合法" }),
 });
 
 export const unbindBookingAction = actionClient
-  .schema(unbindBookingschema)
+  .inputSchema(unbindBookingschema)
   .action(async ({ parsedInput: { id } }) => {
     const bookingApi = await apiInstance(BookingApi);
 

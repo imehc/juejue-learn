@@ -2,7 +2,7 @@
 import { ResponsivePie } from "@nivo/pie";
 import { useMemo } from "react";
 
-import { StatisticCountVo } from "@/meeting-room-booking-api";
+import { StatisticCountVo } from "~/meeting-room-booking-api";
 
 interface Props {
   data: StatisticCountVo[];

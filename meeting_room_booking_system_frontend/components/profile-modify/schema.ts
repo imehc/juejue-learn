@@ -1,19 +1,19 @@
 import { zfd } from "zod-form-data";
 
-import { z } from "@/helper/zod";
+import { z } from "~/helper/zod";
 
 export const profileModifySchema = zfd.formData({
   headPic: zfd.text(z.string().optional()),
   nickName: zfd.text(
     z
-      .string({ required_error: "请输入昵称" })
+      .string({ error: "请输入昵称" })
       .trim()
       .min(2, "最少输入两位")
       .max(16, "最多输入16位"),
   ),
   captcha: zfd.numeric(
     z.coerce
-      .number({ required_error: "请填写验证码" })
+      .number({ error: "请填写验证码" })
       .refine((num) => num.toString().length === 6, {
         message: "验证码长度只能为6位",
       }),

@@ -2,12 +2,12 @@
 
 import { useActionState, useEffect, useState } from "react";
 import { useCountDown } from "ahooks";
-import { Input, Button } from "@nextui-org/react";
+import { Input, Button } from "@heroui/react";
+
+import { UserDetailVo } from "~/meeting-room-booking-api";
+import { parseResult } from "~/helper/parse";
 
 import { passwordModifyAction, passwordModifyCaptchaAction } from "./actions";
-
-import { UserDetailVo } from "@/meeting-room-booking-api";
-import { parseResult } from "@/helper/parse";
 
 export function PasswordModifyForm({ email }: UserDetailVo) {
   const [

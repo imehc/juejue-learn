@@ -2,14 +2,14 @@
 
 import { flattenValidationErrors } from "next-safe-action";
 
+import { apiInstance } from "~/helper/auth";
+import { actionClient } from "~/helper/safe-action";
+import { CaptchaApi, UserApi } from "~/meeting-room-booking-api";
+
 import { forgotPasswordCaptchaSchema, forgotSchema } from "./schema";
 
-import { apiInstance } from "@/helper/auth";
-import { actionClient } from "@/helper/safe-action";
-import { CaptchaApi, UserApi } from "@/meeting-room-booking-api";
-
 export const forgotPasswordAction = actionClient
-  .schema(forgotSchema, {
+  .inputSchema(forgotSchema, {
     handleValidationErrorsShape: async (ve) =>
       flattenValidationErrors(ve).fieldErrors,
   })
@@ -24,7 +24,7 @@ export const forgotPasswordAction = actionClient
   });
 
 export const forgotPasswordCaptchaAction = actionClient
-  .schema(forgotPasswordCaptchaSchema, {
+  .inputSchema(forgotPasswordCaptchaSchema, {
     handleValidationErrorsShape: async (ve) =>
       flattenValidationErrors(ve).fieldErrors,
   })

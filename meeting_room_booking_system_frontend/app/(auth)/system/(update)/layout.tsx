@@ -1,7 +1,7 @@
 import { PropsWithChildren } from "react";
-import { Card, CardBody } from "@nextui-org/react";
+import { Card, CardBody } from "@heroui/react";
 
-import { SlideBar } from "@/components/sidebar";
+import { SlideBar } from "~/components/sidebar";
 
 export default async function SystemUpdateLayout({
   children,

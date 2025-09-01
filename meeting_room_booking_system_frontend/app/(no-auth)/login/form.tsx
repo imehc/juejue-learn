@@ -1,12 +1,12 @@
 "use client";
 
 import { useActionState, useEffect } from "react";
-import { Button, Divider, Input, Link } from "@nextui-org/react";
+import { Button, Divider, Input, Link } from "@heroui/react";
+
+import { GithubIcon, GoogleIcon } from "~/components/icons";
+import { parseResult } from "~/helper/parse";
 
 import { loginAction } from "./actions";
-
-import { GithubIcon, GoogleIcon } from "@/components/icons";
-import { parseResult } from "@/helper/parse";
 
 export function LoginForm() {
   const [loginState, loginFormAction, isPending] = useActionState(

@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 
-import { apiInstance } from "@/helper/auth";
-import { UserApi } from "@/meeting-room-booking-api";
+import { apiInstance } from "~/helper/auth";
+import { UserApi } from "~/meeting-room-booking-api";
 
 export default async function Home() {
   const userApi = await apiInstance(UserApi);

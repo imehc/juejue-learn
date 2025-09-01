@@ -1,11 +1,11 @@
-import { UserList } from "./list";
-import { userListSchema } from "./schema";
+import { UnknownError } from "~/components/unknown-error";
+import { apiInstance } from "~/helper/auth";
+import { parseZodErr } from "~/helper/parse";
+import { UserApi } from "~/meeting-room-booking-api";
+import { BasicPageParams } from "~/types";
 
-import { UnknownError } from "@/components/unknown-error";
-import { apiInstance } from "@/helper/auth";
-import { parseZodErr } from "@/helper/parse";
-import { UserApi } from "@/meeting-room-booking-api";
-import { BasicPageParams } from "@/types";
+import { userListSchema } from "./schema";
+import { UserList } from "./list";
 
 export default async function SystemUserPage(props: BasicPageParams) {
   const searchParams = await props.searchParams;

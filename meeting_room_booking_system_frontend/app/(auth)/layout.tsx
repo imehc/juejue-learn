@@ -1,10 +1,10 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { PropsWithChildren } from "react";
-import { Link } from "@nextui-org/react";
+import { Link } from "@heroui/react";
 
-import { ACCESS_TOKEN } from "@/helper/cookie";
-import { Navbar } from "@/components/navbar";
+import { ACCESS_TOKEN } from "~/helper/cookie";
+import { Navbar } from "~/components/navbar";
 
 export default async function AuthLayout({ children }: PropsWithChildren) {
   if (!(await cookies()).has(ACCESS_TOKEN)) {
@@ -21,11 +21,11 @@ export default async function AuthLayout({ children }: PropsWithChildren) {
         <Link
           isExternal
           className="flex items-center gap-1 text-current"
-          href="https://nextui-docs-v2.vercel.app?utm_source=next-app-template"
-          title="nextui.org homepage"
+          href="https://heroui.com?utm_source=next-app-template"
+          title="heroui.com homepage"
         >
           <span className="text-default-600">Powered by</span>
-          <p className="text-primary">NextUI</p>
+          <p className="text-primary">HeroUI</p>
         </Link>
       </footer>
     </div>

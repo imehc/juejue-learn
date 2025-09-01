@@ -1,13 +1,13 @@
 "use client";
 
-import { Button, Input } from "@nextui-org/react";
+import { Button, Input } from "@heroui/react";
 import { useActionState, useEffect } from "react";
 import { useRouter } from "next-nprogress-bar";
 
-import { meetingRoomAction } from "./actions";
+import { MeetingRoom } from "~/meeting-room-booking-api";
+import { parseResult } from "~/helper/parse";
 
-import { MeetingRoom } from "@/meeting-room-booking-api";
-import { parseResult } from "@/helper/parse";
+import { meetingRoomAction } from "./actions";
 
 export function MeetingRoomForm({
   id,

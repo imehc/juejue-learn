@@ -2,17 +2,17 @@
 
 import { revalidatePath } from "next/cache";
 
-import { apiInstance } from "@/helper/auth";
-import { BookingApi } from "@/meeting-room-booking-api";
-import { actionClient } from "@/helper/safe-action";
-import { z } from "@/helper/zod";
+import { apiInstance } from "~/helper/auth";
+import { BookingApi } from "~/meeting-room-booking-api";
+import { actionClient } from "~/helper/safe-action";
+import { z } from "~/helper/zod";
 
 const schema = z.object({
-  id: z.coerce.number({ required_error: "未预定会议室" }),
+  id: z.coerce.number({ error: "未预定会议室" }),
 });
 
 export const passBookingAction = actionClient
-  .schema(schema)
+  .inputSchema(schema)
   .action(async ({ parsedInput: { id } }) => {
     const bookingApi = await apiInstance(BookingApi);
     const text = await bookingApi.passBooking({
@@ -25,7 +25,7 @@ export const passBookingAction = actionClient
   });
 
 export const rejectBookingAction = actionClient
-  .schema(schema)
+  .inputSchema(schema)
   .action(async ({ parsedInput: { id } }) => {
     const bookingApi = await apiInstance(BookingApi);
     const text = await bookingApi.rejectBooking({
@@ -38,7 +38,7 @@ export const rejectBookingAction = actionClient
   });
 
 export const unbindBookingAction = actionClient
-  .schema(schema)
+  .inputSchema(schema)
   .action(async ({ parsedInput: { id } }) => {
     const bookingApi = await apiInstance(BookingApi);
     const text = await bookingApi.unbindBooking({

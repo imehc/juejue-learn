@@ -10,16 +10,16 @@ import {
   Input,
   Kbd,
   Link,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import NextLink from "next/link";
 import clsx from "clsx";
 import { FC, use } from "react";
 
-import { siteConfig } from "@/config/site";
-import { ThemeSwitch } from "@/components/theme-switch";
-import { GithubIcon, SearchIcon, Logo, ProfileIcon } from "@/components/icons";
-import { apiInstance } from "@/helper/auth";
-import { UserApi } from "@/meeting-room-booking-api";
+import { siteConfig } from "~/config/site";
+import { ThemeSwitch } from "~/components/theme-switch";
+import { GithubIcon, SearchIcon, Logo, ProfileIcon } from "~/components/icons";
+import { apiInstance } from "~/helper/auth";
+import { UserApi } from "~/meeting-room-booking-api";
 
 export const Navbar: FC = () => {
   const userApi = use(apiInstance(UserApi));

@@ -10,12 +10,12 @@ import {
 } from "nuqs";
 import { forwardRef, useImperativeHandle, useTransition } from "react";
 import clsx from "clsx";
-import { Input, DatePicker, Button } from "@nextui-org/react";
+import { Input, DatePicker, Button } from "@heroui/react";
+
+import { BookingStatusEnum } from "~/meeting-room-booking-api";
+import { parseDate } from "~/helper/parse";
 
 import { bookingListSchema } from "./schema";
-
-import { BookingStatusEnum } from "@/meeting-room-booking-api";
-import { parseDate } from "@/helper/parse";
 
 interface Props {
   type: "system" | "normal";

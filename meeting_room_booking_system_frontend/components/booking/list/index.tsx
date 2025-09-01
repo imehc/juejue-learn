@@ -1,12 +1,5 @@
 "use client";
 
-import type {
-  PassBookingAction,
-  RejectBookingAction,
-  UnbindBookingAction as UnbindBookingActionWithSystem,
-} from "@/app/(auth)/system/(manage)/booking/actions";
-import type { UnbindBookingAction } from "@/app/(auth)/(normal)/(manage)/booking-history/actions";
-
 import { toast } from "sonner";
 import { useAction } from "next-safe-action/hooks";
 import { format } from "date-fns";
@@ -28,28 +21,34 @@ import {
   getKeyValue,
   ButtonGroup,
   Tooltip,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { useRef, FC, useState, useEffect, useMemo } from "react";
 
-import { BookingListTopContent, BookingListTopContentRef } from "./top-content";
-import { BookingListBottomContent } from "./bottom-content";
-import { BookingListStatus } from "./status";
-import { urgeBookingAction } from "./actions";
-
+import type { UnbindBookingAction } from "~/app/(auth)/(normal)/(manage)/booking-history/actions";
+import type {
+  PassBookingAction,
+  RejectBookingAction,
+  UnbindBookingAction as UnbindBookingActionWithSystem,
+} from "~/app/(auth)/system/(manage)/booking/actions";
 import {
   Booking,
   BookingList as BookingListImpl,
   BookingStatusEnum,
-} from "@/meeting-room-booking-api";
+} from "~/meeting-room-booking-api";
 import {
   FilterIcon,
   PassIcon,
   RejectIcon,
   UnbindIcon,
   UrgeIcon,
-} from "@/components/menu-icon";
-import { ConfimModal } from "@/components/confirm-modal";
-import { parseResult } from "@/helper/parse";
+} from "~/components/menu-icon";
+import { ConfimModal } from "~/components/confirm-modal";
+import { parseResult } from "~/helper/parse";
+
+import { urgeBookingAction } from "./actions";
+import { BookingListStatus } from "./status";
+import { BookingListBottomContent } from "./bottom-content";
+import { BookingListTopContent, BookingListTopContentRef } from "./top-content";
 
 type SystemAction = {
   type: "system";
@@ -145,7 +144,7 @@ export function BookingList({
             style={{
               // 与其他表头一致
               color:
-                "hsl(var(--nextui-foreground-500) / var(--nextui-foreground-500-opacity, var(--tw-text-opacity)))",
+                "hsl(var(--heroui-foreground-500) / var(--heroui-foreground-500-opacity, var(--tw-text-opacity)))",
             }}
             variant="light"
           >
@@ -302,7 +301,7 @@ const NormalAction: React.FC<NormalActionProps> = ({
 
                 return;
             }
-          } catch (error) {
+          } catch {
             toast.error("解除预定失败");
           } finally {
             onClose();
@@ -440,7 +439,7 @@ const SystemAction: FC<SystemActionProps> = ({
 
                 return;
             }
-          } catch (error) {
+          } catch {
             toast.warning(`${statusTxt}失败`);
           } finally {
             onClose();

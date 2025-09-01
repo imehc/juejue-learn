@@ -1,6 +1,6 @@
 import { PropsWithChildren } from "react";
 
-import { EmptyCookie } from "@/components/empty-cookie";
+import { EmptyCookie } from "~/components/empty-cookie";
 
 export default async function NoAuthLayout({ children }: PropsWithChildren) {
   return (

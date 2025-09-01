@@ -2,14 +2,14 @@
 
 import { flattenValidationErrors } from "next-safe-action";
 
+import { apiInstance } from "~/helper/auth";
+import { actionClient } from "~/helper/safe-action";
+import { CaptchaApi, UserApi } from "~/meeting-room-booking-api";
+
 import { registerCaptchaSchema, registerSchema } from "./schema";
 
-import { apiInstance } from "@/helper/auth";
-import { actionClient } from "@/helper/safe-action";
-import { CaptchaApi, UserApi } from "@/meeting-room-booking-api";
-
 export const registerAction = actionClient
-  .schema(registerSchema, {
+  .inputSchema(registerSchema, {
     handleValidationErrorsShape: async (ve) =>
       flattenValidationErrors(ve).fieldErrors,
   })
@@ -24,7 +24,7 @@ export const registerAction = actionClient
   });
 
 export const registerCaptchaAction = actionClient
-  .schema(registerCaptchaSchema, {
+  .inputSchema(registerCaptchaSchema, {
     handleValidationErrorsShape: async (ve) =>
       flattenValidationErrors(ve).fieldErrors,
   })

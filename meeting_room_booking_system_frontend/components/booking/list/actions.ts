@@ -2,17 +2,17 @@
 
 import { revalidatePath } from "next/cache";
 
-import { z } from "@/helper/zod";
-import { apiInstance } from "@/helper/auth";
-import { BookingApi } from "@/meeting-room-booking-api";
-import { actionClient } from "@/helper/safe-action";
+import { z } from "~/helper/zod";
+import { apiInstance } from "~/helper/auth";
+import { BookingApi } from "~/meeting-room-booking-api";
+import { actionClient } from "~/helper/safe-action";
 
 const schema = z.object({
   bookingId: z.coerce.number(),
 });
 
 export const urgeBookingAction = actionClient
-  .schema(schema)
+  .inputSchema(schema)
   .action(async ({ parsedInput: { bookingId } }) => {
     const bookingApi = await apiInstance(BookingApi);
     const text = await bookingApi.urgeBooking({ bookingId });

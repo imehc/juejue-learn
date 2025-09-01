@@ -1,9 +1,9 @@
 import { PropsWithChildren } from "react";
-import { Card, CardBody } from "@nextui-org/react";
+import { Card, CardBody } from "@heroui/react";
 
-import { SlideBar } from "@/components/sidebar";
-import { apiInstance } from "@/helper/auth";
-import { UserApi } from "@/meeting-room-booking-api";
+import { SlideBar } from "~/components/sidebar";
+import { apiInstance } from "~/helper/auth";
+import { UserApi } from "~/meeting-room-booking-api";
 
 export default async function UpdateLayout({ children }: PropsWithChildren) {
   const userApi = await apiInstance(UserApi);

@@ -1,11 +1,11 @@
-import { Statistics } from "./statistics";
-import { statisticsSchema } from "./schema";
+import { apiInstance } from "~/helper/auth";
+import { StatisticApi } from "~/meeting-room-booking-api";
+import { UnknownError } from "~/components/unknown-error";
+import { BasicPageParams } from "~/types";
+import { parseZodErr } from "~/helper/parse";
 
-import { apiInstance } from "@/helper/auth";
-import { StatisticApi } from "@/meeting-room-booking-api";
-import { UnknownError } from "@/components/unknown-error";
-import { BasicPageParams } from "@/types";
-import { parseZodErr } from "@/helper/parse";
+import { statisticsSchema } from "./schema";
+import { Statistics } from "./statistics";
 
 export default async function SystemStatistics(props: BasicPageParams) {
   const searchParams = await props.searchParams;

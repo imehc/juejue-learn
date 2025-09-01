@@ -4,15 +4,15 @@ import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { flattenValidationErrors } from "next-safe-action";
 
+import { apiInstance } from "~/helper/auth";
+import { ACCESS_TOKEN, EXPIRES_IN, REFRESH_TOKEN } from "~/helper/cookie";
+import { Auth, UserApi } from "~/meeting-room-booking-api";
+import { actionClient } from "~/helper/safe-action";
+
 import { loginSchema } from "./schema";
 
-import { apiInstance } from "@/helper/auth";
-import { ACCESS_TOKEN, EXPIRES_IN, REFRESH_TOKEN } from "@/helper/cookie";
-import { Auth, UserApi } from "@/meeting-room-booking-api";
-import { actionClient } from "@/helper/safe-action";
-
 export const loginAction = actionClient
-  .schema(loginSchema, {
+  .inputSchema(loginSchema, {
     // TODO: https://github.com/TheEdoRan/next-safe-action/issues/288#issuecomment-2438651208
     handleValidationErrorsShape: async (ve) =>
       flattenValidationErrors(ve).fieldErrors,

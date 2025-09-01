@@ -1,13 +1,13 @@
-import { delMeetingRoomAction } from "./actions";
-
 import {
   MeetingRoomList,
   meetingRoomListSchema,
-} from "@/components/meeting-room";
-import { UnknownError } from "@/components/unknown-error";
-import { apiInstance } from "@/helper/auth";
-import { MeetingRoomApi } from "@/meeting-room-booking-api";
-import { BasicPageParams } from "@/types";
+} from "~/components/meeting-room";
+import { UnknownError } from "~/components/unknown-error";
+import { apiInstance } from "~/helper/auth";
+import { MeetingRoomApi } from "~/meeting-room-booking-api";
+import { BasicPageParams } from "~/types";
+
+import { delMeetingRoomAction } from "./actions";
 
 export default async function MeetingRoomPage(props: BasicPageParams) {
   const searchParams = await props?.searchParams;

@@ -2,14 +2,14 @@
 
 import { flattenValidationErrors } from "next-safe-action";
 
+import { apiInstance } from "~/helper/auth";
+import { actionClient } from "~/helper/safe-action";
+import { CaptchaApi, UserApi } from "~/meeting-room-booking-api";
+
 import { passwordModifySchema } from "./schema";
 
-import { apiInstance } from "@/helper/auth";
-import { actionClient } from "@/helper/safe-action";
-import { CaptchaApi, UserApi } from "@/meeting-room-booking-api";
-
 export const passwordModifyAction = actionClient
-  .schema(passwordModifySchema, {
+  .inputSchema(passwordModifySchema, {
     handleValidationErrorsShape: async (ve) =>
       flattenValidationErrors(ve).fieldErrors,
   })

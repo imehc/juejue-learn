@@ -3,14 +3,14 @@
 import { revalidatePath } from "next/cache";
 import { flattenValidationErrors } from "next-safe-action";
 
+import { apiInstance } from "~/helper/auth";
+import { BookingApi } from "~/meeting-room-booking-api";
+import { actionClient } from "~/helper/safe-action";
+
 import { addBookingSchema } from "./schema";
 
-import { apiInstance } from "@/helper/auth";
-import { BookingApi } from "@/meeting-room-booking-api";
-import { actionClient } from "@/helper/safe-action";
-
 export const addBookingAction = actionClient
-  .schema(addBookingSchema, {
+  .inputSchema(addBookingSchema, {
     handleValidationErrorsShape: async (ve) =>
       flattenValidationErrors(ve).fieldErrors,
   })

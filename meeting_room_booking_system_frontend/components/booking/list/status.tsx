@@ -1,7 +1,7 @@
-import { Chip } from "@nextui-org/react";
+import { Chip } from "@heroui/react";
 import { FC } from "react";
 
-import { BookingStatusEnum } from "@/meeting-room-booking-api";
+import { BookingStatusEnum } from "~/meeting-room-booking-api";
 
 interface Props {
   status?: BookingStatusEnum;

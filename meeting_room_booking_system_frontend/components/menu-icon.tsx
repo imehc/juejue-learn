@@ -1,6 +1,6 @@
 import { FC } from "react";
 
-import { IconSvgProps } from "@/types";
+import { IconSvgProps } from "~/types";
 
 // https://icon-sets.iconify.design/gravity-ui/?keyword=icon
 

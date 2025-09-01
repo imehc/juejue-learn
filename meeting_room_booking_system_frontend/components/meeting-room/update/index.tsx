@@ -1,11 +1,11 @@
 import { notFound } from "next/navigation";
 
-import { MeetingRoomForm } from "..";
+import { apiInstance } from "~/helper/auth";
+import { MeetingRoomApi } from "~/meeting-room-booking-api";
+import { z } from "~/helper/zod";
+import { BasicPageParams } from "~/types";
 
-import { apiInstance } from "@/helper/auth";
-import { MeetingRoomApi } from "@/meeting-room-booking-api";
-import { z } from "@/helper/zod";
-import { BasicPageParams } from "@/types";
+import { MeetingRoomForm } from "..";
 
 const schema = z.object({
   meetingRoomId: z.coerce.number(),

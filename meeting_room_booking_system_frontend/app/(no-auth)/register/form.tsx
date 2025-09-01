@@ -3,11 +3,11 @@
 import { useActionState, useEffect, useState } from "react";
 import { useCountDown } from "ahooks";
 import { useRouter } from "next-nprogress-bar";
-import { Button, Divider, Input, Link } from "@nextui-org/react";
+import { Button, Divider, Input, Link } from "@heroui/react";
+
+import { parseResult } from "~/helper/parse";
 
 import { registerAction, registerCaptchaAction } from "./actions";
-
-import { parseResult } from "@/helper/parse";
 
 export function RegisterForm() {
   const router = useRouter();

@@ -1,12 +1,12 @@
 import { zfd } from "zod-form-data";
 
-import { z } from "@/helper/zod";
+import { z } from "~/helper/zod";
 
 export const passwordModifySchema = zfd
   .formData({
     password: zfd.text(
       z
-        .string({ required_error: "请填写密码" })
+        .string({ error: "请填写密码" })
         .trim()
         .min(6, "密码不能少于6位")
         .refine((value) => /^[A-Za-z0-9]+$/.test(value), {
@@ -15,7 +15,7 @@ export const passwordModifySchema = zfd
     ),
     confirmPassword: zfd.text(
       z
-        .string({ required_error: "请填写确认密码" })
+        .string({ error: "请填写确认密码" })
         .trim()
         .min(6, "密码不能少于6位")
         .refine((value) => /^[A-Za-z0-9]+$/.test(value), {
@@ -24,7 +24,7 @@ export const passwordModifySchema = zfd
     ),
     captcha: zfd.numeric(
       z.coerce
-        .number({ required_error: "请填写验证码" })
+        .number({ error: "请填写验证码" })
         .refine((num) => num.toString().length === 6, {
           message: "验证码长度只能为6位",
         }),

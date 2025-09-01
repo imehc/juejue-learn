@@ -1,6 +1,6 @@
 "use client";
 
-import { Listbox, ListboxItem } from "@nextui-org/react";
+import { Listbox, ListboxItem } from "@heroui/react";
 import { useRouter } from "next-nprogress-bar";
 
 import { sidebarOptionsWithNormal } from "./normal-options";
@@ -42,7 +42,7 @@ export function SlideBar({ type, isAdmin = false }: Props) {
                 <span>{item.name}</span>
                 <div className="px-2 py-1 rounded-small bg-default-100 group-data-[hover=true]:bg-default-200">
                   <span className="text-tiny text-default-600">
-                    @nextui-org/react@2.0.10
+                    @heroui/react@2.0.10
                   </span>
                   <div className="flex gap-2 text-tiny">
                     <span className="text-default-500">49 minutes ago</span>

@@ -1,12 +1,12 @@
 "use client";
 
-import { Button, Divider, Input } from "@nextui-org/react";
+import { Button, Divider, Input } from "@heroui/react";
 import { useActionState, useEffect, useState } from "react";
 import { useCountDown } from "ahooks";
 
-import { forgotPasswordAction, forgotPasswordCaptchaAction } from "./actions";
+import { parseResult } from "~/helper/parse";
 
-import { parseResult } from "@/helper/parse";
+import { forgotPasswordAction, forgotPasswordCaptchaAction } from "./actions";
 
 export function ForgotPasswordForm() {
   const [

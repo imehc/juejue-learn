@@ -3,16 +3,16 @@
 import { redirect } from "next/navigation";
 import { flattenValidationErrors } from "next-safe-action";
 
+import { apiInstance } from "~/helper/auth";
+import { SystemApi } from "~/meeting-room-booking-api";
+import { actionClient } from "~/helper/safe-action";
+
 import { setAuthCookie } from "../login/actions";
 
 import { loginSchema } from "./schema";
 
-import { apiInstance } from "@/helper/auth";
-import { SystemApi } from "@/meeting-room-booking-api";
-import { actionClient } from "@/helper/safe-action";
-
 export const systemLoginAction = actionClient
-  .schema(loginSchema, {
+  .inputSchema(loginSchema, {
     handleValidationErrorsShape: async (ve) =>
       flattenValidationErrors(ve).fieldErrors,
   })

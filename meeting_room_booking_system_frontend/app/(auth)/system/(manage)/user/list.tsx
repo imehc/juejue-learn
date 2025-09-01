@@ -19,17 +19,17 @@ import {
   ModalHeader,
   ModalBody,
   ModalFooter,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { format } from "date-fns";
 import { parseAsInteger, parseAsString, useQueryStates } from "nuqs";
 import { FC, useEffect, useTransition } from "react";
 import { useAction } from "next-safe-action/hooks";
 
+import { BASE_PATH, User, UserListVo } from "~/meeting-room-booking-api";
+import { parseResult } from "~/helper/parse";
+
 import { userListSchema } from "./schema";
 import { frozenUserAction } from "./actions";
-
-import { BASE_PATH, User, UserListVo } from "@/meeting-room-booking-api";
-import { parseResult } from "@/helper/parse";
 
 interface Props extends UserListVo {}
 

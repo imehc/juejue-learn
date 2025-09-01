@@ -1,3 +1,3 @@
-import { AddBooking } from "@/components/booking";
+import { AddBooking } from "~/components/booking";
 
 export default AddBooking;
