@@ -1,11 +1,11 @@
 "use client";
 
-import { Button, Input } from "@heroui/react";
+import { Button } from "@heroui/button";
+import { Input } from "@heroui/input";
 import { useRouter } from "next-nprogress-bar";
 import { useActionState, useEffect } from "react";
 import { parseResult } from "~/helper/parse";
 import type { MeetingRoom } from "~/meeting-room-booking-api";
-
 import { meetingRoomAction } from "./actions";
 
 export function MeetingRoomForm({

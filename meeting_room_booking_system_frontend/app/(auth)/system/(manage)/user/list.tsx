@@ -1,25 +1,27 @@
 "use client";
 
+import { Avatar } from "@heroui/avatar";
+import { Button } from "@heroui/button";
+import { Divider } from "@heroui/divider";
+import { Input } from "@heroui/input";
 import {
-  Avatar,
-  Button,
-  Divider,
-  getKeyValue,
-  Input,
   Modal,
   ModalBody,
   ModalContent,
   ModalFooter,
   ModalHeader,
-  Pagination,
+  useDisclosure,
+} from "@heroui/modal";
+import { Pagination } from "@heroui/pagination";
+import {
+  getKeyValue,
   Table,
   TableBody,
   TableCell,
   TableColumn,
   TableHeader,
   TableRow,
-  useDisclosure,
-} from "@heroui/react";
+} from "@heroui/table";
 import { format } from "date-fns";
 import { useAction } from "next-safe-action/hooks";
 import { parseAsInteger, parseAsString, useQueryStates } from "nuqs";

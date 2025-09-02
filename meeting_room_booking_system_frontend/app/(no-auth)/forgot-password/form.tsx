@@ -1,11 +1,11 @@
 "use client";
 
-import { Button, Divider, Input } from "@heroui/react";
+import { Button } from "@heroui/button";
+import { Divider } from "@heroui/divider";
+import { Input } from "@heroui/input";
 import { useCountDown } from "ahooks";
 import { useActionState, useEffect, useState } from "react";
-
 import { parseResult } from "~/helper/parse";
-
 import { forgotPasswordAction, forgotPasswordCaptchaAction } from "./actions";
 
 export function ForgotPasswordForm() {

@@ -1,8 +1,7 @@
+import { Input } from "@heroui/input";
+import { Kbd } from "@heroui/kbd";
+import { Link } from "@heroui/link";
 import {
-  Input,
-  Kbd,
-  Link,
-  link as linkStyles,
   NavbarBrand,
   NavbarContent,
   NavbarItem,
@@ -10,7 +9,8 @@ import {
   NavbarMenuItem,
   NavbarMenuToggle,
   Navbar as NextUINavbar,
-} from "@heroui/react";
+} from "@heroui/navbar";
+import { link as linkStyles } from "@heroui/theme";
 import clsx from "clsx";
 import NextLink from "next/link";
 import { type FC, use } from "react";

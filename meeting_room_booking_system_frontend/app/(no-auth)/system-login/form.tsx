@@ -1,10 +1,10 @@
 "use client";
 
-import { Button, Divider, Input } from "@heroui/react";
+import { Button } from "@heroui/button";
+import { Divider } from "@heroui/divider";
+import { Input } from "@heroui/input";
 import { useActionState, useEffect } from "react";
-
 import { parseResult } from "~/helper/parse";
-
 import { systemLoginAction } from "./actions";
 
 export function SystemLoginForm() {

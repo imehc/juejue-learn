@@ -1,29 +1,24 @@
 "use client";
 
+import { Button, ButtonGroup } from "@heroui/button";
+import { Checkbox, CheckboxGroup } from "@heroui/checkbox";
+import { Chip } from "@heroui/chip";
+import { useDisclosure } from "@heroui/modal";
+import { Popover, PopoverContent, PopoverTrigger } from "@heroui/popover";
 import {
-  Button,
-  ButtonGroup,
-  Checkbox,
-  CheckboxGroup,
-  Chip,
   getKeyValue,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
   Table,
   TableBody,
   TableCell,
   TableColumn,
   TableHeader,
   TableRow,
-  Tooltip,
-  useDisclosure,
-} from "@heroui/react";
+} from "@heroui/table";
+import { Tooltip } from "@heroui/tooltip";
 import { format } from "date-fns";
 import { useAction } from "next-safe-action/hooks";
 import { type FC, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
-
 import type { UnbindBookingAction } from "~/app/(auth)/(normal)/(manage)/booking-history/actions";
 import type {
   PassBookingAction,
@@ -44,7 +39,6 @@ import {
   type BookingList as BookingListImpl,
   BookingStatusEnum,
 } from "~/meeting-room-booking-api";
-
 import { urgeBookingAction } from "./actions";
 import { BookingListBottomContent } from "./bottom-content";
 import { BookingListStatus } from "./status";
@@ -116,7 +110,7 @@ export function BookingList({
                     <FilterIcon size={14} />
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-[240px]">
+                <PopoverContent className="w-60">
                   {() => (
                     <div className="w-full px-1 py-2">
                       <CheckboxGroup

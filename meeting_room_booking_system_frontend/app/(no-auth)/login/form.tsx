@@ -1,11 +1,12 @@
 "use client";
 
-import { Button, Divider, Input, Link } from "@heroui/react";
+import { Button } from "@heroui/button";
+import { Divider } from "@heroui/divider";
+import { Input } from "@heroui/input";
+import { Link } from "@heroui/link";
 import { useActionState, useEffect } from "react";
-
 import { GithubIcon, GoogleIcon } from "~/components/icons";
 import { parseResult } from "~/helper/parse";
-
 import { loginAction } from "./actions";
 
 export function LoginForm() {

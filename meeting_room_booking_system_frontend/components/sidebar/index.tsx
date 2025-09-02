@@ -1,6 +1,6 @@
 "use client";
 
-import { Listbox, ListboxItem } from "@heroui/react";
+import { Listbox, ListboxItem } from "@heroui/listbox";
 import { useRouter } from "next-nprogress-bar";
 
 import { sidebarOptionsWithNormal } from "./normal-options";

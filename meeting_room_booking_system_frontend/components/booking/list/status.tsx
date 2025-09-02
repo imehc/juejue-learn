@@ -1,4 +1,4 @@
-import { Chip } from "@heroui/react";
+import { Chip } from "@heroui/chip";
 import type { FC } from "react";
 
 import { BookingStatusEnum } from "~/meeting-room-booking-api";

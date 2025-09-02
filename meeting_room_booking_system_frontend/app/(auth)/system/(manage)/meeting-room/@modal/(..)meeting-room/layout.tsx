@@ -1,6 +1,6 @@
 "use client";
 
-import { Modal, ModalBody, ModalContent } from "@heroui/react";
+import { Modal, ModalBody, ModalContent } from "@heroui/modal";
 import { useRouter } from "next-nprogress-bar";
 import type { PropsWithChildren } from "react";
 

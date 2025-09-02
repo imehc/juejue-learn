@@ -1,32 +1,32 @@
 "use client";
 
+import { Button, ButtonGroup } from "@heroui/button";
+import { Divider } from "@heroui/divider";
+import { Input } from "@heroui/input";
+import { Link } from "@heroui/link";
 import {
-  Button,
-  ButtonGroup,
-  Divider,
-  getKeyValue,
-  Input,
-  Link,
   Modal,
   ModalBody,
   ModalContent,
   ModalFooter,
   ModalHeader,
-  Pagination,
+  useDisclosure,
+} from "@heroui/modal";
+import { Pagination } from "@heroui/pagination";
+import {
+  getKeyValue,
   Table,
   TableBody,
   TableCell,
   TableColumn,
   TableHeader,
   TableRow,
-  Tooltip,
-  useDisclosure,
-} from "@heroui/react";
+} from "@heroui/table";
+import { Tooltip } from "@heroui/tooltip";
 import { format } from "date-fns";
 import { useAction } from "next-safe-action/hooks";
 import { parseAsInteger, parseAsString, useQueryStates } from "nuqs";
 import { type FC, useEffect, useTransition } from "react";
-
 import type { DelMeetingRoomAction } from "~/app/(auth)/system/(manage)/meeting-room/actions";
 import { BookingIcon } from "~/components/menu-icon";
 import { parseResult } from "~/helper/parse";
@@ -34,7 +34,6 @@ import type {
   MeetingRoom,
   MeetingRoomList as MeetingRoomListImpl,
 } from "~/meeting-room-booking-api";
-
 import { meetingRoomListSchema } from "./schema";
 
 type SystemAction = {

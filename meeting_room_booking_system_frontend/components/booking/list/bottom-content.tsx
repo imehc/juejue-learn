@@ -1,4 +1,4 @@
-import { Pagination } from "@heroui/react";
+import { Pagination } from "@heroui/pagination";
 import type { useQueryStates } from "nuqs";
 import type { FC } from "react";
 

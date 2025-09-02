@@ -1,24 +1,17 @@
 "use client";
 
-import {
-  Button,
-  DatePicker,
-  type DateValue,
-  Input,
-  Textarea,
-} from "@heroui/react";
+import { Button } from "@heroui/button";
+import { DatePicker } from "@heroui/date-picker";
+import { Input, Textarea } from "@heroui/input";
+import type { DateValue } from "@internationalized/date";
 import { addHours } from "date-fns";
 import { useRouter } from "next-nprogress-bar";
 import { useActionState, useEffect } from "react";
 import { parseDate, parseResult } from "~/helper/parse";
 import type { MeetingRoom } from "~/meeting-room-booking-api";
-
 import { addBookingAction } from "./actions";
 
 export function AddBookingForm({ id, name }: MeetingRoom) {
-  // const { execute } = useStateAction(addBookingAction, {
-  //   initResult: { data: { newName: "jane" } },
-  // });
   const router = useRouter();
   const [handleState, handleFormAction, isPending] = useActionState(
     addBookingAction,
@@ -52,7 +45,6 @@ export function AddBookingForm({ id, name }: MeetingRoom) {
         name="name"
         type="text"
       />
-      {/* TODO: 点击选择日期报错,待适配 https://github.com/nextui-org/nextui/issues/3939 */}
       <DatePicker
         disableAnimation
         isRequired
@@ -63,7 +55,7 @@ export function AddBookingForm({ id, name }: MeetingRoom) {
         granularity="minute"
         isInvalid={!!handleState?.validationErrors?.startAt?.length}
         label="开始时间"
-        minValue={parseDate(new Date()) as DateValue}
+        minValue={parseDate(new Date())}
         name="startAt"
       />
       <DatePicker

@@ -1,6 +1,8 @@
 "use client";
 
-import { Button, DatePicker, Input } from "@heroui/react";
+import { Button } from "@heroui/button";
+import { DatePicker } from "@heroui/date-picker";
+import { Input } from "@heroui/input";
 import type { DateValue } from "@internationalized/date";
 import clsx from "clsx";
 import {
@@ -13,7 +15,6 @@ import {
 import { forwardRef, useImperativeHandle, useTransition } from "react";
 import { parseDate } from "~/helper/parse";
 import { BookingStatusEnum } from "~/meeting-room-booking-api";
-
 import { bookingListSchema } from "./schema";
 
 interface Props {

@@ -1,12 +1,12 @@
+import { Button } from "@heroui/button";
 import {
-  Button,
   Modal,
   ModalBody,
   ModalContent,
   ModalFooter,
   ModalHeader,
   type useDisclosure,
-} from "@heroui/react";
+} from "@heroui/modal";
 import type { PropsWithChildren, ReactNode } from "react";
 
 interface Props extends PropsWithChildren {

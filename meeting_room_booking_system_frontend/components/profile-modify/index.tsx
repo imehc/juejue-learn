@@ -1,12 +1,13 @@
 "use client";
 
-import { Avatar, Button, Input } from "@heroui/react";
+import { Avatar } from "@heroui/avatar";
+import { Button } from "@heroui/button";
+import { Input } from "@heroui/input";
 import { useCountDown } from "ahooks";
 import { useRouter } from "next-nprogress-bar";
 import { useActionState, useEffect, useMemo, useState } from "react";
 import { parseResult } from "~/helper/parse";
 import { BASE_PATH, type UserDetailVo } from "~/meeting-room-booking-api";
-
 import { profileModifyAction, profileModifyCaptchaAction } from "./actions";
 
 export function ProfileModifyForm({ headPic, nickName, email }: UserDetailVo) {

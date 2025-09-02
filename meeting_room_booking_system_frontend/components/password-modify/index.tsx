@@ -1,11 +1,11 @@
 "use client";
 
-import { Button, Input } from "@heroui/react";
+import { Button } from "@heroui/button";
+import { Input } from "@heroui/input";
 import { useCountDown } from "ahooks";
 import { useActionState, useEffect, useState } from "react";
 import { parseResult } from "~/helper/parse";
 import type { UserDetailVo } from "~/meeting-room-booking-api";
-
 import { passwordModifyAction, passwordModifyCaptchaAction } from "./actions";
 
 export function PasswordModifyForm({ email }: UserDetailVo) {

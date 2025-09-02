@@ -1,4 +1,4 @@
-import { Link } from "@heroui/react";
+import { Link } from "@heroui/link";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import type { PropsWithChildren } from "react";
