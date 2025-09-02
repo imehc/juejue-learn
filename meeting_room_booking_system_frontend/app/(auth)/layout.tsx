@@ -1,10 +1,9 @@
+import { Link } from "@heroui/react";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { PropsWithChildren } from "react";
-import { Link } from "@heroui/react";
-
-import { ACCESS_TOKEN } from "~/helper/cookie";
+import type { PropsWithChildren } from "react";
 import { Navbar } from "~/components/navbar";
+import { ACCESS_TOKEN } from "~/helper/cookie";
 
 export default async function AuthLayout({ children }: PropsWithChildren) {
   if (!(await cookies()).has(ACCESS_TOKEN)) {

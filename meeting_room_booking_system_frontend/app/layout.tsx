@@ -1,8 +1,7 @@
-import { Metadata, Viewport } from "next";
 import clsx from "clsx";
-
-import { siteConfig } from "~/config/site";
+import type { Metadata, Viewport } from "next";
 import { fontSans } from "~/config/fonts";
+import { siteConfig } from "~/config/site";
 
 import { Providers } from "./providers";
 

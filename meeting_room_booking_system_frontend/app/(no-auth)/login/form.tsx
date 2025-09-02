@@ -1,7 +1,7 @@
 "use client";
 
-import { useActionState, useEffect } from "react";
 import { Button, Divider, Input, Link } from "@heroui/react";
+import { useActionState, useEffect } from "react";
 
 import { GithubIcon, GoogleIcon } from "~/components/icons";
 import { parseResult } from "~/helper/parse";

@@ -1,8 +1,8 @@
-import { apiInstance } from "~/helper/auth";
-import { StatisticApi } from "~/meeting-room-booking-api";
 import { UnknownError } from "~/components/unknown-error";
-import { BasicPageParams } from "~/types";
+import { apiInstance } from "~/helper/auth";
 import { parseZodErr } from "~/helper/parse";
+import { StatisticApi } from "~/meeting-room-booking-api";
+import type { BasicPageParams } from "~/types";
 
 import { statisticsSchema } from "./schema";
 import { Statistics } from "./statistics";

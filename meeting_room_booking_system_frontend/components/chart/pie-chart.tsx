@@ -2,7 +2,7 @@
 import { ResponsivePie } from "@nivo/pie";
 import { useMemo } from "react";
 
-import { StatisticCountVo } from "~/meeting-room-booking-api";
+import type { StatisticCountVo } from "~/meeting-room-booking-api";
 
 interface Props {
   data: StatisticCountVo[];
@@ -15,7 +15,7 @@ export function PieChart({ data, label }: Props) {
       id: item.name,
       value: item.count,
     }));
-  }, []);
+  }, [data.map]);
 
   return (
     <div className="flex flex-col overflow-hidden">

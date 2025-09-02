@@ -1,12 +1,17 @@
 "use client";
 
+import {
+  Button,
+  DatePicker,
+  type DateValue,
+  Input,
+  Textarea,
+} from "@heroui/react";
+import { addHours } from "date-fns";
 import { useRouter } from "next-nprogress-bar";
 import { useActionState, useEffect } from "react";
-import { Button, DatePicker, DateValue, Input, Textarea } from "@heroui/react";
-import { addHours } from "date-fns";
-
-import { MeetingRoom } from "~/meeting-room-booking-api";
 import { parseDate, parseResult } from "~/helper/parse";
+import type { MeetingRoom } from "~/meeting-room-booking-api";
 
 import { addBookingAction } from "./actions";
 
@@ -22,7 +27,7 @@ export function AddBookingForm({ id, name }: MeetingRoom) {
 
   useEffect(() => {
     parseResult(handleState, router.back);
-  }, [handleState]);
+  }, [handleState, router.back]);
 
   return (
     <form

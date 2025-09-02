@@ -1,5 +1,5 @@
 import { differenceInMinutes } from "date-fns";
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 
 import { AuthApi, BASE_PATH } from "~/meeting-room-booking-api";
 
@@ -42,7 +42,7 @@ export async function updateAuth(request: NextRequest) {
       await authApi.checkTokenExpiration({ token: refreshToken });
       const auth = await authApi.refreshToken({ refreshToken });
 
-      const now = new Date().getTime() + auth.expiresIn;
+      const now = Date.now() + auth.expiresIn;
 
       setCookie(res, ACCESS_TOKEN, auth.accessToken, now);
       setCookie(res, REFRESH_TOKEN, auth.refreshToken);

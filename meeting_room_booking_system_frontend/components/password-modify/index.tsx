@@ -1,11 +1,10 @@
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
+import { Button, Input } from "@heroui/react";
 import { useCountDown } from "ahooks";
-import { Input, Button } from "@heroui/react";
-
-import { UserDetailVo } from "~/meeting-room-booking-api";
+import { useActionState, useEffect, useState } from "react";
 import { parseResult } from "~/helper/parse";
+import type { UserDetailVo } from "~/meeting-room-booking-api";
 
 import { passwordModifyAction, passwordModifyCaptchaAction } from "./actions";
 

@@ -1,6 +1,6 @@
 import { Pagination } from "@heroui/react";
-import { useQueryStates } from "nuqs";
-import { FC } from "react";
+import type { useQueryStates } from "nuqs";
+import type { FC } from "react";
 
 interface Props {
   skip?: number;

@@ -7,7 +7,7 @@ import {
   type BookingApiFindAllBookingRequest,
   UserApi,
 } from "~/meeting-room-booking-api";
-import { BasicPageParams } from "~/types";
+import type { BasicPageParams } from "~/types";
 
 import { unbindBookingAction } from "./actions";
 

@@ -2,7 +2,7 @@
 
 import { Modal, ModalBody, ModalContent } from "@heroui/react";
 import { useRouter } from "next-nprogress-bar";
-import { PropsWithChildren } from "react";
+import type { PropsWithChildren } from "react";
 
 export default function MeetingRoomModalLayout({
   children,

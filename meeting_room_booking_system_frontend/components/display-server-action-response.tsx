@@ -27,7 +27,7 @@ export const DisplayServerActionResponse: React.FC<Props> = ({ result }) => {
         <div className="my-2 text-red-500">
           {Object.keys(validationErrors).map((key) => (
             <p key={key}>
-              {`${key}: ${validationErrors && validationErrors[key as keyof typeof validationErrors]}`}
+              {`${key}: ${validationErrors?.[key as keyof typeof validationErrors]}`}
             </p>
           ))}
         </div>

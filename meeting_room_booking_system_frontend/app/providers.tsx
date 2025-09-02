@@ -1,15 +1,14 @@
 "use client";
 
-import * as React from "react";
 import { HeroUIProvider } from "@heroui/react";
-import { useRouter } from "next-nprogress-bar";
+import { AppProgressBar as ProgressBar, useRouter } from "next-nprogress-bar";
 import {
   ThemeProvider as NextThemesProvider,
-  ThemeProviderProps,
+  type ThemeProviderProps,
 } from "next-themes";
-import { Toaster } from "sonner";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
-import { AppProgressBar as ProgressBar } from "next-nprogress-bar";
+import type * as React from "react";
+import { Toaster } from "sonner";
 
 // https://github.com/styled-components/styled-components/issues/3731#issuecomment-2192053161
 const ThemeProvider = (props: ThemeProviderProps): React.JSX.Element => {

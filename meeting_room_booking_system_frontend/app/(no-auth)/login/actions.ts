@@ -1,13 +1,13 @@
 "use server";
 
-import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 import { flattenValidationErrors } from "next-safe-action";
 
 import { apiInstance } from "~/helper/auth";
 import { ACCESS_TOKEN, EXPIRES_IN, REFRESH_TOKEN } from "~/helper/cookie";
-import { Auth, UserApi } from "~/meeting-room-booking-api";
 import { actionClient } from "~/helper/safe-action";
+import { type Auth, UserApi } from "~/meeting-room-booking-api";
 
 import { loginSchema } from "./schema";
 
@@ -42,7 +42,7 @@ export async function setAuthCookie({
 }: Auth) {
   const cookieStore = await cookies();
 
-  const now = new Date().getTime() + expiresIn;
+  const now = Date.now() + expiresIn;
 
   cookieStore.set(ACCESS_TOKEN, accessToken, {
     httpOnly: true,

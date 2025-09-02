@@ -1,19 +1,20 @@
-import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 import {
   Configuration,
-  ConfigurationParameters,
-  Middleware,
-  ResponseContext,
+  type ConfigurationParameters,
+  type Middleware,
+  type ResponseContext,
 } from "~/meeting-room-booking-api";
 
 import { ACCESS_TOKEN, basePath } from "./cookie";
 
-export async function apiInstance<T extends new (conf?: Configuration) => any>(
-  Api: T,
-  conf?: ConfigurationParameters,
-): Promise<InstanceType<T>> {
+export async function apiInstance<
+  T extends new (
+    conf?: Configuration,
+  ) => InstanceType<T>,
+>(Api: T, conf?: ConfigurationParameters): Promise<InstanceType<T>> {
   const accessToken = (await cookies()).get(ACCESS_TOKEN)?.value;
 
   const _conf = new Configuration({
@@ -30,7 +31,7 @@ export async function apiInstance<T extends new (conf?: Configuration) => any>(
 }
 
 const middleware: Middleware = {
-  async post(context: ResponseContext): Promise<Response | void> {
+  async post(context: ResponseContext): Promise<Response | undefined> {
     if (context.response.ok) {
       return;
     }
@@ -58,10 +59,8 @@ const middleware: Middleware = {
   },
 };
 
-const jsonRegex = new RegExp(
-  "^(:?application/json|[^;/ \\t]+/[^;/ \\t]+[+]json)[ \\t]*(:?;.*)?$",
-  "i",
-);
+const jsonRegex =
+  /^(:?application\/json|[^;/ \t]+\/[^;/ \t]+[+]json)[ \t]*(:?;.*)?$/i;
 
 function isJson(text?: string | null) {
   return !!text && jsonRegex.test(text);

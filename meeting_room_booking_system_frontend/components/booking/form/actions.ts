@@ -4,8 +4,8 @@ import { revalidatePath } from "next/cache";
 import { flattenValidationErrors } from "next-safe-action";
 
 import { apiInstance } from "~/helper/auth";
-import { BookingApi } from "~/meeting-room-booking-api";
 import { actionClient } from "~/helper/safe-action";
+import { BookingApi } from "~/meeting-room-booking-api";
 
 import { addBookingSchema } from "./schema";
 
@@ -16,7 +16,7 @@ export const addBookingAction = actionClient
   })
   .stateAction<{
     message?: string;
-  }>(async ({ parsedInput }, {}) => {
+  }>(async ({ parsedInput }) => {
     const bookingApi = await apiInstance(BookingApi);
 
     const text = await bookingApi.createBooking({

@@ -3,8 +3,8 @@
 import { flattenValidationErrors } from "next-safe-action";
 
 import { apiInstance } from "~/helper/auth";
-import { CaptchaApi, FileApi, UserApi } from "~/meeting-room-booking-api";
 import { actionClient } from "~/helper/safe-action";
+import { CaptchaApi, FileApi, UserApi } from "~/meeting-room-booking-api";
 
 import { profileModifySchema } from "./schema";
 

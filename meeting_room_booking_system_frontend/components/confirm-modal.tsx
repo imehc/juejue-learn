@@ -1,13 +1,13 @@
 import {
-  useDisclosure,
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
   Button,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  type useDisclosure,
 } from "@heroui/react";
-import { PropsWithChildren, ReactNode } from "react";
+import type { PropsWithChildren, ReactNode } from "react";
 
 interface Props extends PropsWithChildren {
   header?: ReactNode;

@@ -1,12 +1,11 @@
 "use client";
 
-import { useActionState, useEffect, useMemo, useState } from "react";
-import { useCountDown } from "ahooks";
 import { Avatar, Button, Input } from "@heroui/react";
+import { useCountDown } from "ahooks";
 import { useRouter } from "next-nprogress-bar";
-
-import { BASE_PATH, UserDetailVo } from "~/meeting-room-booking-api";
+import { useActionState, useEffect, useMemo, useState } from "react";
 import { parseResult } from "~/helper/parse";
+import { BASE_PATH, type UserDetailVo } from "~/meeting-room-booking-api";
 
 import { profileModifyAction, profileModifyCaptchaAction } from "./actions";
 
@@ -34,7 +33,7 @@ export function ProfileModifyForm({ headPic, nickName, email }: UserDetailVo) {
 
   useEffect(() => {
     parseResult(profileModifyState, router.refresh);
-  }, [profileModifyState]);
+  }, [profileModifyState, router.refresh]);
 
   useEffect(() => {
     parseResult(profileModifyCaptchaState, () => {
@@ -82,7 +81,7 @@ export function ProfileModifyForm({ headPic, nickName, email }: UserDetailVo) {
       // 使用minio OSS对象存储 基本地址可能随minio配置变化而变化
       if (process.env.NODE_ENV === "development") {
         return headPic.startsWith("uploads/")
-          ? BASE_PATH + "/" + headPic
+          ? `${BASE_PATH}/${headPic}`
           : `http://localhost:9000${headPic}`;
       }
 

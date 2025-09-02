@@ -3,7 +3,7 @@ import { apiInstance } from "~/helper/auth";
 import { parseZodErr } from "~/helper/parse";
 import { z } from "~/helper/zod";
 import { MeetingRoomApi } from "~/meeting-room-booking-api";
-import { BasicPageParams } from "~/types";
+import type { BasicPageParams } from "~/types";
 
 import { AddBookingForm } from "..";
 

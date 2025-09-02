@@ -1,6 +1,8 @@
 "use client";
 
-import { DateValue } from "@internationalized/date";
+import { Button, DatePicker, Input } from "@heroui/react";
+import type { DateValue } from "@internationalized/date";
+import clsx from "clsx";
 import {
   parseAsInteger,
   parseAsIsoDateTime,
@@ -9,11 +11,8 @@ import {
   useQueryStates,
 } from "nuqs";
 import { forwardRef, useImperativeHandle, useTransition } from "react";
-import clsx from "clsx";
-import { Input, DatePicker, Button } from "@heroui/react";
-
-import { BookingStatusEnum } from "~/meeting-room-booking-api";
 import { parseDate } from "~/helper/parse";
+import { BookingStatusEnum } from "~/meeting-room-booking-api";
 
 import { bookingListSchema } from "./schema";
 
@@ -55,16 +54,12 @@ export const BookingListTopContent = forwardRef<
     },
   );
 
-  useImperativeHandle(
-    ref,
-    () => ({
-      skip,
-      limit,
-      status,
-      setQueryState,
-    }),
-    [limit, skip, setQueryState],
-  );
+  useImperativeHandle(ref, () => ({
+    skip,
+    limit,
+    status,
+    setQueryState,
+  }));
 
   return (
     <div className="flex w-full flex-wrap md:flex-nowrap gap-4">

@@ -1,23 +1,22 @@
 import {
-  link as linkStyles,
-  Navbar as NextUINavbar,
-  NavbarContent,
-  NavbarMenu,
-  NavbarMenuToggle,
-  NavbarBrand,
-  NavbarItem,
-  NavbarMenuItem,
   Input,
   Kbd,
   Link,
+  link as linkStyles,
+  NavbarBrand,
+  NavbarContent,
+  NavbarItem,
+  NavbarMenu,
+  NavbarMenuItem,
+  NavbarMenuToggle,
+  Navbar as NextUINavbar,
 } from "@heroui/react";
-import NextLink from "next/link";
 import clsx from "clsx";
-import { FC, use } from "react";
-
-import { siteConfig } from "~/config/site";
+import NextLink from "next/link";
+import { type FC, use } from "react";
+import { GithubIcon, Logo, ProfileIcon, SearchIcon } from "~/components/icons";
 import { ThemeSwitch } from "~/components/theme-switch";
-import { GithubIcon, SearchIcon, Logo, ProfileIcon } from "~/components/icons";
+import { siteConfig } from "~/config/site";
 import { apiInstance } from "~/helper/auth";
 import { UserApi } from "~/meeting-room-booking-api";
 
@@ -128,7 +127,7 @@ export const Navbar: FC = () => {
         {searchInput}
         <div className="mx-4 mt-2 flex flex-col gap-2">
           {siteConfig.navMenuItems.map((item, index) => (
-            <NavbarMenuItem key={`${item}-${index}`}>
+            <NavbarMenuItem key={`${item}-${item.href}`}>
               <Link
                 color={
                   index === 2

@@ -1,11 +1,10 @@
 "use client";
 
 import { Button, Input } from "@heroui/react";
-import { useActionState, useEffect } from "react";
 import { useRouter } from "next-nprogress-bar";
-
-import { MeetingRoom } from "~/meeting-room-booking-api";
+import { useActionState, useEffect } from "react";
 import { parseResult } from "~/helper/parse";
+import type { MeetingRoom } from "~/meeting-room-booking-api";
 
 import { meetingRoomAction } from "./actions";
 
@@ -25,7 +24,7 @@ export function MeetingRoomForm({
 
   useEffect(() => {
     parseResult(handleState, router.back);
-  }, [handleState]);
+  }, [handleState, router.back]);
 
   return (
     <form
@@ -102,7 +101,7 @@ export function MeetingRoomForm({
         isDisabled={isPending}
         type="submit"
       >
-        {isPending ? `${!!id ? "更新" : "创建"}中...` : !!id ? "更新" : "创建"}
+        {isPending ? `${id ? "更新" : "创建"}中...` : id ? "更新" : "创建"}
       </Button>
     </form>
   );

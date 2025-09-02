@@ -1,5 +1,5 @@
 import { Chip } from "@heroui/react";
-import { FC } from "react";
+import type { FC } from "react";
 
 import { BookingStatusEnum } from "~/meeting-room-booking-api";
 

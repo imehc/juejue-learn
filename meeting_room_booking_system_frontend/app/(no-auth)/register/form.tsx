@@ -1,9 +1,9 @@
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
+import { Button, Divider, Input, Link } from "@heroui/react";
 import { useCountDown } from "ahooks";
 import { useRouter } from "next-nprogress-bar";
-import { Button, Divider, Input, Link } from "@heroui/react";
+import { useActionState, useEffect, useState } from "react";
 
 import { parseResult } from "~/helper/parse";
 
@@ -31,7 +31,7 @@ export function RegisterForm() {
     parseResult(registerState, () => {
       router.replace("/login");
     });
-  }, [registerState]);
+  }, [registerState, router.replace]);
 
   useEffect(() => {
     parseResult(registerCaptchaState, () => {

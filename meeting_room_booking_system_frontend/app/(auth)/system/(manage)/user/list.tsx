@@ -1,35 +1,37 @@
 "use client";
 
 import {
-  Table,
-  TableHeader,
-  TableColumn,
-  TableBody,
-  TableRow,
-  TableCell,
-  getKeyValue,
-  Input,
-  Pagination,
-  Divider,
-  useDisclosure,
   Avatar,
   Button,
+  Divider,
+  getKeyValue,
+  Input,
   Modal,
-  ModalContent,
-  ModalHeader,
   ModalBody,
+  ModalContent,
   ModalFooter,
+  ModalHeader,
+  Pagination,
+  Table,
+  TableBody,
+  TableCell,
+  TableColumn,
+  TableHeader,
+  TableRow,
+  useDisclosure,
 } from "@heroui/react";
 import { format } from "date-fns";
-import { parseAsInteger, parseAsString, useQueryStates } from "nuqs";
-import { FC, useEffect, useTransition } from "react";
 import { useAction } from "next-safe-action/hooks";
-
-import { BASE_PATH, User, UserListVo } from "~/meeting-room-booking-api";
+import { parseAsInteger, parseAsString, useQueryStates } from "nuqs";
+import { type FC, useEffect, useTransition } from "react";
 import { parseResult } from "~/helper/parse";
-
-import { userListSchema } from "./schema";
+import {
+  BASE_PATH,
+  type User,
+  type UserListVo,
+} from "~/meeting-room-booking-api";
 import { frozenUserAction } from "./actions";
+import { userListSchema } from "./schema";
 
 interface Props extends UserListVo {}
 

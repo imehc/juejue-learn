@@ -3,7 +3,7 @@
 import { Button } from "@heroui/react";
 import { useEffect } from "react";
 
-export default function Error({
+export default function ClientError({
   error,
   reset,
 }: {

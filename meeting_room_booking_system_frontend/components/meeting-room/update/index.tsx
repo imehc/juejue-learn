@@ -1,9 +1,9 @@
 import { notFound } from "next/navigation";
 
 import { apiInstance } from "~/helper/auth";
-import { MeetingRoomApi } from "~/meeting-room-booking-api";
 import { z } from "~/helper/zod";
-import { BasicPageParams } from "~/types";
+import { MeetingRoomApi } from "~/meeting-room-booking-api";
+import type { BasicPageParams } from "~/types";
 
 import { MeetingRoomForm } from "..";
 

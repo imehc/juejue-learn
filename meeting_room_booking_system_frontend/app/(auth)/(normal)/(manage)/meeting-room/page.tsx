@@ -6,7 +6,7 @@ import { UnknownError } from "~/components/unknown-error";
 import { apiInstance } from "~/helper/auth";
 import { parseZodErr } from "~/helper/parse";
 import { MeetingRoomApi, UserApi } from "~/meeting-room-booking-api";
-import { BasicPageParams } from "~/types";
+import type { BasicPageParams } from "~/types";
 
 export default async function MeetingRoomPage(props: BasicPageParams) {
   const searchParams = await props?.searchParams;

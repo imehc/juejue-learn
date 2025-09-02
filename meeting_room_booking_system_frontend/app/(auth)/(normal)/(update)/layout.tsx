@@ -1,5 +1,5 @@
-import { PropsWithChildren } from "react";
 import { Card, CardBody } from "@heroui/react";
+import type { PropsWithChildren } from "react";
 
 import { SlideBar } from "~/components/sidebar";
 import { apiInstance } from "~/helper/auth";

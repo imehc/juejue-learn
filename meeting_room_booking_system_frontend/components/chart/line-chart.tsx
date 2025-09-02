@@ -1,7 +1,7 @@
 "use client";
-import { BarDatum, ResponsiveBar } from "@nivo/bar";
+import { type BarDatum, ResponsiveBar } from "@nivo/bar";
 
-import { StatisticCountVo } from "~/meeting-room-booking-api";
+import type { StatisticCountVo } from "~/meeting-room-booking-api";
 
 interface Props {
   data: StatisticCountVo[];

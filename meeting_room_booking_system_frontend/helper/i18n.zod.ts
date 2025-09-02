@@ -1,13 +1,12 @@
 // 临时解决 zod 弃用 setErrorMap https://github.com/aiji42/zod-i18n/issues/222#issuecomment-3007821219
 
-import type { $ZodErrorMap } from "zod/v4/core";
-
 import i18next, { type i18n } from "i18next";
+import type { $ZodErrorMap } from "zod/v4/core";
 import en from "zod/v4/locales/zh-CN";
 
 const defaultErrorMap = en().localeError;
 
-const jsonStringifyReplacer = (_: string, value: any): any => {
+const jsonStringifyReplacer = (_: string, value: unknown): unknown => {
   if (typeof value === "bigint") {
     return value.toString();
   }
@@ -15,7 +14,7 @@ const jsonStringifyReplacer = (_: string, value: any): any => {
   return value;
 };
 
-function joinValues<T extends any[]>(array: T, separator = " | "): string {
+function joinValues<T extends unknown[]>(array: T, separator = " | "): string {
   return array
     .map((val) => (typeof val === "string" ? `'${val}'` : val))
     .join(separator);
@@ -25,7 +24,7 @@ const isRecord = (value: unknown): value is Record<string, unknown> => {
   if (typeof value !== "object" || value === null) return false;
 
   for (const key in value) {
-    if (!Object.prototype.hasOwnProperty.call(value, key)) return false;
+    if (!Object.hasOwn(value, key)) return false;
   }
 
   return true;
@@ -42,11 +41,9 @@ const getKeyAndValues = (
 
   if (isRecord(param)) {
     const key =
-      "key" in param && typeof param["key"] === "string"
-        ? param["key"]
-        : defaultKey;
+      "key" in param && typeof param.key === "string" ? param.key : defaultKey;
     const values =
-      "values" in param && isRecord(param["values"]) ? param["values"] : {};
+      "values" in param && isRecord(param.values) ? param.values : {};
 
     return { key, values };
   }
@@ -70,7 +67,7 @@ export type HandlePathOption = {
 
 const defaultNs = "zod";
 
-const parsedType = (data: any): string => {
+const parsedType = (data: unknown): string => {
   const t = typeof data;
 
   switch (t) {
@@ -87,7 +84,7 @@ const parsedType = (data: any): string => {
 
       if (
         Object.getPrototypeOf(data) !== Object.prototype &&
-        data.constructor
+        data?.constructor
       ) {
         return data.constructor.name;
       }
@@ -99,7 +96,7 @@ const parsedType = (data: any): string => {
 
 export const makeZodI18nMap: MakeZodI18nMap = (option) => (issue) => {
   const { t, ns, handlePath } = {
-    t: i18next.t as any as (...args: any[]) => any,
+    t: i18next.t,
     ns: defaultNs,
     ...option,
     handlePath:
@@ -194,10 +191,10 @@ export const makeZodI18nMap: MakeZodI18nMap = (option) => (issue) => {
       break;
     case "invalid_key":
       message = t("errors.invalid_key", {
-        count: Array.isArray(issue["keys"]) ? issue["keys"].length : 0,
-        keys: Array.isArray(issue["keys"])
-          ? joinValues(issue["keys"], ", ")
-          : String(issue["keys"]),
+        count: Array.isArray(issue.keys) ? issue.keys.length : 0,
+        keys: Array.isArray(issue.keys)
+          ? joinValues(issue.keys, ", ")
+          : String(issue.keys),
         ns,
         defaultValue: message,
         ...path,
@@ -250,21 +247,21 @@ export const makeZodI18nMap: MakeZodI18nMap = (option) => (issue) => {
     case "invalid_format":
       if (issue.format === "starts_with") {
         message = t("errors.invalid_format.startsWith", {
-          startsWith: issue["prefix"],
+          startsWith: issue.prefix,
           ns,
           defaultValue: message,
           ...path,
         });
       } else if (issue.format === "ends_with") {
         message = t("errors.invalid_format.endsWith", {
-          endsWith: issue["suffix"],
+          endsWith: issue.suffix,
           ns,
           defaultValue: message,
           ...path,
         });
       } else if (issue.format === "includes") {
         message = t("errors.invalid_format.includes", {
-          includes: issue["includes"],
+          includes: issue.includes,
           ns,
           defaultValue: message,
           ...path,
@@ -291,7 +288,7 @@ export const makeZodI18nMap: MakeZodI18nMap = (option) => (issue) => {
 
     case "custom": {
       const { key, values } = getKeyAndValues(
-        issue.params?.["i18n"],
+        issue.params?.i18n,
         "errors.custom",
       );
 
@@ -305,7 +302,7 @@ export const makeZodI18nMap: MakeZodI18nMap = (option) => (issue) => {
     }
     case "not_multiple_of":
       message = t("errors.not_multiple_of", {
-        multipleOf: issue["multipleOf"],
+        multipleOf: issue.multipleOf,
         ns,
         defaultValue: message,
         ...path,
