@@ -8,18 +8,18 @@ export class DbService {
   private readonly options: DbModuleOptions;
 
   /** 读取文件内容转换为对象 */
-  async read() {
+  async read<T>() {
     const filePath = this.options.path;
     try {
       await access(filePath);
-    } catch (error) {
+    } catch {
       return [];
     }
     const str = await readFile(filePath, { encoding: 'utf-8' });
     if (!str) {
       return [];
     }
-    return JSON.parse(str);
+    return JSON.parse(str) as T[];
   }
 
   /** 写入文件 */

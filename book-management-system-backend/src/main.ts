@@ -17,4 +17,6 @@ async function bootstrap() {
 
   await app.listen(6020);
 }
-bootstrap();
+bootstrap().catch((error) => {
+  console.error('启动失败', error);
+});
