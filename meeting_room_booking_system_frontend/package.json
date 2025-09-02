@@ -1,6 +1,6 @@
 {
-  "name": "next-app-template",
-  "version": "0.0.1",
+  "name": "@meeting-room-booking-system/frontend",
+  "version": "0.6.19",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack -p 6021",
@@ -8,7 +8,8 @@
     "start": "next start -p 6022",
     "lint": "biome check",
     "format": "biome format --write",
-    "gen:apis": "openapi-generator generate -g typescript-fetch -c ./openapi-generator.config.yaml -o ./meeting-room-booking-api -i ../meeting_room_booking_system_backend/openapi.yaml"
+    "gen:apis": "openapi-generator generate -g typescript-fetch -c ./openapi-generator.config.yaml -o ./meeting-room-booking-api -i ../meeting_room_booking_system_backend/openapi.yaml",
+    "version": "npm version"
   },
   "dependencies": {
     "@heroui/avatar": "^2.2.21",

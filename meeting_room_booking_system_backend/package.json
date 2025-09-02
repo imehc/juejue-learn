@@ -1,6 +1,6 @@
 {
-  "name": "meeting_room_booking_system_backend",
-  "version": "0.0.1",
+  "name": "@meeting-room-booking-system/backend",
+  "version": "0.6.19",
   "description": "",
   "author": "",
   "private": true,
@@ -23,7 +23,8 @@
     "migration:create": "npm run typeorm -- migration:create",
     "migration:generate": "npm run typeorm -- migration:generate -d ./src/data-source.ts",
     "migration:run": "npm run typeorm -- migration:run -d ./src/data-source.ts",
-    "migration:revert": "npm run typeorm -- migration:revert -d ./src/data-source.ts"
+    "migration:revert": "npm run typeorm -- migration:revert -d ./src/data-source.ts",
+    "version": "npm version"
   },
   "dependencies": {
     "@faker-js/faker": "^10.0.0",

@@ -1,3 +1,21 @@
+# 会议室预订系统
+
+## 项目结构
+
+本项目使用 pnpm monorepo 管理前后端代码：
+
+- `meeting_room_booking_system_backend`: 后端 NestJS 项目
+- `meeting_room_booking_system_frontend`: 前端 Next.js 项目
+
+## 依赖管理
+
+项目使用 pnpm 进行依赖管理，通过 monorepo 结构统一管理前后端依赖。
+
+安装依赖：
+```bash
+pnpm install
+```
+
 ## Usage
 
 ### 首次运行

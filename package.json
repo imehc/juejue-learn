@@ -1,0 +1,26 @@
+{
+  "name": "meeting-room-booking-system",
+  "version": "0.6.19",
+  "description": "会议室预订系统",
+  "private": true,
+  "scripts": {
+    "build": "pnpm --filter='./meeting_room_booking_system_*' build",
+    "dev": "concurrently \"pnpm --filter='./meeting_room_booking_system_backend' start:dev\" \"pnpm --filter='./meeting_room_booking_system_frontend' dev\"",
+    "lint": "pnpm --filter='./meeting_room_booking_system_*' lint",
+    "format": "pnpm --filter='./meeting_room_booking_system_*' format",
+    "test": "pnpm --filter='./meeting_room_booking_system_*' test",
+    "init-data": "make init-data",
+    "version:major": "npm version major --no-git-tag-version && pnpm --filter='./meeting_room_booking_system_*' version major --no-git-tag-version && git add . && node -e \"const v=require('./package.json').version; const {execFileSync} = require('child_process'); execFileSync('git', ['commit', '-m', 'chore(release): bump to v' + v], {stdio: 'inherit'});\"",
+    "version:minor": "npm version minor --no-git-tag-version && pnpm --filter='./meeting_room_booking_system_*' version minor --no-git-tag-version && git add . && node -e \"const v=require('./package.json').version; const {execFileSync} = require('child_process'); execFileSync('git', ['commit', '-m', 'chore(release): bump to v' + v], {stdio: 'inherit'});\"",
+    "version:patch": "npm version patch --no-git-tag-version && pnpm --filter='./meeting_room_booking_system_*' version patch --no-git-tag-version && git add . && node -e \"const v=require('./package.json').version; const {execFileSync} = require('child_process'); execFileSync('git', ['commit', '-m', 'chore(release): bump to v' + v], {stdio: 'inherit'});\"",
+    "version:set": "npm version --no-git-tag-version",
+    "version:tag": "git tag v$(node -p \"require('./package.json').version\")"
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.1"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=10.0.0"
+  }
+}
