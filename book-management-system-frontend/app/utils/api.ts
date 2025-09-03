@@ -1,4 +1,4 @@
-import { BASE_PATH, Configuration, type ConfigurationParameters } from '~/book-management-system-api'
+import { BASE_PATH, Configuration, type ConfigurationParameters } from '~~/book-management-system-api'
 
 export const USERNAME = 'username'
 

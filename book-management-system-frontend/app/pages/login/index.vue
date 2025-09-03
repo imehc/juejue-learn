@@ -6,45 +6,47 @@
       class="space-y-4"
       @submit="onSubmit"
     >
-      <UFormGroup
+      <UFormField
         label="用户名"
         name="username"
       >
         <UInput
           v-model="state.username"
+          class="w-full"
           autocomplete="on"
         />
-      </UFormGroup>
-      <UFormGroup
+      </UFormField>
+      <UFormField
         label="密码"
         name="password"
       >
         <UInput
           v-model="state.password"
+          class="w-full"
           autocomplete="on"
           type="password"
         />
-      </UFormGroup>
+      </UFormField>
       <UButton
         type="submit"
         block
         :loading="isPending"
       >
-        注册
+        登录
       </UButton>
     </UForm>
-    <UDivider
+    <USeparator
       label="OR"
       class="my-3"
     />
     <div class="text-right">
       <UButton
-        to="login"
+        to="register"
         target="_self"
         variant="link"
         :disabled="isPending"
       >
-        已有账号？去登录
+        没有账号？去注册
       </UButton>
     </div>
   </div>
@@ -73,15 +75,15 @@ const isPending = ref(false)
 
 const onSubmit = async (event: FormSubmitEvent<AuthSchemaValue>) => {
   isPending.value = true
-  await $fetch('/api/auth/register', {
+  await $fetch('/api/auth/login', {
     method: 'POST',
     body: event.data,
     onResponseError: (error) => {
-      toast.add({ title: error.response._data.message ?? '注册失败', color: 'red' })
+      toast.add({ title: error.response._data.message ?? '登录失败', color: 'error' })
     },
   })
     .then(() => {
-      toast.add({ title: '注册成功' })
+      toast.add({ title: '登录成功' })
       cookie.value = event.data.username
       router.replace('book')
     })

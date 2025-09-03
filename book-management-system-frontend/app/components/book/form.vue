@@ -1,14 +1,17 @@
 <template>
   <UModal
-    v-model="isOpen"
+    v-model:open="isOpen"
+    :title="`${formType === 'create' ? '添加' : formType === 'update' ? '修改' : '查看'}图书`"
+    description=""
     @close="handleClose"
   >
-    <UContainer class="w-full">
+    <template #body>
       <UForm
+        :id="form"
         ref="formRef"
         :schema="bookSchema"
         :state="state"
-        class="space-y-4 my-5"
+        class="space-y-4"
         :validate-on="['change', 'input', 'submit']"
         @submit="onSubmit"
       >
@@ -19,37 +22,40 @@
           :title="formType === 'info' ? '图书详情' : formType === 'update' ? '编辑图书' : '新增图书'"
           :description="formType === 'info' ? '' : '请完善图书信息'"
         />
-        <UFormGroup
+        <UFormField
           label="图书"
           name="name"
         >
           <UInput
             v-model="state.name"
+            class="w-full"
             autocomplete="on"
             :disabled="formType === 'info'"
           />
-        </UFormGroup>
-        <UFormGroup
+        </UFormField>
+        <UFormField
           label="作者"
           name="author"
         >
           <UInput
             v-model="state.author"
+            class="w-full"
             autocomplete="on"
             :disabled="formType === 'info'"
           />
-        </UFormGroup>
-        <UFormGroup
+        </UFormField>
+        <UFormField
           label="描述"
           name="description"
         >
           <UTextarea
             v-model="state.description"
+            class="w-full"
             autocomplete="on"
             :disabled="formType === 'info'"
           />
-        </UFormGroup>
-        <UFormGroup
+        </UFormField>
+        <UFormField
           label="封面"
           name="cover"
         >
@@ -75,24 +81,27 @@
               class="object-cover bg-center bg-no-repeat bg-cover"
             />
           </label>
-        </UFormGroup>
-        <UButton
-          type="submit"
-          block
-          :loading="isPending"
-          :disabled="isPending"
-        >
-          {{ isPending ? '提交中...' : formType === 'info' ? '关闭' : '提交' }}
-        </UButton>
+        </UFormField>
       </UForm>
-    </UContainer>
+    </template>
+    <template #footer>
+      <UButton
+        type="submit"
+        block
+        :loading="isPending"
+        :disabled="isPending"
+        :form="form"
+      >
+        {{ isPending ? '提交中...' : formType === 'info' ? '关闭' : '提交' }}
+      </UButton>
+    </template>
   </UModal>
 </template>
 
 <script setup lang="ts">
 import { bookSchema, initBook, type BookSchemaValue, type IFormType } from '~/schemas'
 import type { FormSubmitEvent } from '#ui/types'
-import { BASE_PATH, type BookItem } from '~/book-management-system-api'
+import { BASE_PATH, type BookItem } from '~~/book-management-system-api'
 
 defineOptions({
   name: 'BookForm',
@@ -109,6 +118,7 @@ const formType = defineModel<IFormType>('type', { default: 'create' })
 const { refresh } = defineProps<Props>()
 
 const toast = useToast()
+const form = useId()
 
 const isPending = ref(false)
 const uploadImagePending = ref(false)
@@ -125,7 +135,7 @@ const onSubmit = async (event: FormSubmitEvent<BookSchemaValue>) => {
     body: event.data,
     onResponseError: (error) => {
       const text = (formType.value === 'create') ? '创建失败' : '更新失败'
-      toast.add({ title: error.response._data.message ?? text, color: 'red' })
+      toast.add({ title: error.response._data.message ?? text, color: 'error' })
     },
   })
     .then(() => {
@@ -156,7 +166,7 @@ const onFileChange = async (event: Event) => {
       toast.add({ title: '上传成功' })
     })
     .catch(() => {
-      toast.add({ title: '上传失败', color: 'red' })
+      toast.add({ title: '上传失败', color: 'error' })
     })
     .finally(() => {
       uploadImagePending.value = false

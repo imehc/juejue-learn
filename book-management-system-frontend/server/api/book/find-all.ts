@@ -1,5 +1,5 @@
-import type { FindAllBooksRequest } from '~/book-management-system-api'
-import { BookApi, ResponseError } from '~/book-management-system-api'
+import type { FindAllBooksRequest } from '~~/book-management-system-api'
+import { BookApi, ResponseError } from '~~/book-management-system-api'
 import { apiInstance } from '~/utils/api'
 
 export default defineEventHandler(async (event) => {

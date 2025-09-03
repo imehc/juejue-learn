@@ -6,9 +6,16 @@ export default defineNuxtConfig({
     pageTransition: { name: 'page', mode: 'out-in' },
     layoutTransition: { name: 'layout', mode: 'out-in' },
   },
+  css: ['~/assets/css/main.css'],
+  ui: {
+    fonts: false,
+  },
   routeRules: {
     '/': { redirect: 'book' },
     '/**': { appMiddleware: 'auth' },
+  },
+  devServer: {
+    port: 6021,
   },
   // https://nuxt.com/docs/getting-started/transitions#view-transitions-api-experimental
   experimental: {
@@ -19,5 +26,4 @@ export default defineNuxtConfig({
     config: {
       stylistic: true,
     },
-  },
-})
+  } })

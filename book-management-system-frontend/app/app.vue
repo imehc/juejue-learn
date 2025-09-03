@@ -7,11 +7,11 @@
     />
   </Head>
 
-  <UNotifications class="pointer-events-none" />
-
   <NuxtLoadingIndicator />
   <NuxtLayout>
-    <NuxtPage />
+    <UApp :toaster="{ position: 'top-center' }">
+      <NuxtPage />
+    </UApp>
   </NuxtLayout>
 </template>
 

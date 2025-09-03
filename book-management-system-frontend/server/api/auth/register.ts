@@ -1,5 +1,5 @@
-import type { User } from '~/book-management-system-api'
-import { ResponseError, UserApi } from '~/book-management-system-api'
+import type { User } from '~~/book-management-system-api'
+import { ResponseError, UserApi } from '~~/book-management-system-api'
 import { apiInstance } from '~/utils/api'
 
 export default defineEventHandler(async (event) => {
