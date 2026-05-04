@@ -32,7 +32,7 @@
     "@heroui/system": "^2.4.28",
     "@heroui/table": "^2.2.25",
     "@heroui/tooltip": "^2.2.22",
-    "@internationalized/date": "^3.9.0",
+    "@internationalized/date": "^3.12.1",
     "@nivo/bar": "^0.99.0",
     "@nivo/core": "^0.99.0",
     "@nivo/pie": "^0.99.0",
