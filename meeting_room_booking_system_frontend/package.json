@@ -29,7 +29,7 @@
     "@heroui/popover": "^2.3.25",
     "@heroui/select": "^2.4.26",
     "@heroui/switch": "^2.2.23",
-    "@heroui/system": "^2.4.21",
+    "@heroui/system": "^2.4.28",
     "@heroui/table": "^2.2.25",
     "@heroui/tooltip": "^2.2.22",
     "@internationalized/date": "^3.9.0",
