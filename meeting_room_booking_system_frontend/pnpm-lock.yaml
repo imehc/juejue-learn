@@ -102,8 +102,8 @@ importers:
         specifier: ~12.38.0
         version: 12.38.0(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       i18next:
-        specifier: ^26.0.10
-        version: 26.0.10(typescript@6.0.3)
+        specifier: ^26.1.0
+        version: 26.1.0(typescript@6.0.3)
       intl-messageformat:
         specifier: ^11.2.4
         version: 11.2.4
@@ -139,7 +139,7 @@ importers:
         version: 3.0.1(zod@4.4.3)
       zod-i18n-map:
         specifier: ^2.27.0
-        version: 2.27.0(i18next@26.0.10(typescript@6.0.3))(zod@4.4.3)
+        version: 2.27.0(i18next@26.1.0(typescript@6.0.3))(zod@4.4.3)
     devDependencies:
       '@biomejs/biome':
         specifier: ^2.4.15
@@ -1772,8 +1772,8 @@ packages:
   graceful-fs@4.2.11:
     resolution: {integrity: sha512-RbJ5/jmFcNNCcDV5o9eTnBLJ/HszWV0P73bc+Ff4nS/rJj+YaS6IGyiOL0VoBYX+l1Wrl3k63h/KrH+nhJ0XvQ==}
 
-  i18next@26.0.10:
-    resolution: {integrity: sha512-k3yGPAlWR2RdMYoVXJoDZDT87qeHIWKH7gVksdZMpRty7QX/D9QZeYGvN08KGbKHke9wn01eYT+EEsrqX/YTlw==}
+  i18next@26.1.0:
+    resolution: {integrity: sha512-dIU6td04DvQuIqVst5S9g0GviTmhZ0DYD4b9ociVGJmuCa5vZ2de/t+Enf4olvj87mF8Y2lwjNQBwC9QZsvzKQ==}
     peerDependencies:
       typescript: ^5 || ^6
     peerDependenciesMeta:
@@ -4387,7 +4387,7 @@ snapshots:
 
   graceful-fs@4.2.11: {}
 
-  i18next@26.0.10(typescript@6.0.3):
+  i18next@26.1.0(typescript@6.0.3):
     optionalDependencies:
       typescript: 6.0.3
 
@@ -4753,9 +4753,9 @@ snapshots:
       '@rvf/set-get': 7.0.1
       zod: 4.4.3
 
-  zod-i18n-map@2.27.0(i18next@26.0.10(typescript@6.0.3))(zod@4.4.3):
+  zod-i18n-map@2.27.0(i18next@26.1.0(typescript@6.0.3))(zod@4.4.3):
     dependencies:
-      i18next: 26.0.10(typescript@6.0.3)
+      i18next: 26.1.0(typescript@6.0.3)
       zod: 4.4.3
 
   zod@4.4.3: {}
