@@ -43,7 +43,7 @@
     "clsx": "2.1.1",
     "date-fns": "^4.1.0",
     "framer-motion": "~12.38.0",
-    "i18next": "^26.1.0",
+    "i18next": "^26.2.0",
     "intl-messageformat": "^11.2.5",
     "next": "16.2.6",
     "next-nprogress-bar": "^2.4.7",
