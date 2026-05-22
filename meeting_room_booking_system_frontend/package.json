@@ -44,7 +44,7 @@
     "date-fns": "^4.2.1",
     "framer-motion": "~12.39.0",
     "i18next": "^26.2.0",
-    "intl-messageformat": "^11.2.6",
+    "intl-messageformat": "^11.2.7",
     "next": "16.2.6",
     "next-nprogress-bar": "^2.4.7",
     "next-safe-action": "^8.5.2",
