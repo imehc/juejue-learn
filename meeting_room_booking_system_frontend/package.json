@@ -37,7 +37,7 @@
     "@nivo/core": "^0.99.0",
     "@nivo/pie": "^0.99.0",
     "@react-aria/ssr": "3.10.1",
-    "@react-aria/visually-hidden": "3.9.0",
+    "@react-aria/visually-hidden": "3.9.1",
     "ahooks": "^3.9.7",
     "autoprefixer": "10.5.0",
     "clsx": "2.1.1",
