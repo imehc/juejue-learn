@@ -157,8 +157,8 @@ importers:
         specifier: 19.2.3
         version: 19.2.3(@types/react@19.2.17)
       tailwind-variants:
-        specifier: 3.2.2
-        version: 3.2.2(tailwind-merge@3.3.1)(tailwindcss@4.3.3)
+        specifier: 3.3.0
+        version: 3.3.0(tailwind-merge@3.3.1)(tailwindcss@4.3.3)
       tailwindcss:
         specifier: 4.3.3
         version: 4.3.3
@@ -2238,14 +2238,16 @@ packages:
       tailwind-merge:
         optional: true
 
-  tailwind-variants@3.2.2:
-    resolution: {integrity: sha512-Mi4kHeMTLvKlM98XPnK+7HoBPmf4gygdFmqQPaDivc3DpYS6aIY6KiG/PgThrGvii5YZJqRsPz0aPyhoFzmZgg==}
-    engines: {node: '>=16.x', pnpm: '>=7.x'}
+  tailwind-variants@3.3.0:
+    resolution: {integrity: sha512-t1QsB42dcwUdaCEArO0tRZcP0nbCcAmJKRYCs7jmwYSFOCXlGqgO8c0TrCYm9OranYmT6i9YOi8LFo2gxmxnow==}
+    engines: {node: '>=16.9.x', pnpm: '>=7.x'}
     peerDependencies:
       tailwind-merge: '>=3.0.0'
       tailwindcss: '*'
     peerDependenciesMeta:
       tailwind-merge:
+        optional: true
+      tailwindcss:
         optional: true
 
   tailwindcss@4.3.3:
@@ -4926,11 +4928,10 @@ snapshots:
     optionalDependencies:
       tailwind-merge: 3.3.1
 
-  tailwind-variants@3.2.2(tailwind-merge@3.3.1)(tailwindcss@4.3.3):
-    dependencies:
-      tailwindcss: 4.3.3
+  tailwind-variants@3.3.0(tailwind-merge@3.3.1)(tailwindcss@4.3.3):
     optionalDependencies:
       tailwind-merge: 3.3.1
+      tailwindcss: 4.3.3
 
   tailwindcss@4.3.3: {}
 
