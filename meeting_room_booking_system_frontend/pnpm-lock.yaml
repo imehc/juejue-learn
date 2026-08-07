@@ -157,8 +157,8 @@ importers:
         specifier: 19.2.4
         version: 19.2.4(@types/react@19.2.18)
       tailwind-variants:
-        specifier: 3.3.0
-        version: 3.3.0(tailwind-merge@3.3.1)(tailwindcss@4.3.3)
+        specifier: 3.3.1
+        version: 3.3.1(tailwind-merge@3.3.1)(tailwindcss@4.3.3)
       tailwindcss:
         specifier: 4.3.3
         version: 4.3.3
@@ -2292,8 +2292,8 @@ packages:
       tailwind-merge:
         optional: true
 
-  tailwind-variants@3.3.0:
-    resolution: {integrity: sha512-t1QsB42dcwUdaCEArO0tRZcP0nbCcAmJKRYCs7jmwYSFOCXlGqgO8c0TrCYm9OranYmT6i9YOi8LFo2gxmxnow==}
+  tailwind-variants@3.3.1:
+    resolution: {integrity: sha512-4pAvwUtM4HKBiRZftncAbpn6V9Hhwoa5Fl7O2u5zbp7Z5Cvu+/o/6+176WY3WCEES209543quG8zFIcXCsc5Jw==}
     engines: {node: '>=16.9.x', pnpm: '>=7.x'}
     peerDependencies:
       tailwind-merge: '>=3.0.0'
@@ -4999,7 +4999,7 @@ snapshots:
     optionalDependencies:
       tailwind-merge: 3.3.1
 
-  tailwind-variants@3.3.0(tailwind-merge@3.3.1)(tailwindcss@4.3.3):
+  tailwind-variants@3.3.1(tailwind-merge@3.3.1)(tailwindcss@4.3.3):
     optionalDependencies:
       tailwind-merge: 3.3.1
       tailwindcss: 4.3.3
