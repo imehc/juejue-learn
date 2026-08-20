@@ -6,18 +6,26 @@
 
 version: 2
 updates:
-  - package-ecosystem: "github-actions" 
-    directory: "/" 
+  - package-ecosystem: "github-actions"
+    directory: "/"
     schedule:
       interval: "daily"
 
-  - package-ecosystem: "npm"
+  # pnpm workspace 的根 lockfile 包含后端/前端所有依赖，
+  # 用 pnpm ecosystem 才能让 Dependabot 正确解析 pnpm-lock.yaml
+  - package-ecosystem: "pnpm"
+    versioning-strategy: increase
+    directory: "/"
+    schedule:
+      interval: "daily"
+
+  - package-ecosystem: "pnpm"
     versioning-strategy: increase
     directory: "/meeting_room_booking_system_backend"
     schedule:
       interval: "daily"
 
-  - package-ecosystem: "npm"
+  - package-ecosystem: "pnpm"
     versioning-strategy: increase
     directory: "/meeting_room_booking_system_frontend"
     schedule:
