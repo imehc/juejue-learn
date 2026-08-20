@@ -1,4 +1,4 @@
-name: CI for Fronted and Backend 
+name: CI for Fronted and Backend
 
 on:
   push:
@@ -8,29 +8,139 @@ on:
     branches:
       - main
 
+# 同一个 PR 上的新 push 取消掉还在跑的旧 run；push 到 main 不取消
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+
 jobs:
-  build-fronted-with-nextjs:
+  # 判断这次改动碰到了哪个子项目，只跑对应的 build/test
+  changes:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      backend: ${{ steps.filter.outputs.backend }}
+      frontend: ${{ steps.filter.outputs.frontend }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: dorny/paths-filter@v4
+        id: filter
+        with:
+          filters: |
+            shared: &shared
+              - '.github/workflows/ci.yml'
+              - '.github/scripts/**'
+              - 'package.json'
+              - 'pnpm-lock.yaml'
+              - 'pnpm-workspace.yaml'
+              - '.npmrc'
+            backend:
+              - *shared
+              - 'meeting_room_booking_system_backend/**'
+            frontend:
+              - *shared
+              - 'meeting_room_booking_system_frontend/**'
+              # 前端构建要用后端的 openapi.yaml 生成 API 客户端
+              - 'meeting_room_booking_system_backend/openapi.yaml'
+
+  build-backend-with-nestjs:
+    needs: changes
+    if: needs.changes.outputs.backend == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
       - uses: pnpm/action-setup@v6.0.10
         with:
-          version: 9 
+          version: 9
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 20
+      - name: Run Nest.js setup script
+        run: bash ./.github/scripts/backend-setup.sh
+
+  build-fronted-with-nextjs:
+    needs: changes
+    if: needs.changes.outputs.frontend == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6.0.10
+        with:
+          version: 9
       - uses: actions/setup-node@v7
         with:
           node-version: 20
       - name: Run Next.js setup script
         run: bash ./.github/scripts/frontend-setup.sh
 
-  build-backend-with-nestjs:
+  # 汇总门禁：被 paths 过滤跳过的 build job 算通过，失败/取消算不通过。
+  # changes 必须 success —— 否则 build job 全被跳过，门禁会被“空跑”骗过去。
+  # automerge 只依赖这一个 job，未来加 job 也不用改 automerge。
+  ci-gate:
+    needs:
+      - changes
+      - build-backend-with-nestjs
+      - build-fronted-with-nextjs
+    if: always()
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
-      - uses: pnpm/action-setup@v6.0.10
+      - name: Check upstream job results
+        env:
+          CHANGES: ${{ needs.changes.result }}
+          BACKEND: ${{ needs.build-backend-with-nestjs.result }}
+          FRONTEND: ${{ needs.build-fronted-with-nextjs.result }}
+        run: |
+          echo "changes=$CHANGES backend=$BACKEND frontend=$FRONTEND"
+          if [ "$CHANGES" != "success" ]; then
+            echo "::error::change detection did not succeed ($CHANGES)"
+            exit 1
+          fi
+          for r in "$BACKEND" "$FRONTEND"; do
+            case "$r" in
+              success|skipped) ;;
+              *) echo "::error::CI gate failed (job result: $r)"; exit 1 ;;
+            esac
+          done
+          echo "CI gate passed."
+
+  # Dependabot 的 patch/minor 更新，在 ci-gate 通过后自动合并
+  automerge-dependabot:
+    needs: ci-gate
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.event.pull_request.user.login == 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Fetch Dependabot metadata
+        id: meta
+        uses: dependabot/fetch-metadata@v3
         with:
-          version: 9 
-      - uses: actions/setup-node@v7
-        with:
-          node-version: 20
-      - name: Run Nest.js setup script
-        run: bash ./.github/scripts/backend-setup.sh
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Approve and squash-merge
+        if: steps.meta.outputs.update-type != 'version-update:semver-major'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+        run: |
+          gh pr review --approve "$PR_URL"
+          gh pr merge --squash --delete-branch "$PR_URL"
+
+      - name: Skip major updates
+        if: steps.meta.outputs.update-type == 'version-update:semver-major'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+        run: |
+          gh pr comment "$PR_URL" \
+            --body "CI 已通过，但这是 major 升级，需要人工确认后再合并。"
