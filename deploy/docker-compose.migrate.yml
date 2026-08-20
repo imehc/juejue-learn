@@ -1,9 +1,13 @@
 # ─────────────────────────────────────────────────────────────
-# 仅用于对生产库执行 TypeORM 迁移的临时 override。
+# 仅用于对生产库手动执行 TypeORM 迁移的临时 override。
 #
-# 迁移脚本需要 ts-node 和 src/，生产镜像里只有编译后的 dist/，所以迁移
-# 在主机上跑；而 docker-compose.yml 故意不把 3306 映射出来。这份 override
-# 只在迁移期间把端口开到 127.0.0.1，跑完由 make prod-migrate 自动收回。
+# 平时不需要：后端开了 migrationsRun（见 src/app.module.ts），容器启动时
+# 会自动执行未跑过的迁移。这份 override 只在需要手动补跑或排查时用。
+#
+# 迁移脚本需要 ts-node 和 src/，生产镜像里只有编译后的 dist/，所以手动
+# 迁移在主机上跑；而 docker-compose.yml 故意不把 3306 映射出来。这份
+# override 只在迁移期间把端口开到 127.0.0.1，跑完由 make prod-migrate
+# 自动收回。
 #
 # 不要另起一个 mysqld 容器去连同一个数据卷 —— 两个实例同时写会损坏数据。
 #
