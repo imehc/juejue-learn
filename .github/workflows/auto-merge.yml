@@ -93,12 +93,11 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # ci-gate 通过后直接合并（squash）。
-      # 不用 --auto：--auto 要求目标分支开启"Allow auto-merge"分支保护规则，
-      # 本仓库 main 未配置分支保护，会导致 enablePullRequestAutoMerge 错误。
-      # 这里 CI 门禁已通过才走到此步，直接合并即可，避免竞态。
+      # ci-gate 通过后，用 GitHub 原生 auto-merge 合并（squash）。
+      # 使用 --auto 让 GitHub 在分支保护（Allow auto-merge）条件满足后自动完成合并。
+      # 目标分支 main 已开启 Allow auto-merge 分支保护规则。
       - name: Merge Dependabot PR
-        run: gh pr merge "$PR_URL" --squash
+        run: gh pr merge "$PR_URL" --squash --auto
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
