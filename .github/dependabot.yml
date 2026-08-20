@@ -6,8 +6,15 @@
 
 version: 2
 updates:
-  - package-ecosystem: "github-actions" 
-    directory: "/" 
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "daily"
+
+  # 它会自动识别并解析 pnpm-lock.yaml（含 workspace 根 lockfile）
+  - package-ecosystem: "npm"
+    versioning-strategy: increase
+    directory: "/"
     schedule:
       interval: "daily"
 
