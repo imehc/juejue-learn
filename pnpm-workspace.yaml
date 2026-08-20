@@ -1,3 +1,32 @@
 packages:
   - "meeting_room_booking_system_backend"
   - "meeting_room_booking_system_frontend"
+
+# pnpm 11 起这些设置不再从 .npmrc 读取，必须写在这里；
+# .npmrc 里保留同名项是为了兼容仍在用 pnpm 10 的环境。
+
+# 每个子项目各自维护 lockfile，不合并成根目录一份
+sharedWorkspaceLockfile: false
+# package.json 里的 engines 视为硬约束，版本不符直接报错
+engineStrict: true
+
+# @heroui/date-picker 把 @internationalized/date 钉死在 3.12.0，应用和
+# @react-aria/* 用的是较新的 3.12.3。装成两份副本后 DateValue 里的 #private
+# 字段互不兼容，DatePicker 的 value/maxValue/minValue 全报 TS2322，收敛成一份。
+# 注意必须写在这里：workspace 成员自己 package.json 里的 pnpm.overrides
+# 不生效，overrides 只认工作区根。
+overrides:
+  '@internationalized/date': 3.12.3
+
+# @heroui/shared-utils 的 postinstall 会按 react 大版本把 dist/demi/reactXX
+# 覆盖到 dist（默认产物是 react18 那份）。pnpm 默认不跑依赖的构建脚本，
+# 不显式放行的话安装会以 ERR_PNPM_IGNORED_BUILDS 失败，
+# 且 dist 会停留在 react18 变体。
+# pnpm 11 用 allowBuilds 取代了 onlyBuiltDependencies。
+allowBuilds:
+  '@heroui/shared-utils': true
+  # 后端侧：jest-resolve → unrs-resolver，postinstall 选取当前平台的原生绑定
+  unrs-resolver: true
+  # 后端侧：@nestjs/swagger → swagger-ui-dist → @scarf/scarf，postinstall 只做
+  # 安装量埋点上报，对构建无用，明确拒绝
+  '@scarf/scarf': false

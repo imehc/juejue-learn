@@ -3,3 +3,8 @@
 
 # node
 node_modules
+
+# 真实配置文件，只提交 deploy/ 下的 .example 模板
+.env
+!.env.example
+deploy/backend.env.yaml

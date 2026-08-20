@@ -825,7 +825,7 @@ paths:
       summary: ''
       tags:
         - statistic
-  /minio/presigned-url:
+  /oss/presigned-url:
     get:
       description: 上传文件到OSS
       operationId: get-presigned-url

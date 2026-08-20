@@ -1,0 +1,166 @@
+# ─────────────────────────────────────────────────────────────
+# 开发环境：只跑基础设施（MySQL / Redis / RustFS）
+#
+# 前后端用 pnpm dev 跑在主机上，所以这里把端口映射出来。
+# 端口只绑 127.0.0.1，不暴露到局域网。
+#
+#   cd deploy && docker compose -f docker-compose.dev.yml up -d
+#   或在仓库根目录执行 make dev-up
+#
+# 需要先准备 deploy/.env（cp .env.example .env）。Compose 会自动读取
+# 与 compose 文件同目录的 .env 来解析 ${VAR}，mysql 也用它做 env_file。
+# ─────────────────────────────────────────────────────────────
+
+name: meeting-room-dev
+
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: mrbs-dev-mysql
+    command: >-
+      mysqld
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_general_ci
+    env_file:
+      - ./.env
+    ports:
+      - '127.0.0.1:3306:3306'
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - mysqladmin ping -h 127.0.0.1 -u root --password="$$MYSQL_ROOT_PASSWORD"
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 40s
+    restart: unless-stopped
+    networks:
+      - common-network
+
+  redis:
+    image: redis:8
+    container_name: mrbs-dev-redis
+    ports:
+      - '127.0.0.1:6379:6379'
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+    networks:
+      - common-network
+
+  # RustFS：S3 兼容对象存储。MinIO 官方仓库已于 2026-02 归档，
+  # 且社区版从 2025-05 起移除了管理控制台，故改用 RustFS。
+  # 后端用 AWS 官方 S3 SDK（@aws-sdk/client-s3）走标准 S3 协议访问，
+  # 不依赖任何厂商特有 API，换 S3 兼容实现不用改代码。
+  rustfs:
+    image: rustfs/rustfs:1.0.0-rc.1
+    container_name: mrbs-dev-rustfs
+    depends_on:
+      rustfs-permission-helper:
+        condition: service_completed_successfully
+    security_opt:
+      - 'no-new-privileges:true'
+    environment:
+      RUSTFS_VOLUMES: /data
+      RUSTFS_ADDRESS: 0.0.0.0:9000
+      RUSTFS_CONSOLE_ADDRESS: 0.0.0.0:9001
+      RUSTFS_CONSOLE_ENABLE: 'true'
+      RUSTFS_ACCESS_KEY: ${RUSTFS_ACCESS_KEY:?RUSTFS_ACCESS_KEY 未设置，请检查 .env}
+      RUSTFS_SECRET_KEY: ${RUSTFS_SECRET_KEY:?RUSTFS_SECRET_KEY 未设置，请检查 .env}
+      RUSTFS_OBS_LOGGER_LEVEL: info
+    ports:
+      - '127.0.0.1:9000:9000' # S3 API
+      - '127.0.0.1:9001:9001' # 控制台
+    volumes:
+      - rustfs-data:/data
+      - rustfs-logs:/logs
+    healthcheck:
+      test: ['CMD', 'curl', '-fsS', 'http://127.0.0.1:9000/health']
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    restart: unless-stopped
+    networks:
+      - common-network
+
+  # RustFS 容器以 uid/gid 10001 运行，named volume 初始属主是 root，
+  # 需要先修正属主，否则 RustFS 无法写入 /data。跑完即退出。
+  rustfs-permission-helper:
+    image: alpine:3
+    container_name: mrbs-dev-rustfs-perm
+    volumes:
+      - rustfs-data:/data
+      - rustfs-logs:/logs
+    command: sh -c 'chown -R 10001:10001 /data /logs'
+    restart: 'no'
+    networks:
+      - common-network
+
+  # 建桶 + 开放匿名读，幂等：重复执行不会报错。跑完即退出。
+  # amazon/aws-cli 只发 latest 和完整的 2.x.y，没有 2 这种大版本标签；
+  # 这里只用到 s3api，跟版本无关，用 latest 即可。
+  #
+  # 匿名读是必须的：前端头像是普通 <img src>，直接访问对象 URL，
+  # 没有签名。不开策略的话头像一律 403。
+  rustfs-init:
+    image: amazon/aws-cli:latest
+    container_name: mrbs-dev-rustfs-init
+    depends_on:
+      rustfs:
+        condition: service_healthy
+    environment:
+      AWS_ACCESS_KEY_ID: ${RUSTFS_ACCESS_KEY:?}
+      AWS_SECRET_ACCESS_KEY: ${RUSTFS_SECRET_KEY:?}
+      AWS_DEFAULT_REGION: us-east-1
+      BUCKET: ${RUSTFS_BUCKET:-meeting-room-booking-system}
+    entrypoint: /bin/sh
+    command:
+      - -ec
+      - |
+        ep=http://rustfs:9000
+        if aws --endpoint-url "$$ep" s3api head-bucket --bucket "$$BUCKET" 2>/dev/null; then
+          echo "bucket $$BUCKET already exists"
+        else
+          aws --endpoint-url "$$ep" s3api create-bucket --bucket "$$BUCKET"
+          echo "bucket $$BUCKET created"
+        fi
+        cat > /tmp/policy.json <<JSON
+        {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {"AWS": ["*"]},
+              "Action": ["s3:GetObject"],
+              "Resource": ["arn:aws:s3:::$$BUCKET/*"]
+            }
+          ]
+        }
+        JSON
+        aws --endpoint-url "$$ep" s3api put-bucket-policy \
+          --bucket "$$BUCKET" --policy file:///tmp/policy.json
+        echo "anonymous read policy applied to $$BUCKET"
+    restart: 'no'
+    networks:
+      - common-network
+
+# 数据卷全部用 named volume，不绑主机路径，换机器/换用户都能直接跑
+volumes:
+  mysql-data:
+  redis-data:
+  rustfs-data:
+  rustfs-logs:
+
+# 需要保证容器网络处于同一网络，否则容器之间无法访问
+networks:
+  common-network:
+    driver: bridge

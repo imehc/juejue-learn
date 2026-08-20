@@ -1,0 +1,8 @@
+# 这份文件只为容器构建存在：Dockerfile 只把前端目录拷进镜像，拿不到仓库根的
+# pnpm-workspace.yaml，而 pnpm 11 已不再读 package.json 里的 pnpm.overrides，
+# 缺了这些设置安装会直接失败。内容必须与根 pnpm-workspace.yaml 保持一致。
+overrides:
+  '@internationalized/date': 3.12.3
+
+allowBuilds:
+  '@heroui/shared-utils': true

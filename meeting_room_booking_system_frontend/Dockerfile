@@ -21,7 +21,10 @@ RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
 # Install dependencies based on the preferred package manager
-COPY meeting_room_booking_system_frontend/package.json meeting_room_booking_system_frontend/yarn.lock* meeting_room_booking_system_frontend/package-lock.json* meeting_room_booking_system_frontend/pnpm-lock.yaml* ./
+# pnpm-workspace.yaml 必须一起拷进来：lockfile 里记了 overrides，
+# 配置对不上时 pnpm 会直接 ERR_PNPM_LOCKFILE_CONFIG_MISMATCH；
+# 依赖构建脚本的放行（allowBuilds）也在里面
+COPY meeting_room_booking_system_frontend/package.json meeting_room_booking_system_frontend/pnpm-workspace.yaml meeting_room_booking_system_frontend/yarn.lock* meeting_room_booking_system_frontend/package-lock.json* meeting_room_booking_system_frontend/pnpm-lock.yaml* ./
 RUN \
   if [ -f yarn.lock ]; then yarn --frozen-lockfile; \
   elif [ -f package-lock.json ]; then npm ci; \

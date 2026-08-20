@@ -5,3 +5,8 @@ node_modules/
 npm-debug.log
 dist
 Dockerfile
+
+# 真实配置不进构建上下文；生产配置由 compose 以只读方式挂载
+.env
+.env.dev.yaml
+.env.yaml

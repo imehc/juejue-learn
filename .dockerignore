@@ -1,8 +1,14 @@
+# .dockerignore 里 # 只在行首才是注释，写在模式后面会被当成模式的一部分
 .git/
 .gitignore
-.next/                # Existing Next.js builds
 .dockerignore
-Dockerfile
-docker-compose.yml
-node_modules/         # Installed inside container
-nginx/ 
+
+# 容器内重新安装
+**/node_modules
+
+# 已有的构建产物
+**/.next
+**/dist
+
+# 部署配置：compose 文件和 nginx 配置由宿主机挂载，不进构建上下文
+deploy/

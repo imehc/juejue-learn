@@ -1,0 +1,216 @@
+# ─────────────────────────────────────────────────────────────
+# 生产环境：整个项目打包运行
+#
+# 基础设施 + 后端 + 前端 + nginx 反向代理，只对外暴露 80 端口。
+# 数据库、缓存、对象存储的端口都不映射到主机，仅容器网络内可达。
+#
+#   cd deploy && docker compose up -d --build
+#   或在仓库根目录执行 make prod-up
+#
+# 需要先在本目录准备两份配置（都已被 .gitignore 忽略）：
+#   deploy/.env               ← cp .env.example .env
+#   deploy/backend.env.yaml   ← cp backend.env.example.yaml backend.env.yaml
+#
+# 注意 backend.env.yaml 里的 host 要用服务名（mysql / redis / rustfs），
+# 不是 localhost —— 后端此时也在容器里。
+# ─────────────────────────────────────────────────────────────
+
+name: meeting-room
+
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: mrbs-mysql
+    command: >-
+      mysqld
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_general_ci
+    env_file:
+      - ./.env
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - mysqladmin ping -h 127.0.0.1 -u root --password="$$MYSQL_ROOT_PASSWORD"
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 40s
+    restart: always
+    networks:
+      - common-network
+
+  redis:
+    image: redis:8
+    container_name: mrbs-redis
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: always
+    networks:
+      - common-network
+
+  # RustFS：S3 兼容对象存储。MinIO 官方仓库已于 2026-02 归档，
+  # 且社区版从 2025-05 起移除了管理控制台，故改用 RustFS。
+  # 后端用 AWS 官方 S3 SDK（@aws-sdk/client-s3）走标准 S3 协议访问，
+  # 不依赖任何厂商特有 API，换 S3 兼容实现不用改代码。
+  rustfs:
+    image: rustfs/rustfs:1.0.0-rc.1
+    container_name: mrbs-rustfs
+    depends_on:
+      rustfs-permission-helper:
+        condition: service_completed_successfully
+    security_opt:
+      - 'no-new-privileges:true'
+    environment:
+      RUSTFS_VOLUMES: /data
+      RUSTFS_ADDRESS: 0.0.0.0:9000
+      RUSTFS_CONSOLE_ADDRESS: 0.0.0.0:9001
+      # 生产环境不需要控制台，如需排查可临时改为 true 并映射 9001
+      RUSTFS_CONSOLE_ENABLE: 'false'
+      RUSTFS_ACCESS_KEY: ${RUSTFS_ACCESS_KEY:?RUSTFS_ACCESS_KEY 未设置，请检查 .env}
+      RUSTFS_SECRET_KEY: ${RUSTFS_SECRET_KEY:?RUSTFS_SECRET_KEY 未设置，请检查 .env}
+      RUSTFS_OBS_LOGGER_LEVEL: warn
+    volumes:
+      - rustfs-data:/data
+      - rustfs-logs:/logs
+    healthcheck:
+      test: ['CMD', 'curl', '-fsS', 'http://127.0.0.1:9000/health']
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    restart: always
+    networks:
+      - common-network
+
+  # RustFS 容器以 uid/gid 10001 运行，named volume 初始属主是 root，
+  # 需要先修正属主，否则 RustFS 无法写入 /data。跑完即退出。
+  rustfs-permission-helper:
+    image: alpine:3
+    container_name: mrbs-rustfs-perm
+    volumes:
+      - rustfs-data:/data
+      - rustfs-logs:/logs
+    command: sh -c 'chown -R 10001:10001 /data /logs'
+    restart: 'no'
+    networks:
+      - common-network
+
+  # 建桶 + 开放匿名读，幂等：重复执行不会报错。跑完即退出。
+  # amazon/aws-cli 只发 latest 和完整的 2.x.y，没有 2 这种大版本标签；
+  # 这里只用到 s3api，跟版本无关，用 latest 即可。
+  #
+  # 匿名读是必须的：前端头像是普通 <img src>（生产环境走 nginx 的
+  # /oss 反代），直接访问对象 URL，没有签名。不开策略的话头像一律 403。
+  # 写入仍然要签名——预签名 PUT 由后端签发。
+  rustfs-init:
+    image: amazon/aws-cli:latest
+    container_name: mrbs-rustfs-init
+    depends_on:
+      rustfs:
+        condition: service_healthy
+    environment:
+      AWS_ACCESS_KEY_ID: ${RUSTFS_ACCESS_KEY:?}
+      AWS_SECRET_ACCESS_KEY: ${RUSTFS_SECRET_KEY:?}
+      AWS_DEFAULT_REGION: us-east-1
+      BUCKET: ${RUSTFS_BUCKET:-meeting-room-booking-system}
+    entrypoint: /bin/sh
+    command:
+      - -ec
+      - |
+        ep=http://rustfs:9000
+        if aws --endpoint-url "$$ep" s3api head-bucket --bucket "$$BUCKET" 2>/dev/null; then
+          echo "bucket $$BUCKET already exists"
+        else
+          aws --endpoint-url "$$ep" s3api create-bucket --bucket "$$BUCKET"
+          echo "bucket $$BUCKET created"
+        fi
+        cat > /tmp/policy.json <<JSON
+        {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {"AWS": ["*"]},
+              "Action": ["s3:GetObject"],
+              "Resource": ["arn:aws:s3:::$$BUCKET/*"]
+            }
+          ]
+        }
+        JSON
+        aws --endpoint-url "$$ep" s3api put-bucket-policy \
+          --bucket "$$BUCKET" --policy file:///tmp/policy.json
+        echo "anonymous read policy applied to $$BUCKET"
+    restart: 'no'
+    networks:
+      - common-network
+
+  nest-api:
+    container_name: mrbs-nest-api
+    build:
+      # 后端有独立的 lockfile，上下文只需要它自己的目录
+      context: ../meeting_room_booking_system_backend
+      dockerfile: ./Dockerfile
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rustfs-init:
+        condition: service_completed_successfully
+    environment:
+      # 让后端读取 .env.yaml 而非 .env.dev.yaml
+      NODE_ENVIRONMENT: production
+    volumes:
+      # 生产配置以只读方式挂进去，不打进镜像：改配置只需重启，不用重新构建
+      - ./backend.env.yaml:/usr/src/app/.env.yaml:ro
+      # 上传的图片走对象存储；此卷用于 main.ts 里的 /uploads 静态目录
+      - uploads:/usr/src/app/uploads
+    restart: always
+    networks:
+      - common-network
+
+  next-client:
+    container_name: mrbs-next-client
+    build:
+      context: ..
+      dockerfile: ./meeting_room_booking_system_frontend/Dockerfile
+    depends_on:
+      - nest-api
+    restart: always
+    networks:
+      - common-network
+
+  nginx:
+    container_name: mrbs-nginx
+    image: nginx:1-alpine
+    depends_on:
+      - nest-api
+      - next-client
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - '80:80'
+    restart: always
+    networks:
+      - common-network
+
+# 数据卷全部用 named volume，不绑主机路径，换机器/换用户都能直接跑
+volumes:
+  mysql-data:
+  redis-data:
+  rustfs-data:
+  rustfs-logs:
+  uploads:
+
+# 需要保证容器网络处于同一网络，否则容器之间无法访问
+networks:
+  common-network:
+    driver: bridge

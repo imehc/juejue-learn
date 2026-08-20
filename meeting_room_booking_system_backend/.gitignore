@@ -36,11 +36,13 @@ lerna-debug.log*
 !.vscode/extensions.json
 
 # dotenv environment variable files
-# .env
+# 真实配置一律不提交，模板统一放在 deploy/ 下
+.env
 .env.development.local
 .env.test.local
 .env.production.local
 .env.local
+.env.dev.yaml
 .env.prod.yaml
 .env.yaml
 

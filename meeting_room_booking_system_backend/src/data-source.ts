@@ -1,5 +1,6 @@
 import { DataSource } from 'typeorm';
 import { config } from 'dotenv';
+import { resolve } from 'path';
 
 import { User } from './user/entities/user.entity';
 import { Role } from './user/entities/role.entity';
@@ -7,15 +8,19 @@ import { Permission } from './user/entities/permission.entity';
 import { MeetingRoom } from './meeting-room/entities/meeting-room.entity';
 import { Booking } from './booking/entities/booking.entity';
 
-config({ path: 'src/.env-migration' });
+// 迁移在主机上执行，直接复用 deploy/.env 里的数据库凭据，
+// 避免再维护一份重复的连接配置。host/port 默认连本机映射出来的端口
+// （见 deploy/docker-compose.dev.yml），需要时用环境变量覆盖：
+//   MYSQL_HOST=... MYSQL_PORT=... pnpm migration:run
+config({ path: resolve(__dirname, '../../deploy/.env') });
 
 export default new DataSource({
   type: 'mysql',
-  host: `${process.env.mysql_server_host}`,
-  port: +`${process.env.mysql_server_port}`,
-  username: `${process.env.mysql_server_username}`,
-  password: `${process.env.mysql_server_password}`,
-  database: `${process.env.mysql_server_database}`,
+  host: process.env.MYSQL_HOST || '127.0.0.1',
+  port: +(process.env.MYSQL_PORT || 3306),
+  username: process.env.MYSQL_USER || 'root',
+  password: process.env.MYSQL_ROOT_PASSWORD,
+  database: process.env.MYSQL_DATABASE,
   synchronize: false,
   logging: true,
   entities: [User, Role, Permission, MeetingRoom, Booking],

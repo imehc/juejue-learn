@@ -61,8 +61,10 @@ function initConfig(
     .addTag('file', '文件')
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  // 写入到文件
-  writeFileSync('./openapi.yaml', dump(document, {}));
+  // 写入到文件（生产环境以 node user 运行，工作目录可能只读，跳过写入）
+  if (process.env.NODE_ENVIRONMENT !== 'production') {
+    writeFileSync('./openapi.yaml', dump(document, {}));
+  }
   // http://localhost:6020/api-doc
   SwaggerModule.setup('api-doc', app, document);
 }

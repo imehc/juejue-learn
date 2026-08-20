@@ -79,7 +79,8 @@ export function ProfileModifyForm({ headPic, nickName, email }: UserDetailVo) {
       // }
       // return `http://localhost/api/${headPic}`;
 
-      // 使用minio OSS对象存储 基本地址可能随minio配置变化而变化
+      // 对象存储（S3 协议，当前实现是 RustFS）的地址随部署方式变化：
+      // 开发环境直连 RustFS 的 9000 端口，生产环境走 nginx 的 /oss 反代
       if (process.env.NODE_ENV === "development") {
         return headPic.startsWith("uploads/")
           ? `${BASE_PATH}/${headPic}`

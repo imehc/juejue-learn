@@ -2,9 +2,12 @@
 
 import i18next, { type i18n } from "i18next";
 import type { $ZodErrorMap } from "zod/v4/core";
-import en from "zod/v4/locales/zh-CN";
+// 从 locales 入口取具名导出，不要写成 "zod/v4/locales/zh-CN"：
+// zod 的 exports 通配符 "./v4/locales/*" 指向的是不带扩展名的路径，
+// moduleResolution: bundler 会尊重 exports 映射从而解析失败（TS2307）
+import { zhCN } from "zod/v4/locales";
 
-const defaultErrorMap = en().localeError;
+const defaultErrorMap = zhCN().localeError;
 
 const jsonStringifyReplacer = (_: string, value: unknown): unknown => {
   if (typeof value === "bigint") {

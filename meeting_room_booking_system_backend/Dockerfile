@@ -11,7 +11,7 @@ WORKDIR /usr/src/app
 # Copy application dependency manifests to the container image.
 # A wildcard is used to ensure copying both package.json AND package-lock.json (when available).
 # Copying this first prevents re-running npm install on every code change.
-COPY --chown=node:node package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
+COPY --chown=node:node package.json pnpm-workspace.yaml yarn.lock* package-lock.json* pnpm-lock.yaml* ./
 
 # Install app dependencies using the `npm ci` command instead of `npm install`
 RUN \
@@ -35,7 +35,7 @@ FROM node:22-alpine As build
 
 WORKDIR /usr/src/app
 
-COPY --chown=node:node package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
+COPY --chown=node:node package.json pnpm-workspace.yaml yarn.lock* package-lock.json* pnpm-lock.yaml* ./
 
 # In order to run `npm run build` we need access to the Nest CLI which is a dev dependency. In the previous development stage we ran `npm ci` which installed all dependencies, so we can copy over the node_modules directory from the development image
 COPY --chown=node:node --from=development /usr/src/app/node_modules ./node_modules
@@ -78,10 +78,28 @@ USER node
 
 FROM node:22-alpine As production
 
+# 必须设置工作目录：configuration.ts 用 resolve(__dirname, '../../.env.yaml')
+# 定位配置，main.ts 用 __dirname/../uploads 作静态目录。不设 WORKDIR 时
+# 这些路径会落到容器根目录 /，卷挂载点也就无从对应。
+WORKDIR /usr/src/app
+
 # Copy the bundled code from the build stage to the production image
 COPY --chown=node:node --from=build /usr/src/app/node_modules ./node_modules
 COPY --chown=node:node --from=build /usr/src/app/dist ./dist
-COPY --chown=node:node .env.yaml ./.env.yaml
+
+# 注意：生产配置 .env.yaml 不打进镜像，由 deploy/docker-compose.yml 以
+# 只读 bind mount 挂到 /usr/src/app/.env.yaml。改配置只需重启容器，
+# 不用重新构建；镜像里也就不含任何凭据。
+# 单独 docker run 时需自行挂载：
+#   -v "$PWD/deploy/backend.env.yaml:/usr/src/app/.env.yaml:ro"
+
+# 静态文件目录，compose 里挂了 named volume
+RUN mkdir -p uploads && chown node:node uploads
+
+# 日志目录，winston daily-rotate-file 需要写入
+RUN mkdir -p daily-log && chown node:node daily-log
+
+USER node
 
 EXPOSE 6020
 

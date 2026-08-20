@@ -18,7 +18,7 @@ import { MeetingRoom } from './meeting-room/entities/meeting-room.entity';
 import { BookingModule } from './booking/booking.module';
 import { Booking } from './booking/entities/booking.entity';
 import { StatisticModule } from './statistic/statistic.module';
-import { MinioModule } from './minio/minio.module';
+import { OssModule } from './oss/oss.module';
 import { AuthModule } from './auth/auth.module';
 import configuration from './config/configuration';
 import { ConfigurationImpl } from './config/configuration-impl';
@@ -58,7 +58,7 @@ import 'winston-daily-rotate-file';
         return {
           type: 'mysql',
           host: configService.get('mysql-server.host'),
-          port: configService.get('mysql-server.host'),
+          port: configService.get('mysql-server.port'),
           username: configService.get('mysql-server.username'),
           password: configService.get('mysql-server.password'),
           database: configService.get('mysql-server.database'),
@@ -68,6 +68,10 @@ import 'winston-daily-rotate-file';
           entities: [User, Role, Permission, MeetingRoom, Booking],
           poolSize: 10,
           connectorPackage: 'mysql2',
+          // 应用启动时自动执行未跑过的迁移，生产/开发通用；
+          // 新增迁移文件后重启即可生效，无需再手动 make migrate
+          migrationsRun: true,
+          migrations: ['dist/migrations/*.js'],
         };
       },
       inject: [ConfigService, WINSTON_MODULE_NEST_PROVIDER],
@@ -108,7 +112,7 @@ import 'winston-daily-rotate-file';
     MeetingRoomModule,
     BookingModule,
     StatisticModule,
-    MinioModule,
+    OssModule,
     AuthModule,
   ],
   controllers: [AppController],

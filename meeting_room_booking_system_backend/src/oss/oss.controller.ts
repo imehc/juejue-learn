@@ -1,17 +1,19 @@
 import { Controller, Get, Inject } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiBearerAuth, ApiOkResponse, ApiOperation } from '@nestjs/swagger';
-import { Client } from 'minio';
+import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { PresignedUrlVo } from './vo/presigned-url.vo';
 import { v4 as uuidv4 } from 'uuid';
 import { RequireLogin } from 'src/helper/custom.decorator';
 import { ConfigurationImpl } from 'src/config/configuration-impl';
+import { OSS_CLIENT } from './oss.constants';
 
 @RequireLogin()
-@Controller('minio')
-export class MinioController {
-  @Inject('MINIO_CLIENT')
-  private minioClient: Client;
+@Controller('oss')
+export class OssController {
+  @Inject(OSS_CLIENT)
+  private ossClient: S3Client;
 
   @Inject(ConfigService)
   private configService: ConfigService<ConfigurationImpl>;
@@ -25,10 +27,13 @@ export class MinioController {
   })
   @Get('presigned-url')
   async presignedPutObject() {
-    const presignedPutUrl = await this.minioClient.presignedPutObject(
-      this.configService.get('minio-server.bucket-name'),
-      uuidv4(),
-      +(this.configService.get('minio-server.expires') ?? 60 * 60),
+    const presignedPutUrl = await getSignedUrl(
+      this.ossClient,
+      new PutObjectCommand({
+        Bucket: this.configService.get('oss-server.bucket-name'),
+        Key: uuidv4(),
+      }),
+      { expiresIn: +(this.configService.get('oss-server.expires') ?? 60 * 60) },
     );
     return { presignedPutUrl };
   }

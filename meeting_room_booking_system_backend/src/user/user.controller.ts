@@ -609,8 +609,10 @@ export class UserController {
     permissions: Permission[];
   }): LoginUserVo['auth'] {
     // TODO: 使用refreshToken获取新的token时 不能通过accessToken重新获取新的token
-    const expiresIn: string =
-      this.configService.get('jwt.access-token-expires-time') || '30m';
+    // @nestjs/jwt 的 expiresIn 类型是 ms.StringValue | number，
+    // 配置读出来是 string，需要断言
+    const expiresIn = (this.configService.get('jwt.access-token-expires-time') ||
+      '30m') as ms.StringValue;
     const accessToken = this.jwtService.sign(
       {
         userId,
@@ -621,8 +623,9 @@ export class UserController {
       },
       { expiresIn: expiresIn },
     );
-    const refeshExpiresIn: string =
-      this.configService.get('jwt.access-refresh-expires-time') || '7d';
+    const refeshExpiresIn = (this.configService.get(
+      'jwt.access-refresh-expires-time',
+    ) || '7d') as ms.StringValue;
     const refreshToken = this.jwtService.sign(
       { userId },
       { expiresIn: refeshExpiresIn },
@@ -630,7 +633,7 @@ export class UserController {
 
     return {
       accessToken,
-      expiresIn: ms(expiresIn as ms.StringValue),
+      expiresIn: ms(expiresIn),
       refreshToken,
     };
   }

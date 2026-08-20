@@ -1,0 +1,16 @@
+# 这份文件只为容器构建存在：Dockerfile 只把后端目录拷进镜像，拿不到仓库根的
+# pnpm-workspace.yaml。根上的 overrides 会写进本目录的 lockfile，配置对不上时
+# pnpm 直接 ERR_PNPM_LOCKFILE_CONFIG_MISMATCH，所以必须与根保持一致。
+# 后端本身并不依赖 @internationalized/date，这里纯粹是为了让配置对齐。
+overrides:
+  '@internationalized/date': 3.12.3
+
+# 主机上装过一次后，表态会记在 node_modules/.modules.yaml 里，所以本地不报错；
+# 容器里是全新安装，没有这份记录，任何未表态的依赖构建脚本都会让安装以
+# ERR_PNPM_IGNORED_BUILDS（exit 1）失败。因此必须逐个显式表态。
+allowBuilds:
+  # jest-resolve → unrs-resolver，postinstall 负责选取当前平台的原生绑定
+  unrs-resolver: true
+  # @nestjs/swagger → swagger-ui-dist → @scarf/scarf，postinstall 只做安装量
+  # 埋点上报，对构建无用，明确拒绝
+  '@scarf/scarf': false

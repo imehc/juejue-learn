@@ -10,7 +10,7 @@ const noAuthPaths = [
 ];
 
 // This function can be marked `async` if using `await` inside
-export async function middleware(req: NextRequest) {
+export async function proxy(req: NextRequest) {
   const pathname = req.nextUrl.pathname;
 
   // TODO: 更多需要清除cookie的场景
