@@ -11,13 +11,12 @@ updates:
     schedule:
       interval: "daily"
 
-  # 它会自动识别并解析 pnpm-lock.yaml（含 workspace 根 lockfile）
-  - package-ecosystem: "npm"
-    versioning-strategy: increase
-    directory: "/"
-    schedule:
-      interval: "daily"
-
+  # pnpm workspace 设置 sharedWorkspaceLockfile: false，backend/frontend 各自维护
+  # 独立的 pnpm-lock.yaml。因此不要在这里用根目录 "/" 的 npm entry 去更新 workspace
+  # 依赖——它只会改 package.json 却无法同步子目录的 lockfile，导致 CI 因
+  # ERR_PNPM_OUTDATED_LOCKFILE 失败。
+  # 改为只给每个子项目单独配 npm entry，Dependabot 会各自更新对应子目录的
+  # package.json 及其 pnpm-lock.yaml，保证两者同步、--frozen-lockfile 可用。
   - package-ecosystem: "npm"
     versioning-strategy: increase
     directory: "/meeting_room_booking_system_backend"

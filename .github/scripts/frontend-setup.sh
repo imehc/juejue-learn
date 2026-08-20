@@ -3,8 +3,8 @@
 set -euo pipefail
 
 cd ./meeting_room_booking_system_frontend
-# 同 backend：lockfile 与 package.json 不一致时降级重算
-pnpm install --frozen-lockfile || pnpm install --no-frozen-lockfile
+# 同 backend：严格 frozen，lockfile 必须随 package.json 同步进 PR
+pnpm install --frozen-lockfile
 pnpm dlx @openapitools/openapi-generator-cli generate \
   -g typescript-fetch \
   -c ./openapi-generator.config.yaml \
