@@ -1,0 +1,103 @@
+name: Auto Merge Dependabot PRs
+
+# 只保留 pull_request_target 一个触发源，避免重复触发导致重复 approve/merge。
+on:
+  pull_request_target:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - ready_for_review
+
+# 同一 PR 的多次触发合并为一个并发组，防止并发运行重复 approve/merge。
+concurrency:
+  group: auto-merge-dependabot-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
+
+jobs:
+  auto-merge:
+    runs-on: ubuntu-latest
+    # 使用 github.actor 判断：Dependabot 触发时 github.actor 恒为 dependabot[bot]。
+    # 注意：不要用 github.event.pull_request.user.login —— 它在 pull_request_target
+    # 事件下可能因维护者手动 re-run 而变成维护者身份，导致误判。
+    if: github.actor == 'dependabot[bot]'
+    permissions:
+      pull-requests: write
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+
+      # 幂等批准：本 bot（github-actions）已批准过则跳过，避免重复 approve。
+      - name: Approve Dependabot PR (idempotent)
+        run: |
+          PR_URL="${{ github.event.pull_request.html_url }}"
+          ALREADY=$(gh pr view "$PR_URL" --json reviews \
+            --jq '[.reviews[] | select(.author.login == "github-actions" and .state == "APPROVED")] | length')
+          if [ "$ALREADY" -eq 0 ]; then
+            gh pr review "$PR_URL" --approve
+          else
+            echo "Already approved by github-actions, skip."
+          fi
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # 等待并核对 CI 门禁（ci-gate）通过后再合并。
+      # 不能用 `gh pr checks --watch`：它会把本 workflow 自身的 auto-merge
+      # check（永远处于 pending）也算进去，导致自我等待死锁直至超时。
+      # 改为用 gh api 轮询，且只统计名为 "ci-gate" 的 check。
+      - name: Wait for ci-gate check to pass
+        id: checks
+        run: |
+          REPO="${{ github.repository }}"
+          HEAD_SHA="${{ github.event.pull_request.head.sha }}"
+
+          # 轮询直到 ci-gate 成功；失败或超时（10min）则退出。
+          for i in $(seq 1 30); do
+            NAMES=$(gh api "/repos/$REPO/commits/$HEAD_SHA/check-runs" --jq '
+              [.check_runs[]
+               | select(.name == "ci-gate")
+               | {name, status, conclusion}]')
+
+            COUNT=$(echo "$NAMES" | jq 'length')
+            SUCCESS=$(echo "$NAMES" | jq '[.[] | select(.conclusion == "success")] | length')
+            FAILED=$(echo "$NAMES" | jq '[.[] | select(.conclusion != "success" and .conclusion != null)] | length')
+            PENDING=$(echo "$NAMES" | jq '[.[] | select(.conclusion == null or .status == "in_progress" or .status == "queued")] | length')
+
+            echo "ci-gate check: count=$COUNT success=$SUCCESS failed=$FAILED pending=$PENDING"
+            if [ "$SUCCESS" -eq 1 ]; then
+              echo "ci-gate-state=passed" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+            # check 尚未创建（workflow 刚被触发，check 还在排队/未上报），继续等待。
+            if [ "$COUNT" -lt 1 ]; then
+              sleep 20
+              continue
+            fi
+            if [ "$FAILED" -gt 0 ]; then
+              echo "::error::ci-gate check failed."
+              echo "ci-gate-state=failed" >> "$GITHUB_OUTPUT"
+              exit 1
+            fi
+            if [ "$PENDING" -eq 0 ]; then
+              echo "::error::ci-gate finished but not passed."
+              echo "ci-gate-state=failed" >> "$GITHUB_OUTPUT"
+              exit 1
+            fi
+            sleep 20
+          done
+
+          echo "::error::Timed out waiting for ci-gate check."
+          echo "ci-gate-state=failed" >> "$GITHUB_OUTPUT"
+          exit 1
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # ci-gate 通过后，用 GitHub 原生 auto-merge 合并（squash）。
+      # 使用 --auto 让 GitHub 在分支保护条件满足后自动完成合并，避免直接 merge
+      # 时因"PR 状态不稳定"的竞态失败。
+      - name: Merge Dependabot PR
+        run: gh pr merge "$PR_URL" --squash --auto
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

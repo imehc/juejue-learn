@@ -85,7 +85,7 @@ jobs:
 
   # 汇总门禁：被 paths 过滤跳过的 build job 算通过，失败/取消算不通过。
   # changes 必须 success —— 否则 build job 全被跳过，门禁会被“空跑”骗过去。
-  # automerge 只依赖这一个 job，未来加 job 也不用改 automerge。
+  # 该 job 是唯一的总闸：auto-merge.yml 会轮询 "ci-gate" 这个 check 通过后再合并。
   ci-gate:
     needs:
       - changes
@@ -112,41 +112,3 @@ jobs:
             esac
           done
           echo "CI gate passed."
-
-  # Dependabot 的 patch/minor 更新，在 ci-gate 通过后自动合并
-  automerge-dependabot:
-    needs: ci-gate
-    if: >-
-      github.event_name == 'pull_request' &&
-      (
-        github.event.pull_request.user.login == 'dependabot[bot]' ||
-        github.event.pull_request.user.login == 'app/dependabot'
-      )
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: write
-    steps:
-      - name: Fetch Dependabot metadata
-        id: meta
-        uses: dependabot/fetch-metadata@v3
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Approve and squash-merge
-        if: steps.meta.outputs.update-type != 'version-update:semver-major'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_URL: ${{ github.event.pull_request.html_url }}
-        run: |
-          gh pr review --approve "$PR_URL"
-          gh pr merge --squash --delete-branch "$PR_URL"
-
-      - name: Skip major updates
-        if: steps.meta.outputs.update-type == 'version-update:semver-major'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_URL: ${{ github.event.pull_request.html_url }}
-        run: |
-          gh pr comment "$PR_URL" \
-            --body "CI 已通过，但这是 major 升级，需要人工确认后再合并。"
