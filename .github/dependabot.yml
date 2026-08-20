@@ -11,21 +11,20 @@ updates:
     schedule:
       interval: "daily"
 
-  # pnpm workspace 的根 lockfile 包含后端/前端所有依赖，
-  # 用 pnpm ecosystem 才能让 Dependabot 正确解析 pnpm-lock.yaml
-  - package-ecosystem: "pnpm"
+  # 它会自动识别并解析 pnpm-lock.yaml（含 workspace 根 lockfile）
+  - package-ecosystem: "npm"
     versioning-strategy: increase
     directory: "/"
     schedule:
       interval: "daily"
 
-  - package-ecosystem: "pnpm"
+  - package-ecosystem: "npm"
     versioning-strategy: increase
     directory: "/meeting_room_booking_system_backend"
     schedule:
       interval: "daily"
 
-  - package-ecosystem: "pnpm"
+  - package-ecosystem: "npm"
     versioning-strategy: increase
     directory: "/meeting_room_booking_system_frontend"
     schedule:
