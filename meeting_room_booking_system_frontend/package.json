@@ -59,7 +59,7 @@
     "zod-i18n-map": "^2.27.0"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.5.8",
+    "@biomejs/biome": "^2.5.9",
     "@tailwindcss/postcss": "^4.3.3",
     "@types/node": "26.2.0",
     "@types/react": "19.2.18",
