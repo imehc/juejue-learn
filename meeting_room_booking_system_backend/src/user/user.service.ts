@@ -170,7 +170,11 @@ export class UserService {
         isAdmin,
       },
       // 级联查询 指示应该加载实体的哪些关系(简化左连接形式)。
-      relations: ['roles', 'roles.permissions'],
+      relations: {
+        roles: {
+          permissions: true
+        }
+      },
     });
 
     if (!user) {
@@ -207,7 +211,11 @@ export class UserService {
         id: userId,
         // isAdmin,
       },
-      relations: ['roles', 'roles.permissions'],
+      relations: {
+        roles: {
+          permissions: true
+        }
+      },
     });
 
     if (!user) {
@@ -237,7 +245,11 @@ export class UserService {
         email: email,
         isAdmin: false,
       },
-      relations: ['roles', 'roles.permissions'],
+      relations: {
+        roles: {
+          permissions: true
+        }
+      },
     });
     if (user) {
       // TODO: 通过email查询默认都是普通用户，所以不需要判断角色信息
@@ -257,7 +269,11 @@ export class UserService {
         username: username,
         isAdmin: false,
       },
-      relations: ['roles', 'roles.permissions'],
+      relations: {
+        roles: {
+          permissions: true
+        }
+      },
     });
     if (user) {
       // TODO: 通过email查询默认都是普通用户，所以不需要判断角色信息
@@ -379,7 +395,11 @@ export class UserService {
       where: {
         id: userId,
       },
-      relations: ['roles', 'roles.permissions'], // 级联查询 指示应该加载实体的哪些关系(简化左连接形式)。
+      relations: {
+        roles: {
+          permissions: true
+        }
+      }, // 级联查询 指示应该加载实体的哪些关系(简化左连接形式)。
     });
 
     if (!user) {
@@ -472,16 +492,16 @@ export class UserService {
     const skipCount = (skip - 1) * limit;
     // 查找与给定查找选项匹配的实体。还计算匹配给定条件的所有实体，但忽略分页设置(from和take选项)
     const [users, totalCount] = await this.userRepository.findAndCount({
-      select: [
-        'id',
-        'username',
-        'nickName',
-        'email',
-        'phoneNumber',
-        'isFrozen',
-        'headPic',
-        'createAt',
-      ],
+      select: {
+        id: true,
+        username: true,
+        nickName: true,
+        email: true,
+        phoneNumber: true,
+        isFrozen: true,
+        headPic: true,
+        createAt: true
+      },
       skip: skipCount,
       take: limit,
     });
@@ -514,16 +534,16 @@ export class UserService {
       condition.email = Like(`%${email}%`);
     }
     const [users, totalCount] = await this.userRepository.findAndCount({
-      select: [
-        'id',
-        'username',
-        'nickName',
-        'email',
-        'phoneNumber',
-        'isFrozen',
-        'headPic',
-        'createAt',
-      ],
+      select: {
+        id: true,
+        username: true,
+        nickName: true,
+        email: true,
+        phoneNumber: true,
+        isFrozen: true,
+        headPic: true,
+        createAt: true
+      },
       skip: skipCount,
       take: limit,
       where: condition,
