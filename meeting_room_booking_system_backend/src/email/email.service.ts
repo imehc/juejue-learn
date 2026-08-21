@@ -7,7 +7,7 @@ import { ConfigurationImpl } from 'src/config/configuration-impl';
 export class EmailService {
   private transporter: Transporter;
 
-  constructor(private configService: ConfigService<ConfigurationImpl>) {
+  constructor(private configService: ConfigService<ConfigurationImpl, true>) {
     this.transporter = createTransport({
       host: this.configService.get('nodemailer-server.host'),
       port: this.configService.get('nodemailer-server.port'),

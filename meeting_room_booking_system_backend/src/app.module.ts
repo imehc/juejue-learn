@@ -32,7 +32,7 @@ import 'winston-daily-rotate-file';
   imports: [
     JwtModule.registerAsync({
       global: true,
-      useFactory(configService: ConfigService<ConfigurationImpl>) {
+      useFactory(configService: ConfigService<ConfigurationImpl, true>) {
         return {
           secret: configService.get('jwt.secret'),
           signOptions: {
@@ -52,7 +52,7 @@ import 'winston-daily-rotate-file';
     }),
     TypeOrmModule.forRootAsync({
       useFactory: (
-        configService: ConfigService<ConfigurationImpl>,
+        configService: ConfigService<ConfigurationImpl, true>,
         logger: WinstonLogger,
       ) => {
         return {
@@ -77,7 +77,7 @@ import 'winston-daily-rotate-file';
       inject: [ConfigService, WINSTON_MODULE_NEST_PROVIDER],
     }),
     WinstonModule.forRootAsync({
-      useFactory: (configService: ConfigService<ConfigurationImpl>) => ({
+      useFactory: (configService: ConfigService<ConfigurationImpl, true>) => ({
         level: 'debug', // 指定日志输出级别 debug
         // 输出到的 transport 包括 console 和 file
         transports: [

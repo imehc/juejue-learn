@@ -11,7 +11,7 @@ import { ConfigurationImpl } from 'src/config/configuration-impl';
     RedisService,
     {
       provide: 'REDIS_CLIENT',
-      async useFactory(configService: ConfigService<ConfigurationImpl>) {
+      async useFactory(configService: ConfigService<ConfigurationImpl, true>) {
         const client = createClient({
           socket: {
             host: configService.get('redis-server.host'),

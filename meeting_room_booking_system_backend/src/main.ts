@@ -30,7 +30,7 @@ async function bootstrap() {
 
   app.use(cookieParser());
 
-  const configService = app.get(ConfigService<ConfigurationImpl>);
+  const configService = app.get(ConfigService<ConfigurationImpl, true>);
   initConfig(app, configService);
 
   // winston 的 logger 设置为 Nest 的默认 Logger
@@ -42,7 +42,7 @@ bootstrap().catch(console.error);
 
 function initConfig(
   app: INestApplication<any>,
-  cs: ConfigService<ConfigurationImpl, false>,
+  cs: ConfigService<ConfigurationImpl, true>,
 ) {
   // 减少模版代码参考 https://docs.nestjs.com/openapi/cli-plugin#using-the-cli-plugin
   const config = new DocumentBuilder()

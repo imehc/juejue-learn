@@ -15,7 +15,7 @@ const Agent = new SocksProxyAgent(
  */
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
-  constructor(configService: ConfigService<ConfigurationImpl>) {
+  constructor(configService: ConfigService<ConfigurationImpl, true>) {
     super({
       clientID: configService.get('google.login.client-id'),
       clientSecret: configService.get('google.login.client-secret'),
@@ -28,10 +28,10 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
   validate(accessToken: string, refreshToken: string, profile: Profile) {
     const { name, emails, photos } = profile;
     const user = {
-      email: emails[0].value,
-      firstName: name.givenName,
-      lastName: name.familyName,
-      picture: photos[0].value,
+      email: emails?.[0]?.value ?? '',
+      firstName: name?.givenName ?? '',
+      lastName: name?.familyName ?? '',
+      picture: photos?.[0]?.value ?? '',
       accessToken,
     };
     return user;

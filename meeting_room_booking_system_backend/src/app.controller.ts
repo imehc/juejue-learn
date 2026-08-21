@@ -5,7 +5,7 @@ import {
   RequirePermission,
   UserInfo,
 } from './helper/custom.decorator';
-import { JwtUserData } from './helper';
+import type { JwtUserData } from './helper';
 import { ApiExcludeEndpoint } from '@nestjs/swagger';
 
 @Controller()

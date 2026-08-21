@@ -16,7 +16,7 @@ export class OssController {
   private ossClient: S3Client;
 
   @Inject(ConfigService)
-  private configService: ConfigService<ConfigurationImpl>;
+  private configService: ConfigService<ConfigurationImpl, true>;
 
   @ApiBearerAuth()
   @ApiOkResponse({ description: '预设上传链接', type: PresignedUrlVo })

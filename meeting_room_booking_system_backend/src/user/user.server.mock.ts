@@ -60,7 +60,9 @@ export class UserServiceMock {
       const permissionD = await this.permissionRepository.findOne({
         where: { code: 'ddd' },
       });
-      role1.permissions = [permissionC, permissionD];
+      role1.permissions = [permissionC, permissionD].filter(
+        (item): item is Permission => !!item,
+      );
       await this.roleRepository.save([role1]);
     }
     if (!checkNormal) {
@@ -70,7 +72,7 @@ export class UserServiceMock {
       const permissionD = await this.permissionRepository.findOne({
         where: { code: 'ddd' },
       });
-      role1.permissions = [permissionD];
+      role1.permissions = permissionD ? [permissionD] : [];
       await this.roleRepository.save([role2]);
     }
 
@@ -105,7 +107,7 @@ export class UserServiceMock {
         user1.nickName = fakerZH_CN.person.fullName();
         user1.phoneNumber = fakerZH_CN.phone.number();
         user1.headPic = faker.image.avatar();
-        user1.roles = [systemRole];
+        user1.roles = systemRole ? [systemRole] : [];
         await this.userRepository.save([user1]);
       } else {
         // 冻结用户
@@ -121,7 +123,7 @@ export class UserServiceMock {
         user2.nickName = fakerZH_CN.person.fullName();
         user2.headPic = faker.image.avatar();
         user2.isFrozen = index % 8 == 0;
-        user2.roles = [normalRole];
+        user2.roles = normalRole ? [normalRole] : [];
         await this.userRepository.save([user2]);
       }
     }

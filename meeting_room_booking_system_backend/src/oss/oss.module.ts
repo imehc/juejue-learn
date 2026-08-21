@@ -15,7 +15,7 @@ export { OSS_CLIENT };
   providers: [
     {
       provide: OSS_CLIENT,
-      useFactory(configService: ConfigService<ConfigurationImpl>) {
+      useFactory(configService: ConfigService<ConfigurationImpl, true>) {
         const endpoint = configService.get('oss-server.endpoint');
         const port = configService.get('oss-server.port') || '9000';
         const useSSL = configService.get('oss-server.use-ssl') === 'true';

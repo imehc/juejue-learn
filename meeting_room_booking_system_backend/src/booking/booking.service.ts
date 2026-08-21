@@ -130,6 +130,9 @@ export class BookingService {
       const user = await this.entityManager.findOneBy(User, {
         id: userId,
       });
+      if (!user) {
+        throw new BadRequestException('用户不存在');
+      }
       const booking = new Booking();
       booking.room = meetingRoom;
       booking.user = user;
@@ -220,9 +223,11 @@ export class BookingService {
             isAdmin: true,
           },
         });
+        if (!admin?.email) {
+          throw new BadRequestException('管理员邮箱不存在');
+        }
         email = admin.email;
-      }
-      await this.redisService.set(ADMIN_EMAIL, email);
+      }      await this.redisService.set(ADMIN_EMAIL, email);
       await this.emailService.sendMail({
         to: email,
         subject: '预定申请催办提醒',
@@ -230,7 +235,10 @@ export class BookingService {
       });
       await this.redisService.set(URGE(id.toString()), 1, 60 * 30);
       return '催办成功';
-    } catch {
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
       throw new InternalServerErrorException();
     }
   }

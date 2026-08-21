@@ -7,14 +7,14 @@ import { ConfigurationImpl } from 'src/config/configuration-impl';
 
 /** 配置代理 */
 const Agent = new SocksProxyAgent(
-  process.env.SOCKS5_PROXY || 'socks5://127.0.0.1:7890',
+  process.env.SOCKS5_PROXY || 'socks5://127.0.0.1:7897',
 );
 /**
  * docs https://github.com/settings/apps
  */
 @Injectable()
 export class GithubStrategy extends PassportStrategy(Strategy, 'github') {
-  constructor(configService: ConfigService<ConfigurationImpl>) {
+  constructor(configService: ConfigService<ConfigurationImpl, true>) {
     super({
       clientID: configService.get('github.login.client-id'),
       clientSecret: configService.get('github.login.client-secret'),

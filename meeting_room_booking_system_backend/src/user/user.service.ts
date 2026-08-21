@@ -210,19 +210,23 @@ export class UserService {
       relations: ['roles', 'roles.permissions'],
     });
 
+    if (!user) {
+      throw new HttpException('用户不存在', HttpStatus.BAD_REQUEST);
+    }
+
     return {
       id: user.id,
       username: user.username,
       isAdmin: user.isAdmin,
       email: user.email,
       roles: user.roles.map((item) => item.name),
-      permissions: user.roles.reduce((arr, item) => {
+      permissions: user.roles.reduce<Permission[]>((arr, item) => {
         item.permissions.forEach((permission) => {
           if (arr.indexOf(permission) === -1) {
             arr.push(permission);
           }
         });
-        return arr as Permission[];
+        return arr;
       }, []),
     };
   }
@@ -339,6 +343,10 @@ export class UserService {
       id: userId,
     });
 
+    if (!foundUser) {
+      throw new HttpException('用户不存在', HttpStatus.BAD_REQUEST);
+    }
+
     foundUser.password = md5(passwordDto.password);
 
     try {
@@ -374,6 +382,10 @@ export class UserService {
       relations: ['roles', 'roles.permissions'], // 级联查询 指示应该加载实体的哪些关系(简化左连接形式)。
     });
 
+    if (!user) {
+      throw new HttpException('用户不存在', HttpStatus.BAD_REQUEST);
+    }
+
     if (user.isAdmin) {
       return this.handleUserTransformUserInfo(user);
     }
@@ -406,6 +418,10 @@ export class UserService {
     const foundUser = await this.userRepository.findOneBy({
       id: userId,
     });
+
+    if (!foundUser) {
+      throw new HttpException('用户不存在', HttpStatus.BAD_REQUEST);
+    }
 
     // 更新昵称
     if (updateUserDto.nickName) {
@@ -443,6 +459,9 @@ export class UserService {
     const freezeUser = await this.userRepository.findOneBy({
       id,
     });
+    if (!freezeUser) {
+      throw new HttpException('用户不存在', HttpStatus.BAD_REQUEST);
+    }
     freezeUser.isFrozen = true;
 
     await this.userRepository.save(freezeUser);
@@ -532,15 +551,16 @@ export class UserService {
     userInfo.isFrozen = user.isFrozen;
     userInfo.isAdmin = user.isAdmin;
     userInfo.roles = user.roles?.map((item) => item.name) ?? [];
-    userInfo.permissions = (user.roles?.reduce((arr, item) => {
-      // 去重
-      item.permissions.forEach((permission) => {
-        if (arr.indexOf(permission) === -1) {
-          arr.push(permission);
-        }
-      });
-      return arr as Permission[];
-    }, []) ?? []) as Permission[];
+    userInfo.permissions =
+      user.roles?.reduce<Permission[]>((arr, item) => {
+        // 去重
+        item.permissions.forEach((permission) => {
+          if (arr.indexOf(permission) === -1) {
+            arr.push(permission);
+          }
+        });
+        return arr;
+      }, []) ?? [];
     userInfo.type = 'system';
 
     return userInfo;

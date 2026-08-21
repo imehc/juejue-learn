@@ -73,7 +73,7 @@ import { UserServiceMock } from './user.server.mock';
 import { AuthGuard } from '@nestjs/passport';
 import { ConfigurationImpl } from 'src/config/configuration-impl';
 import type { GithubRequest, GoogleRequest, JwtUserData } from 'src/helper';
-import { Response } from 'express';
+import type { Response } from 'express';
 
 // @ApiTags('用户管理模块') // 注意：使用这个会导致使用openAPI generate失败
 @Controller('user')
@@ -95,7 +95,7 @@ export class UserController {
   private jwtService: JwtService;
 
   @Inject(ConfigService)
-  private configService: ConfigService<ConfigurationImpl>;
+  private configService: ConfigService<ConfigurationImpl, true>;
 
   @ApiQuery({
     name: 'token',
