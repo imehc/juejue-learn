@@ -26,7 +26,9 @@ export class BookingServiceMock {
     });
 
     if (!user1 || !user2 || !room1 || !room2) {
-      throw new Error('mock 数据缺少依赖的用户或会议室，请先执行用户/会议室 mock');
+      throw new Error(
+        'mock 数据缺少依赖的用户或会议室，请先执行用户/会议室 mock',
+      );
     }
 
     const booking1 = new Booking();

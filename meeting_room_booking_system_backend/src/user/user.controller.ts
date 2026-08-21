@@ -301,7 +301,7 @@ export class UserController {
         username: user.username,
         email: user.email,
         roles: user.roles,
-        permissions: user.permissions as Permission[],
+        permissions: user.permissions,
       });
     } catch {
       throw new UnauthorizedException('token 已失效，请重新登录');
@@ -611,8 +611,9 @@ export class UserController {
     // TODO: 使用refreshToken获取新的token时 不能通过accessToken重新获取新的token
     // @nestjs/jwt 的 expiresIn 类型是 ms.StringValue | number，
     // 配置读出来是 string，需要断言
-    const expiresIn = (this.configService.get('jwt.access-token-expires-time') ||
-      '30m') as ms.StringValue;
+    const expiresIn =
+      this.configService.get<ms.StringValue>('jwt.access-token-expires-time') ||
+      '30m';
     const accessToken = this.jwtService.sign(
       {
         userId,
@@ -623,9 +624,10 @@ export class UserController {
       },
       { expiresIn: expiresIn },
     );
-    const refeshExpiresIn = (this.configService.get(
-      'jwt.access-refresh-expires-time',
-    ) || '7d') as ms.StringValue;
+    const refeshExpiresIn =
+      this.configService.get<ms.StringValue>(
+        'jwt.access-refresh-expires-time',
+      ) || '7d';
     const refreshToken = this.jwtService.sign(
       { userId },
       { expiresIn: refeshExpiresIn },

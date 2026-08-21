@@ -77,8 +77,10 @@ export class MeetingRoomService {
       throw new BadRequestException('会议室不存在');
     }
 
-    meetingRoom.capacity = updateMeetingRoomDto.capacity ?? meetingRoom.capacity;
-    meetingRoom.location = updateMeetingRoomDto.location ?? meetingRoom.location;
+    meetingRoom.capacity =
+      updateMeetingRoomDto.capacity ?? meetingRoom.capacity;
+    meetingRoom.location =
+      updateMeetingRoomDto.location ?? meetingRoom.location;
     meetingRoom.name = updateMeetingRoomDto.name ?? meetingRoom.name;
 
     meetingRoom.description = updateMeetingRoomDto.description ?? '';

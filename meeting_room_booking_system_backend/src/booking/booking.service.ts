@@ -227,7 +227,8 @@ export class BookingService {
           throw new BadRequestException('管理员邮箱不存在');
         }
         email = admin.email;
-      }      await this.redisService.set(ADMIN_EMAIL, email);
+      }
+      await this.redisService.set(ADMIN_EMAIL, email);
       await this.emailService.sendMail({
         to: email,
         subject: '预定申请催办提醒',

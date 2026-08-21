@@ -19,14 +19,16 @@ type JwtConfig =
 type NestServerConfig = `nest-server.${'port' | 'doc-url'}`;
 
 export declare type ConfigurationImpl = {
-  [K in
-    | RedisConfig
-    | MysqlConfig
-    | OssConfig
-    | NodemailerConfig
-    | WinstonConfig
-    | GoogleLoginConfig
-    | GithubLoginConfig
-    | JwtConfig
-    | NestServerConfig]: string;
+  [
+    K in
+      | RedisConfig
+      | MysqlConfig
+      | OssConfig
+      | NodemailerConfig
+      | WinstonConfig
+      | GoogleLoginConfig
+      | GithubLoginConfig
+      | JwtConfig
+      | NestServerConfig
+  ]: string;
 };
