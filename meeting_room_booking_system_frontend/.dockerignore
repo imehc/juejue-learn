@@ -1,4 +1,13 @@
+# 注意：这份文件对 docker compose 构建无效。
+#
+# 前端的构建上下文是仓库根（见 deploy/docker-compose.yml 里 next-client 的
+# context: ..），Docker 只读取上下文根目录下的 .dockerignore，也就是
+# 仓库根那一份。要改前端的排除规则，请改根目录的 .dockerignore。
+#
+# 这里保留内容只为兼容「在本目录内直接 docker build」的场景。
 node_modules/
 .vscode/
 .git/
 build/
+.next/
+meeting-room-booking-api/

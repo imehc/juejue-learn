@@ -1,3 +1,7 @@
+# 后端的构建上下文就是本目录（见 deploy/docker-compose.yml 的
+# context: ../meeting_room_booking_system_backend），所以这份文件生效。
+# 对比：前端的构建上下文是仓库根，生效的是根目录那份 .dockerignore。
+
 .vscode/
 .git/
 .dockerignore
@@ -10,3 +14,15 @@ Dockerfile
 .env
 .env.dev.yaml
 .env.yaml
+
+# 测试与覆盖率产物：tsconfig.build.json 已把 test/ 和 *spec.ts 排除在编译外，
+# 拷进上下文纯属浪费
+test/
+coverage/
+
+# 运行时产物：日志由容器内的 named volume/目录承载，宿主机这份不要带进去
+daily-log/
+
+# 文档与截图，构建用不到
+*.md
+image.png

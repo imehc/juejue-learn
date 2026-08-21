@@ -22,7 +22,8 @@ export { OSS_CLIENT };
 
         return new S3Client({
           // 自建 S3 服务没有 region 概念，但 SDK 强制要求填，
-          // 且要与建桶时用的 region 一致（见 deploy 里的 rustfs-init）
+          // 且要与建桶时用的 region 一致（见 deploy/oss/init-oss.sh，
+          // rc alias set 的 --region 默认即 us-east-1）
           region: configService.get('oss-server.region') || 'us-east-1',
           endpoint: `${useSSL ? 'https' : 'http'}://${endpoint}:${port}`,
           // 自建服务不支持 bucket.host 这种 virtual-host 寻址，

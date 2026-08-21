@@ -10,7 +10,8 @@ pnpm monorepo，前后端分离，用 Docker Compose 编排。
 │   ├── docker-compose.migrate.yml       #   临时 override，手动跑生产迁移时才用
 │   ├── .env.example                     #   基础设施凭据模板
 │   ├── backend.env.example.yaml          #   后端应用配置模板
-│   └── nginx/nginx.conf                 #   生产环境反向代理
+│   ├── nginx/nginx.conf                 #   生产环境反向代理
+│   └── oss/init-oss.sh                  #   建桶 + 开放匿名读，dev/生产共用
 ├── meeting_room_booking_system_backend/  # 后端 NestJS（6020）
 ├── meeting_room_booking_system_frontend/ # 前端 Next.js（dev 6021 / prod 6022）
 └── Makefile                             # 常用命令的入口
@@ -70,10 +71,12 @@ TypeORM 迁移直接读 `deploy/.env`（见 `src/data-source.ts`），不需要�
 >
 > 因此后端 yaml 里的键是中立的 `oss-server.*`，除凭据外还有两个：
 > `use-ssl`（自建服务一般 `'false'`）和 `region`（自建 S3 没有 region 概念，
-> 但 SDK 强制要求，须与建桶时用的一致 —— compose 里的 `rustfs-init` 用
-> `us-east-1`）。`rustfs-init` 同时会给桶打上允许匿名 `s3:GetObject` 的策略：
+> 但 SDK 强制要求，须与建桶时用的一致 —— `rustfs-init` 用 RustFS 官方 `rc` CLI
+> 建桶，`rc alias set` 的 `--region` 默认即 `us-east-1`）。`rustfs-init` 同时会给桶
+> 打上允许匿名 `s3:GetObject` 的策略（`rc bucket anonymous set download`）：
 > 头像是普通 `<img src>`，不带签名，不开这条策略一律 403；写入仍然要签名，
-> 预签名 PUT 由后端 `/oss/presigned-url` 签发。
+> 预签名 PUT 由后端 `/oss/presigned-url` 签发。具体脚本见 `deploy/oss/init-oss.sh`，
+> dev 和生产两套 compose 共用同一份。
 
 ## 开发环境
 
@@ -217,9 +220,9 @@ API 客户端，所以它的 build context 是仓库根目录，改了后端接�
 生产环境不映射 RustFS 的 9001 控制台端口（`RUSTFS_CONSOLE_ENABLE: 'false'`），
 排查时可临时改回 `'true'` 并加端口映射。
 
-镜像都固定大版本标签（`mysql:8.4` / `redis:8` / `nginx:1-alpine` 等），数据全部用
-named volume（`mysql-data` / `redis-data` / `rustfs-data` / `rustfs-logs` /
-`uploads`），不绑主机路径，换机器换用户都能直接跑。
+镜像都固定大版本标签（`mysql:8.4` / `redis:8-alpine` / `nginx:1-alpine-slim` /
+`rustfs/rc:v0.1.30` 等），数据全部用 named volume（`mysql-data` / `redis-data` /
+`rustfs-data` / `rustfs-logs` / `uploads`），不绑主机路径，换机器换用户都能直接跑。
 
 ## 数据库迁移
 

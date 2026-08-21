@@ -1,19 +1,19 @@
 ###################
-# BUILD FOR LOCAL DEVELOPMENT
+# BUILD
 ###################
 
 # https://www.tomray.dev/nestjs-docker-production
-FROM node:22-alpine As development
+FROM node:22-alpine AS build
 
-# Create app directory
 WORKDIR /usr/src/app
 
-# Copy application dependency manifests to the container image.
-# A wildcard is used to ensure copying both package.json AND package-lock.json (when available).
-# Copying this first prevents re-running npm install on every code change.
+# 先只拷依赖清单，让 node_modules 这层能被缓存，改源码不会触发重装。
+# pnpm-workspace.yaml 必须一起拷：lockfile 里记了 overrides，配置对不上时
+# pnpm 直接 ERR_PNPM_LOCKFILE_CONFIG_MISMATCH；依赖构建脚本的放行
+# （allowBuilds）也在里面。详见该文件自带的注释。
 COPY --chown=node:node package.json pnpm-workspace.yaml yarn.lock* package-lock.json* pnpm-lock.yaml* ./
 
-# Install app dependencies using the `npm ci` command instead of `npm install`
+# 这一阶段要装全量依赖：nest build 依赖 @nestjs/cli，它是 devDependency
 RUN \
   if [ -f yarn.lock ]; then yarn --frozen-lockfile; \
   elif [ -f package-lock.json ]; then npm ci; \
@@ -21,28 +21,8 @@ RUN \
   else echo "Lockfile not found." && exit 1; \
   fi
 
-# Bundle app source
 COPY --chown=node:node . .
 
-# Use the node user from the image (instead of the root user)
-USER node
-
-###################
-# BUILD FOR PRODUCTION
-###################
-
-FROM node:22-alpine As build
-
-WORKDIR /usr/src/app
-
-COPY --chown=node:node package.json pnpm-workspace.yaml yarn.lock* package-lock.json* pnpm-lock.yaml* ./
-
-# In order to run `npm run build` we need access to the Nest CLI which is a dev dependency. In the previous development stage we ran `npm ci` which installed all dependencies, so we can copy over the node_modules directory from the development image
-COPY --chown=node:node --from=development /usr/src/app/node_modules ./node_modules
-
-COPY --chown=node:node . .
-
-# Run the build command which creates the production bundle
 RUN \
   if [ -f yarn.lock ]; then yarn run build; \
   elif [ -f package-lock.json ]; then npm run build; \
@@ -50,41 +30,55 @@ RUN \
   else echo "Lockfile not found." && exit 1; \
   fi
 
-# Set NODE_ENV environment variable
-ENV NODE_ENV production
+###################
+# PRODUCTION DEPENDENCIES
+###################
 
-# Running `npm ci` removes the existing node_modules directory and passing in --only=production ensures that only the production dependencies are installed. This ensures that the node_modules directory is as optimized as possible
+# 独立的干净阶段，从零只装生产依赖。
+#
+# 不要复用 build 阶段的 node_modules 再原地 --prod 裁剪：pnpm 是符号链接式
+# 布局，原地裁剪会在 node_modules/.pnpm 虚拟store里留下 dev 包的残留目录，
+# 白占体积。从零装则压根不会出现 dev 包。
+#
+# 这一阶段不依赖 build 阶段，BuildKit 会让两者并行跑。
+FROM node:22-alpine AS prod-deps
+
+WORKDIR /usr/src/app
+
+COPY --chown=node:node package.json pnpm-workspace.yaml yarn.lock* package-lock.json* pnpm-lock.yaml* ./
+
 RUN \
   if [ -f yarn.lock ]; then \
-    yarn install --frozen-lockfile --production && \
-    yarn cache clean; \
+    yarn install --frozen-lockfile --production && yarn cache clean; \
   elif [ -f package-lock.json ]; then \
-    npm ci --only=production && \
-    npm cache clean --force; \
+    npm ci --omit=dev && npm cache clean --force; \
   elif [ -f pnpm-lock.yaml ]; then \
-    corepack enable pnpm && \
-    pnpm install --prod && \
-    pnpm prune; \
+    corepack enable pnpm && pnpm install --prod --frozen-lockfile; \
   else \
     echo "Lockfile not found." && exit 1; \
   fi
-
-
-USER node
 
 ###################
 # PRODUCTION
 ###################
 
-FROM node:22-alpine As production
+FROM node:22-alpine AS production
 
 # 必须设置工作目录：configuration.ts 用 resolve(__dirname, '../../.env.yaml')
 # 定位配置，main.ts 用 __dirname/../uploads 作静态目录。不设 WORKDIR 时
 # 这些路径会落到容器根目录 /，卷挂载点也就无从对应。
 WORKDIR /usr/src/app
 
-# Copy the bundled code from the build stage to the production image
-COPY --chown=node:node --from=build /usr/src/app/node_modules ./node_modules
+# 注意：原先这行写在 build 阶段，而镜像层的 ENV 不会跨阶段继承，所以运行时
+# 其实一直没有 NODE_ENV=production（Express 因此跑在 development 模式）。
+# 挪到这里才真正生效。生产依赖的筛选不靠它，靠 prod-deps 阶段的 --prod 参数。
+# 配置文件的选择用的是另一个变量 NODE_ENVIRONMENT，由 compose 注入，
+# 见 src/config/configuration.ts。
+ENV NODE_ENV=production
+
+# 只拿两样东西：干净的生产依赖 + 编译产物。
+# pnpm 的 store 留在 prod-deps 阶段，不会进最终镜像。
+COPY --chown=node:node --from=prod-deps /usr/src/app/node_modules ./node_modules
 COPY --chown=node:node --from=build /usr/src/app/dist ./dist
 
 # 注意：生产配置 .env.yaml 不打进镜像，由 deploy/docker-compose.yml 以
@@ -93,17 +87,16 @@ COPY --chown=node:node --from=build /usr/src/app/dist ./dist
 # 单独 docker run 时需自行挂载：
 #   -v "$PWD/deploy/backend.env.yaml:/usr/src/app/.env.yaml:ro"
 
-# 静态文件目录，compose 里挂了 named volume
-RUN mkdir -p uploads && chown node:node uploads
-
-# 日志目录，winston daily-rotate-file 需要写入
-RUN mkdir -p daily-log && chown node:node daily-log
+# uploads：main.ts 里的 /uploads 静态目录，compose 挂了 named volume
+# daily-log：winston daily-rotate-file 需要写入
+# 合成一条 RUN，少一个镜像层
+RUN mkdir -p uploads daily-log && chown node:node uploads daily-log
 
 USER node
 
 EXPOSE 6020
 
-ENV PORT 6020
+ENV PORT=6020
 
 # Start the server using the production build
 CMD [ "node", "dist/main.js" ]

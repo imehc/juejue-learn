@@ -41,8 +41,11 @@ services:
     networks:
       - common-network
 
+  # alpine 变体：232MB → 约 45MB。后端只用到 get/set/expire/del
+  # （见 src/redis/redis.service.ts），用不上默认镜像捆绑的那些模块
+  # （RediSearch / JSON 等），所以 alpine 够用。
   redis:
-    image: redis:8
+    image: redis:8-alpine
     container_name: mrbs-redis
     volumes:
       - redis-data:/data
@@ -104,50 +107,24 @@ services:
       - common-network
 
   # 建桶 + 开放匿名读，幂等：重复执行不会报错。跑完即退出。
-  # amazon/aws-cli 只发 latest 和完整的 2.x.y，没有 2 这种大版本标签；
-  # 这里只用到 s3api，跟版本无关，用 latest 即可。
+  # 具体逻辑见 ./oss/init-oss.sh（dev / 生产两套 compose 共用同一份脚本）。
   #
-  # 匿名读是必须的：前端头像是普通 <img src>（生产环境走 nginx 的
-  # /oss 反代），直接访问对象 URL，没有签名。不开策略的话头像一律 403。
-  # 写入仍然要签名——预签名 PUT 由后端签发。
+  # 用 RustFS 官方 rc CLI（68.7MB）而不是 amazon/aws-cli（668MB）：
+  # 只为建一个桶 + 设一条策略，没必要背一整个 AWS CLI。
+  # rc 的版本 tag 要锁死，理由同 rustfs 本体——RC 阶段迭代快、有过策略回归。
   rustfs-init:
-    image: amazon/aws-cli:latest
+    image: rustfs/rc:v0.1.30
     container_name: mrbs-rustfs-init
     depends_on:
       rustfs:
         condition: service_healthy
     environment:
-      AWS_ACCESS_KEY_ID: ${RUSTFS_ACCESS_KEY:?}
-      AWS_SECRET_ACCESS_KEY: ${RUSTFS_SECRET_KEY:?}
-      AWS_DEFAULT_REGION: us-east-1
+      RUSTFS_ACCESS_KEY: ${RUSTFS_ACCESS_KEY:?}
+      RUSTFS_SECRET_KEY: ${RUSTFS_SECRET_KEY:?}
       BUCKET: ${RUSTFS_BUCKET:-meeting-room-booking-system}
-    entrypoint: /bin/sh
-    command:
-      - -ec
-      - |
-        ep=http://rustfs:9000
-        if aws --endpoint-url "$$ep" s3api head-bucket --bucket "$$BUCKET" 2>/dev/null; then
-          echo "bucket $$BUCKET already exists"
-        else
-          aws --endpoint-url "$$ep" s3api create-bucket --bucket "$$BUCKET"
-          echo "bucket $$BUCKET created"
-        fi
-        cat > /tmp/policy.json <<JSON
-        {
-          "Version": "2012-10-17",
-          "Statement": [
-            {
-              "Effect": "Allow",
-              "Principal": {"AWS": ["*"]},
-              "Action": ["s3:GetObject"],
-              "Resource": ["arn:aws:s3:::$$BUCKET/*"]
-            }
-          ]
-        }
-        JSON
-        aws --endpoint-url "$$ep" s3api put-bucket-policy \
-          --bucket "$$BUCKET" --policy file:///tmp/policy.json
-        echo "anonymous read policy applied to $$BUCKET"
+    entrypoint: ['/bin/sh', '/init-oss.sh']
+    volumes:
+      - ./oss/init-oss.sh:/init-oss.sh:ro
     restart: 'no'
     networks:
       - common-network
@@ -188,9 +165,13 @@ services:
     networks:
       - common-network
 
+  # alpine-slim：95MB → 约 15MB。砍掉的是 njs / geoip / perl 模块和
+  # /docker-entrypoint.d 里的 envsubst 模板机制；nginx.conf 只用到
+  # events / http / upstream / proxy_pass / rewrite 这些核心功能，
+  # 且配置是静态 bind mount 进来的，都用不上。
   nginx:
     container_name: mrbs-nginx
-    image: nginx:1-alpine
+    image: nginx:1-alpine-slim
     depends_on:
       - nest-api
       - next-client

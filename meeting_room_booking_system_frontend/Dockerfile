@@ -1,5 +1,5 @@
 # 使用 openapitools/openapi-generator-cli 生成api文档
-FROM openapitools/openapi-generator-cli:v6.6.0 as openapi-generate-stage
+FROM openapitools/openapi-generator-cli:v6.6.0 AS openapi-generate-stage
 
 WORKDIR /app 
 
@@ -36,9 +36,14 @@ RUN \
 FROM base AS builder
 WORKDIR /app
 
-COPY --from=openapi-generate-stage /app/meeting-room-booking-api ./meeting-room-booking-api
 COPY --from=deps /app/node_modules ./node_modules
 COPY meeting_room_booking_system_frontend .
+
+# 必须放在拷贝源码之后：上一条 COPY 会把宿主机的同名目录（如果存在）盖进来，
+# 顺序反了就会用一份可能已经过期的本地客户端，生成阶段白跑。
+# 根 .dockerignore 里也排除了该目录，双重保险。
+# 前端通过 tsconfig 的 ~/* 路径别名 import 这个目录，见 app/page.tsx。
+COPY --from=openapi-generate-stage /app/meeting-room-booking-api ./meeting-room-booking-api
 
 # Next.js collects completely anonymous telemetry data about general usage.
 # Learn more here: https://nextjs.org/telemetry
