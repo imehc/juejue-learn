@@ -67,7 +67,7 @@ import 'winston-daily-rotate-file';
           logger: new CustomTypeormLogger(logger),
           entities: [User, Role, Permission, MeetingRoom, Booking],
           poolSize: 10,
-          connectorPackage: 'mysql2',
+          // typeorm 1.0 移除了 connectorPackage，mysql2 是唯一支持的客户端，会自动加载
           // 应用启动时自动执行未跑过的迁移，生产/开发通用；
           // 新增迁移文件后重启即可生效，无需再手动 make migrate
           migrationsRun: true,

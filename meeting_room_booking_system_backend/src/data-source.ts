@@ -25,7 +25,7 @@ export default new DataSource({
   logging: true,
   entities: [User, Role, Permission, MeetingRoom, Booking],
   poolSize: 10,
-  migrations: ['src/migrations/**.ts']
+  migrations: ['src/migrations/**.ts'],
 });
 
 // 生成了 create table 的 migration

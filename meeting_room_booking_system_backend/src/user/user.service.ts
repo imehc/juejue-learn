@@ -172,8 +172,8 @@ export class UserService {
       // 级联查询 指示应该加载实体的哪些关系(简化左连接形式)。
       relations: {
         roles: {
-          permissions: true
-        }
+          permissions: true,
+        },
       },
     });
 
@@ -213,8 +213,8 @@ export class UserService {
       },
       relations: {
         roles: {
-          permissions: true
-        }
+          permissions: true,
+        },
       },
     });
 
@@ -247,8 +247,8 @@ export class UserService {
       },
       relations: {
         roles: {
-          permissions: true
-        }
+          permissions: true,
+        },
       },
     });
     if (user) {
@@ -271,8 +271,8 @@ export class UserService {
       },
       relations: {
         roles: {
-          permissions: true
-        }
+          permissions: true,
+        },
       },
     });
     if (user) {
@@ -397,8 +397,8 @@ export class UserService {
       },
       relations: {
         roles: {
-          permissions: true
-        }
+          permissions: true,
+        },
       }, // 级联查询 指示应该加载实体的哪些关系(简化左连接形式)。
     });
 
@@ -500,7 +500,7 @@ export class UserService {
         phoneNumber: true,
         isFrozen: true,
         headPic: true,
-        createAt: true
+        createAt: true,
       },
       skip: skipCount,
       take: limit,
@@ -542,7 +542,7 @@ export class UserService {
         phoneNumber: true,
         isFrozen: true,
         headPic: true,
-        createAt: true
+        createAt: true,
       },
       skip: skipCount,
       take: limit,
