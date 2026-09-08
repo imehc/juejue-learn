@@ -59,7 +59,7 @@ jobs:
       # 版本要满足根 package.json 的 engines（pnpm >=10、node >=20），
       # 否则 pnpm 直接以 ERR_PNPM_UNSUPPORTED_ENGINE 退出，
       # 后续步骤拿不到 nest/jest 二进制，门禁会变成空跑
-      - uses: pnpm/action-setup@v6.0.10
+      - uses: pnpm/action-setup@v6.1.0
         with:
           version: 11
       - uses: actions/setup-node@v7
@@ -74,7 +74,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - uses: pnpm/action-setup@v6.0.10
+      - uses: pnpm/action-setup@v6.1.0
         with:
           version: 11
       - uses: actions/setup-node@v7
