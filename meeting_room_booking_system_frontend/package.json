@@ -40,7 +40,7 @@
     "@react-aria/ssr": "3.10.1",
     "@react-aria/visually-hidden": "3.9.1",
     "ahooks": "^3.10.0",
-    "autoprefixer": "10.5.4",
+    "autoprefixer": "10.5.5",
     "clsx": "2.1.1",
     "date-fns": "^4.4.0",
     "framer-motion": "~13.2.0",
