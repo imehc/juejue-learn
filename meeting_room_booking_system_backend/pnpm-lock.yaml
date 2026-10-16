@@ -46,7 +46,7 @@ importers:
         version: 11.4.7(@nestjs/common@11.2.7(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@8.1.1))(@nestjs/core@11.2.1)(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)
       '@nestjs/typeorm':
         specifier: ^12.0.2
-        version: 12.0.2(@nestjs/common@11.2.7(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@8.1.1))(@nestjs/core@11.2.1)(reflect-metadata@0.2.2)(rxjs@7.8.2)(typeorm@1.1.1(mysql2@3.24.5(@types/node@26.5.1))(redis@6.2.1)(supports-color@8.1.1)(ts-node@10.9.2(@types/node@26.5.1)(typescript@5.9.2)))
+        version: 12.0.2(@nestjs/common@11.2.7(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@8.1.1))(@nestjs/core@11.2.1)(reflect-metadata@0.2.2)(rxjs@7.8.2)(typeorm@1.1.2(mysql2@3.24.5(@types/node@26.5.1))(redis@6.2.1)(supports-color@8.1.1)(ts-node@10.9.2(@types/node@26.5.1)(typescript@5.9.2)))
       class-transformer:
         specifier: ^0.5.1
         version: 0.5.1
@@ -102,8 +102,8 @@ importers:
         specifier: ^10.1.0
         version: 10.1.0(supports-color@8.1.1)
       typeorm:
-        specifier: ^1.1.1
-        version: 1.1.1(mysql2@3.24.5(@types/node@26.5.1))(redis@6.2.1)(supports-color@8.1.1)(ts-node@10.9.2(@types/node@26.5.1)(typescript@5.9.2))
+        specifier: ^1.1.2
+        version: 1.1.2(mysql2@3.24.5(@types/node@26.5.1))(redis@6.2.1)(supports-color@8.1.1)(ts-node@10.9.2(@types/node@26.5.1)(typescript@5.9.2))
       uuid:
         specifier: ^14.0.3
         version: 14.0.3
@@ -1636,10 +1636,6 @@ packages:
   ansi-styles@6.2.3:
     resolution: {integrity: sha512-4Dj6M28JB+oAH8kFkTLUo+a2jwOFkuqb3yucU0CANcRRUbxS0cP0nZYCGjcc3BNXwRIsUVmDGgzawme7zvJHvg==}
     engines: {node: '>=12'}
-
-  ansis@4.3.1:
-    resolution: {integrity: sha512-BJ8/l4R5LRE7hW9WdSuGYrLSHi2ynxeFpDFbH0K/CgNeY/tyhk+vO6TYxXC5r5CpUhNVX310xzPsN/H9lCdfOA==}
-    engines: {node: '>=14'}
 
   ansis@4.4.0:
     resolution: {integrity: sha512-9k3v7xcHwgdO/DruxGIg4HtjvlAZlcnsX/mzqUb1t3NkYnl9kK2UJ+Gq0io+vQf7iT//BD/HB/NBkUR1LWxoeA==}
@@ -3689,8 +3685,8 @@ packages:
     resolution: {integrity: sha512-faYHw0anBbc/kWF3zFTEnxSFOAGUX9GFbOBthvDdLsIlEoWOFOtS0zgCiQYwIskL9iGXZL3kAXD8OoZ4GmMATA==}
     engines: {node: '>= 18'}
 
-  typeorm@1.1.1:
-    resolution: {integrity: sha512-og9mG4Lwlvj6MfvYd8yRCzXy73gETtwgTKQ/ISLYvEOpJPy4IrjU/89HK4ZAFmRIbEg1hkIk04v8phTrxfgPmQ==}
+  typeorm@1.1.2:
+    resolution: {integrity: sha512-UDQ8++2oFCK4fETiRKEC0eCES/i+/1SB4NBqXWeJNosI1i2SVFCDPhqIsXHWpFzFHTBOA553upQZj0NKVbNdUQ==}
     engines: {node: ^20.19.0 || ^22.13.0 || >=24.11.0}
     hasBin: true
     peerDependencies:
@@ -5003,13 +4999,13 @@ snapshots:
     optionalDependencies:
       '@nestjs/platform-express': 11.2.7(@nestjs/common@11.2.7(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@8.1.1))(@nestjs/core@11.2.1)(supports-color@8.1.1)
 
-  '@nestjs/typeorm@12.0.2(@nestjs/common@11.2.7(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@8.1.1))(@nestjs/core@11.2.1)(reflect-metadata@0.2.2)(rxjs@7.8.2)(typeorm@1.1.1(mysql2@3.24.5(@types/node@26.5.1))(redis@6.2.1)(supports-color@8.1.1)(ts-node@10.9.2(@types/node@26.5.1)(typescript@5.9.2)))':
+  '@nestjs/typeorm@12.0.2(@nestjs/common@11.2.7(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@8.1.1))(@nestjs/core@11.2.1)(reflect-metadata@0.2.2)(rxjs@7.8.2)(typeorm@1.1.2(mysql2@3.24.5(@types/node@26.5.1))(redis@6.2.1)(supports-color@8.1.1)(ts-node@10.9.2(@types/node@26.5.1)(typescript@5.9.2)))':
     dependencies:
       '@nestjs/common': 11.2.7(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@8.1.1)
       '@nestjs/core': 11.2.1(@nestjs/common@11.2.7(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@8.1.1))(@nestjs/platform-express@11.2.7)(reflect-metadata@0.2.2)(rxjs@7.8.2)
       reflect-metadata: 0.2.2
       rxjs: 7.8.2
-      typeorm: 1.1.1(mysql2@3.24.5(@types/node@26.5.1))(redis@6.2.1)(supports-color@8.1.1)(ts-node@10.9.2(@types/node@26.5.1)(typescript@5.9.2))
+      typeorm: 1.1.2(mysql2@3.24.5(@types/node@26.5.1))(redis@6.2.1)(supports-color@8.1.1)(ts-node@10.9.2(@types/node@26.5.1)(typescript@5.9.2))
 
   '@noble/hashes@1.1.5': {}
 
@@ -5627,8 +5623,6 @@ snapshots:
   ansi-styles@5.2.0: {}
 
   ansi-styles@6.2.3: {}
-
-  ansis@4.3.1: {}
 
   ansis@4.4.0: {}
 
@@ -7815,10 +7809,10 @@ snapshots:
       media-typer: 1.1.1
       mime-types: 3.0.2
 
-  typeorm@1.1.1(mysql2@3.24.5(@types/node@26.5.1))(redis@6.2.1)(supports-color@8.1.1)(ts-node@10.9.2(@types/node@26.5.1)(typescript@5.9.2)):
+  typeorm@1.1.2(mysql2@3.24.5(@types/node@26.5.1))(redis@6.2.1)(supports-color@8.1.1)(ts-node@10.9.2(@types/node@26.5.1)(typescript@5.9.2)):
     dependencies:
       '@sqltools/formatter': 1.2.5
-      ansis: 4.3.1
+      ansis: 4.4.0
       dayjs: 1.11.23
       debug: 4.4.3(supports-color@8.1.1)
       dedent: 1.7.2
