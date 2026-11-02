@@ -93,8 +93,8 @@ importers:
         specifier: 3.9.1
         version: 3.9.1(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       ahooks:
-        specifier: ^3.10.0
-        version: 3.10.0(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
+        specifier: ^3.11.0
+        version: 3.11.0(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       autoprefixer:
         specifier: 10.6.2
         version: 10.6.2(postcss@8.5.23)
@@ -1848,8 +1848,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  ahooks@3.10.0:
-    resolution: {integrity: sha512-gwlBIjvG6x9UDOxZJeJ9l4x/nlrfrHBEqmau0b2mqchwWKOwAGAMXVE7rJXy883y9hzUTn+xlHgJHcJrf98Haw==}
+  ahooks@3.11.0:
+    resolution: {integrity: sha512-mQML7DrxZo7xvxm145NTMowE9m75tflSayKjlwEMzwQSRFguweNCdCSIq88aQ4RRfVMugBrH8AtGresJwqMy5A==}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
@@ -4659,7 +4659,7 @@ snapshots:
   '@typescript/typescript-win32-x64@7.0.2':
     optional: true
 
-  ahooks@3.10.0(react-dom@19.3.1(react@19.3.1))(react@19.3.1):
+  ahooks@3.11.0(react-dom@19.3.1(react@19.3.1))(react@19.3.1):
     dependencies:
       '@babel/runtime': 7.29.7
       dayjs: 1.11.23
