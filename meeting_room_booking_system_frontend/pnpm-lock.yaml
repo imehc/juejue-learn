@@ -108,8 +108,8 @@ importers:
         specifier: ~14.10.0
         version: 14.10.0(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       i18next:
-        specifier: ^26.7.2
-        version: 26.7.2(typescript@7.0.2)
+        specifier: ^27.0.1
+        version: 27.0.1(typescript@7.0.2)
       intl-messageformat:
         specifier: ^12.1.4
         version: 12.1.4
@@ -145,7 +145,7 @@ importers:
         version: 3.0.4(zod@4.6.7)
       zod-i18n-map:
         specifier: ^3.0.1
-        version: 3.0.1(i18next@26.7.2(typescript@7.0.2))(zod@4.6.7)
+        version: 3.0.1(i18next@27.0.1(typescript@7.0.2))(zod@4.6.7)
     devDependencies:
       '@biomejs/biome':
         specifier: ^2.6.5
@@ -2013,8 +2013,9 @@ packages:
   graceful-fs@4.2.11:
     resolution: {integrity: sha512-RbJ5/jmFcNNCcDV5o9eTnBLJ/HszWV0P73bc+Ff4nS/rJj+YaS6IGyiOL0VoBYX+l1Wrl3k63h/KrH+nhJ0XvQ==}
 
-  i18next@26.7.2:
-    resolution: {integrity: sha512-RsOY3BeaCDdkk52NeJSFAXELQ2rQXBO/tOub6L8ue2ICPfR/FRDWDOfEDg4xMPd1SqO5goVYQ6i72qWEUB/PPw==}
+  i18next@27.0.1:
+    resolution: {integrity: sha512-KaE5ozP8UUeVpOJIwMVbbnpRKpyYQuxd9ZbseJoDzezE3nvLnZZQn20pkzyIJwPI2Uet/Qs3WzPTG812f6F/Eg==}
+    engines: {node: '>=22'}
     peerDependencies:
       typescript: ^5 || ^6 || ^7
     peerDependenciesMeta:
@@ -2366,9 +2367,6 @@ packages:
   tailwind-variants@4.0.1:
     resolution: {integrity: sha512-VumzgPklIwpneDWtskGuhEqPlfZZ2DeN1nIb2um9DRhk9XBX580s4N84A533j+oHN+dLz274HkKvSjr+64fggA==}
     engines: {node: '>=16.9.x', pnpm: '>=7.x'}
-
-  tailwindcss@4.3.4:
-    resolution: {integrity: sha512-PCJZTFFdG+sL3gvnP1Do9o6GbkvH2q0p04xSs3f7cSvmAeK+sttG+/7ncK1fdRwKFfC7n+wDDJaOMBSefkI9ow==}
 
   tailwindcss@4.3.5:
     resolution: {integrity: sha512-FcQk9BuffmEHJP2G0XmB2SplU1aLTI7j07Kunk+U74Ny+XiWOtzXz9aujFZ/avntw1e2cOv/3PkgzflQ7gX2vQ==}
@@ -4812,7 +4810,7 @@ snapshots:
 
   graceful-fs@4.2.11: {}
 
-  i18next@26.7.2(typescript@7.0.2):
+  i18next@27.0.1(typescript@7.0.2):
     optionalDependencies:
       typescript: 7.0.2
 
@@ -5152,8 +5150,6 @@ snapshots:
 
   tailwind-variants@4.0.1: {}
 
-  tailwindcss@4.3.4: {}
-
   tailwindcss@4.3.5: {}
 
   tapable@2.3.3: {}
@@ -5223,9 +5219,9 @@ snapshots:
       '@rvf/set-get': 7.0.4
       zod: 4.6.7
 
-  zod-i18n-map@3.0.1(i18next@26.7.2(typescript@7.0.2))(zod@4.6.7):
+  zod-i18n-map@3.0.1(i18next@27.0.1(typescript@7.0.2))(zod@4.6.7):
     dependencies:
-      i18next: 26.7.2(typescript@7.0.2)
+      i18next: 27.0.1(typescript@7.0.2)
       zod: 4.6.7
 
   zod@4.6.7: {}
