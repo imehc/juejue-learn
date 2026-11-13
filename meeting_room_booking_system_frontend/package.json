@@ -44,7 +44,7 @@
     "clsx": "2.1.1",
     "date-fns": "^4.4.0",
     "framer-motion": "~14.10.1",
-    "i18next": "^27.0.1",
+    "i18next": "^27.1.1",
     "intl-messageformat": "^12.1.5",
     "next": "16.4.5",
     "next-nprogress-bar": "^2.4.7",
