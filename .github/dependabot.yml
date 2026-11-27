@@ -10,6 +10,10 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
+    # 合并或关闭 PR 后删掉 Dependabot 自己的远端分支，避免分支堆积。
+    # 仓库级 delete_branch_on_merge 只覆盖“合并成功”这一条路径，
+    # 这里补上“关闭但未合并”的情况，两者互补。
+    delete-branch: true
 
   # pnpm workspace 设置 sharedWorkspaceLockfile: false，backend/frontend 各自维护
   # 独立的 pnpm-lock.yaml。因此不要在这里用根目录 "/" 的 npm entry 去更新 workspace
@@ -22,9 +26,11 @@ updates:
     directory: "/meeting_room_booking_system_backend"
     schedule:
       interval: "daily"
+    delete-branch: true
 
   - package-ecosystem: "npm"
     versioning-strategy: increase
     directory: "/meeting_room_booking_system_frontend"
     schedule:
       interval: "daily"
+    delete-branch: true
