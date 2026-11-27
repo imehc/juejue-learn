@@ -96,8 +96,33 @@ jobs:
       # ci-gate 通过后，用 GitHub 原生 auto-merge 合并（squash）。
       # 使用 --auto 让 GitHub 在分支保护（Allow auto-merge）条件满足后自动完成合并。
       # 目标分支 main 已开启 Allow auto-merge 分支保护规则。
+      #
+      # 为什么必须重试：GitHub 计算 mergeability 有延迟，紧跟 ci-gate 之后调用
+      # enablePullRequestAutoMerge 会返回 "Pull request is in unstable status"。
+      # 本 workflow 只在 opened/synchronize/reopened/ready_for_review 触发，
+      # CI 后来跑完不会再触发一次，所以单次失败就会让 PR 永久停在
+      # “ci-gate 全绿但没合并、也没开 auto-merge”的状态。
+      # 加一个带退避的重试即可覆盖 mergeability 尚未收敛的窗口。
       - name: Merge Dependabot PR
-        run: gh pr merge "$PR_URL" --squash --auto
+        run: |
+          # 重复触发或人工已先合并时直接跳过，避免对已合并 PR 反复报错。
+          STATE=$(gh pr view "$PR_URL" --json state --jq .state)
+          if [ "$STATE" = "MERGED" ]; then
+            echo "PR already merged, skip."
+            exit 0
+          fi
+
+          for i in $(seq 1 6); do
+            if gh pr merge "$PR_URL" --squash --auto; then
+              echo "auto-merge enabled on attempt $i."
+              exit 0
+            fi
+            echo "attempt $i failed: mergeability not settled yet, retrying in 30s..."
+            sleep 30
+          done
+
+          echo "::error::Could not enable auto-merge after 6 attempts."
+          exit 1
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
