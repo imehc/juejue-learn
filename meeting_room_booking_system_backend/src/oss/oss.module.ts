@@ -16,8 +16,10 @@ export { OSS_CLIENT };
     {
       provide: OSS_CLIENT,
       useFactory(configService: ConfigService<ConfigurationImpl, true>) {
-        const endpoint = configService.get('oss-server.endpoint');
-        const port = configService.get('oss-server.port') || '9000';
+        const endpoint = configService.get<string>('oss-server.endpoint');
+        // ConfigurationImpl 的 key 本身就是 'oss-server.port' 这种扁平点号字面量，
+        // 不是嵌套对象，get(..., { infer: true }) 推导出来是 never，只能显式给泛型
+        const port = configService.get<string>('oss-server.port') || '9000';
         const useSSL = configService.get('oss-server.use-ssl') === 'true';
 
         return new S3Client({

@@ -37,6 +37,9 @@ declare global {
   }
   interface Headers {
     authorization?: string;
+    // undici 的 Headers 类型只有方法、没有索引签名，取值只能靠这里逐个声明；
+    // 运行时 headers 是 express 的普通对象，字面量读取才是正确姿势
+    'user-agent'?: string;
   }
 }
 

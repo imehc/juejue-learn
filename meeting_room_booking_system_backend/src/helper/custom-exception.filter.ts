@@ -14,13 +14,10 @@ export class CustomExceptionFilter implements ExceptionFilter {
     response.statusCode = code;
 
     const res = exception.getResponse() as { message: string[] | string };
-    let message = exception.message;
-
-    if (res.message instanceof Array) {
-      message = res?.message?.join('；');
-    } else {
-      message = res.message;
-    }
+    // message 由下面的三元直接算出，不再先赋 exception.message 再覆盖
+    const message = Array.isArray(res.message)
+      ? res.message.join('；')
+      : res.message;
 
     response
       .status(code)
