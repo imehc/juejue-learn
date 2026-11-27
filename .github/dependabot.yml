@@ -33,6 +33,12 @@ updates:
       aws-sdk:
         patterns:
           - "@aws-sdk/*"
+    # TypeScript 6 默认开启 strictPropertyInitialization 等检查，直接升会产生
+    # 122 处类型错误，属于真实不兼容，需要单独做一次迁移而不是跟着 Dependabot 走。
+    ignore:
+      - dependency-name: "typescript"
+        update-types:
+          - "version-update:semver-major"
 
   - package-ecosystem: "npm"
     versioning-strategy: increase
