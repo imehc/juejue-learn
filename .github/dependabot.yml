@@ -33,6 +33,14 @@ updates:
       aws-sdk:
         patterns:
           - "@aws-sdk/*"
+      # Nest 的包互相钉 peerDependency（@nestjs/swagger 要求 core ^12、
+      # @nestjs/typeorm 要求 common ^12），而且 @nestjs/schematics 把 TypeScript
+      # 的大版本写成 peer（v12 → TS ^6）。任何一个单独升都会在安装阶段就 peer
+      # 冲突，或者装上了却在运行期对不上，所以整组一起走、一次升级一个 PR。
+      nestjs:
+        patterns:
+          - "@nestjs/*"
+          - "typescript"
 
   - package-ecosystem: "npm"
     versioning-strategy: increase
