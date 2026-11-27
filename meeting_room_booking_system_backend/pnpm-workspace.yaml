@@ -14,3 +14,7 @@ allowBuilds:
   # @nestjs/swagger → swagger-ui-dist → @scarf/scarf，postinstall 只做安装量
   # 埋点上报，对构建无用，明确拒绝
   '@scarf/scarf': false
+  # jest-haste-map 30.5 起改用 @parcel/watcher 做文件监听，postinstall 通过
+  # node-gyp-build 选取当前平台的原生绑定（产物已在 optionalDependencies 里），
+  # 与 unrs-resolver 同理，放行。
+  '@parcel/watcher': true
