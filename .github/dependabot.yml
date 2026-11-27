@@ -27,6 +27,12 @@ updates:
     schedule:
       interval: "daily"
     delete-branch: true
+    # @aws-sdk/* 内部共用 @smithy/* 类型，拆成多个 PR 单独升会让 @smithy/types
+    # 出现两份副本，middlewareStack.add 的类型直接不兼容。必须同批升级。
+    groups:
+      aws-sdk:
+        patterns:
+          - "@aws-sdk/*"
 
   - package-ecosystem: "npm"
     versioning-strategy: increase
