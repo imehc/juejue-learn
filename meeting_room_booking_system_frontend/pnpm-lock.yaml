@@ -108,8 +108,8 @@ importers:
         specifier: ~14.14.0
         version: 14.14.0(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       i18next:
-        specifier: ^27.2.5
-        version: 27.2.5(typescript@7.0.2)
+        specifier: ^27.2.6
+        version: 27.2.6(typescript@7.0.2)
       intl-messageformat:
         specifier: ^12.2.1
         version: 12.2.1
@@ -145,7 +145,7 @@ importers:
         version: 3.0.4(zod@4.6.7)
       zod-i18n-map:
         specifier: ^3.0.1
-        version: 3.0.1(i18next@27.2.5(typescript@7.0.2))(zod@4.6.7)
+        version: 3.0.1(i18next@27.2.6(typescript@7.0.2))(zod@4.6.7)
     devDependencies:
       '@biomejs/biome':
         specifier: ^2.6.8
@@ -2389,8 +2389,8 @@ packages:
     resolution: {integrity: sha512-ag87y7cJJ9/3+GxFr8Oy4O5faDsGRGnBGsJj/YjOSsSx/5eadKLYTMPlzuR6obgoCDDm0abAAZitXXQkMOPSpA==}
     engines: {node: '>= 20'}
 
-  i18next@27.2.5:
-    resolution: {integrity: sha512-hzw6DP/OV8u9LPLFRNLxoDbehhbEeMwpjQanJv5sRLsYUVYsgqftUSRfWJUbQN5lodGIiFjV9e+lA6M2UILt2g==}
+  i18next@27.2.6:
+    resolution: {integrity: sha512-ScRHHL/oAHaEgi78K770XIDQmOiq3BLjD4zxEoDeva4NLXXLPb83mzeSjFw7SefkwCEpLNC+560Pg0Q3BnCLsA==}
     engines: {node: '>=22'}
     peerDependencies:
       typescript: ^5 || ^6 || ^7
@@ -5827,7 +5827,7 @@ snapshots:
       - kerberos
       - supports-color
 
-  i18next@27.2.5(typescript@7.0.2):
+  i18next@27.2.6(typescript@7.0.2):
     optionalDependencies:
       typescript: 7.0.2
 
@@ -6455,9 +6455,9 @@ snapshots:
       '@rvf/set-get': 7.0.4
       zod: 4.6.7
 
-  zod-i18n-map@3.0.1(i18next@27.2.5(typescript@7.0.2))(zod@4.6.7):
+  zod-i18n-map@3.0.1(i18next@27.2.6(typescript@7.0.2))(zod@4.6.7):
     dependencies:
-      i18next: 27.2.5(typescript@7.0.2)
+      i18next: 27.2.6(typescript@7.0.2)
       zod: 4.6.7
 
   zod@4.6.7: {}
