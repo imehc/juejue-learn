@@ -5,15 +5,16 @@
 # https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
 
 version: 2
+
+# 分支清理只靠仓库设置 delete_branch_on_merge（合并后自动删）。
+# dependabot.yml 没有删分支的选项：写成 delete-branch 属于非法键，
+# Dependabot 的配置校验（check run ".github/dependabot.yml"）会直接失败。
+# 关闭但未合并的 PR 分支不会被自动删，需要时手工清理。
 updates:
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "daily"
-    # 合并或关闭 PR 后删掉 Dependabot 自己的远端分支，避免分支堆积。
-    # 仓库级 delete_branch_on_merge 只覆盖“合并成功”这一条路径，
-    # 这里补上“关闭但未合并”的情况，两者互补。
-    delete-branch: true
 
   # pnpm workspace 设置 sharedWorkspaceLockfile: false，backend/frontend 各自维护
   # 独立的 pnpm-lock.yaml。因此不要在这里用根目录 "/" 的 npm entry 去更新 workspace
@@ -26,7 +27,6 @@ updates:
     directory: "/meeting_room_booking_system_backend"
     schedule:
       interval: "daily"
-    delete-branch: true
     # @aws-sdk/* 内部共用 @smithy/* 类型，拆成多个 PR 单独升会让 @smithy/types
     # 出现两份副本，middlewareStack.add 的类型直接不兼容。必须同批升级。
     groups:
@@ -47,4 +47,3 @@ updates:
     directory: "/meeting_room_booking_system_frontend"
     schedule:
       interval: "daily"
-    delete-branch: true
