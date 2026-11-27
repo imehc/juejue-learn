@@ -56,9 +56,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      # 版本要满足根 package.json 的 engines（pnpm >=10、node >=20），
-      # 否则 pnpm 直接以 ERR_PNPM_UNSUPPORTED_ENGINE 退出，
-      # 后续步骤拿不到 nest/jest 二进制，门禁会变成空跑
+      # 版本要满足根 package.json 的 engines（pnpm >=10、node >=22.22.3），
+      # 否则 pnpm 会直接拒绝安装，后续步骤拿不到 nest/vitest 二进制，
+      # 门禁会变成空跑。22 取的是 22.x 最新补丁（当前 22.23.x）：
+      # Nest 12 的 schematics 要求 >=22.22.3。
       - uses: pnpm/action-setup@v6.1.1
         with:
           version: 11
