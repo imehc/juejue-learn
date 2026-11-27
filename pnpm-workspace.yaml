@@ -10,6 +10,11 @@ sharedWorkspaceLockfile: false
 # package.json 里的 engines 视为硬约束，版本不符直接报错
 engineStrict: true
 
+# pnpm 11 默认会把发布不足 24 小时的版本隔离（minimumReleaseAge 默认 1440 分钟），
+# 表现是升级时静默退回上一个补丁——“明明有新版却装不到”，还得逐个加白名单。
+# 这里直接关掉观察期，跟随 registry 上的 latest。
+minimumReleaseAge: 0
+
 # @heroui/date-picker 把 @internationalized/date 钉死在 3.12.0，应用和
 # @react-aria/* 用的是较新的 3.12.3。装成两份副本后 DateValue 里的 #private
 # 字段互不兼容，DatePicker 的 value/maxValue/minValue 全报 TS2322，收敛成一份。

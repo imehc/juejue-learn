@@ -4,5 +4,10 @@
 overrides:
   '@internationalized/date': 3.12.3
 
+# pnpm 11 默认会把发布不足 24 小时的版本隔离（minimumReleaseAge 默认 1440 分钟），
+# 表现是升级时静默退回上一个补丁——“明明有新版却装不到”，还得逐个加白名单。
+# 这里直接关掉观察期，跟随 registry 上的 latest。
+minimumReleaseAge: 0
+
 allowBuilds:
   '@heroui/shared-utils': true
