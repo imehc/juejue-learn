@@ -119,7 +119,7 @@ export const makeZodI18nMap: MakeZodI18nMap = (option) => (issue) => {
   message = (typeof errorMsg === "string" ? errorMsg : errorMsg?.message) ?? "";
 
   const path =
-    (issue.path?.length ?? 0) > 0 && !!handlePath
+    (issue.path?.length ?? 0) > 0 && handlePath
       ? {
           context: handlePath.context,
           path: t(

@@ -2,10 +2,7 @@
 
 import { HeroUIProvider } from "@heroui/system";
 import { AppProgressBar as ProgressBar, useRouter } from "next-nprogress-bar";
-import {
-  ThemeProvider ,
-  type ThemeProviderProps,
-} from "next-themes";
+import { ThemeProvider, type ThemeProviderProps } from "next-themes";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { Toaster } from "sonner";
 

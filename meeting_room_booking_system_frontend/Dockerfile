@@ -1,5 +1,7 @@
 # 使用 openapitools/openapi-generator-cli 生成api文档
-FROM openapitools/openapi-generator-cli:v6.6.0 AS openapi-generate-stage
+# 版本必须与 openapitools.json 的 generator-cli.version 一致（当前 7.28.0），
+# 否则本地/CI 生成与镜像内生成会产出不同的客户端代码
+FROM openapitools/openapi-generator-cli:v7.28.0 AS openapi-generate-stage
 
 WORKDIR /app 
 

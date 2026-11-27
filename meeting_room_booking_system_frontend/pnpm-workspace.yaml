@@ -2,12 +2,14 @@
 # pnpm-workspace.yaml，而 pnpm 11 已不再读 package.json 里的 pnpm.overrides，
 # 缺了这些设置安装会直接失败。内容必须与根 pnpm-workspace.yaml 保持一致。
 overrides:
-  '@internationalized/date': 3.12.3
+  "@internationalized/date": 3.12.3
 
-# pnpm 11 默认会把发布不足 24 小时的版本隔离（minimumReleaseAge 默认 1440 分钟），
-# 表现是升级时静默退回上一个补丁——“明明有新版却装不到”，还得逐个加白名单。
-# 这里直接关掉观察期，跟随 registry 上的 latest。
+# 与根一致的设置：关掉 pnpm 11 默认的发布观察期（1440 分钟），
+# 否则升级时会被静默退回上一个补丁。
 minimumReleaseAge: 0
 
 allowBuilds:
-  '@heroui/shared-utils': true
+  "@heroui/shared-utils": true
+  # 生成器 CLI 的 postinstall 只是 opencollective 的募捐提示（`opencollective || exit 0`），
+  # 对产出零影响，明确拒绝，免得每次安装都多跑一个进程
+  "@openapitools/openapi-generator-cli": false
