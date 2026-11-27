@@ -3,7 +3,7 @@
 # pnpm 直接 ERR_PNPM_LOCKFILE_CONFIG_MISMATCH，所以必须与根保持一致。
 # 后端本身并不依赖 @internationalized/date，这里纯粹是为了让配置对齐。
 overrides:
-  '@internationalized/date': 3.12.3
+  "@internationalized/date": 3.12.3
 
 # pnpm 11 默认会把发布不足 24 小时的版本隔离（minimumReleaseAge 默认 1440 分钟），
 # 表现是升级时静默退回上一个补丁——“明明有新版却装不到”，还得逐个加白名单。
@@ -14,12 +14,9 @@ minimumReleaseAge: 0
 # 容器里是全新安装，没有这份记录，任何未表态的依赖构建脚本都会让安装以
 # ERR_PNPM_IGNORED_BUILDS（exit 1）失败。因此必须逐个显式表态。
 allowBuilds:
-  # jest-resolve → unrs-resolver，postinstall 负责选取当前平台的原生绑定
-  unrs-resolver: true
   # @nestjs/swagger → swagger-ui-dist → @scarf/scarf，postinstall 只做安装量
   # 埋点上报，对构建无用，明确拒绝
-  '@scarf/scarf': false
-  # jest-haste-map 30.5 起改用 @parcel/watcher 做文件监听，postinstall 通过
-  # node-gyp-build 选取当前平台的原生绑定（产物已在 optionalDependencies 里），
-  # 与 unrs-resolver 同理，放行。
-  '@parcel/watcher': true
+  "@scarf/scarf": false
+  # 测试跑在 Vitest 上，TS 转换走 unplugin-swc → @swc/core，postinstall 负责
+  # 选取当前平台的原生绑定，放行。
+  "@swc/core": true

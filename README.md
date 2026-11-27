@@ -31,9 +31,23 @@ pnpm monorepo，前后端分离，用 Docker Compose 编排。
 
 | 工具 | 版本 |
 | --- | --- |
-| Node.js | >= 20 |
+| Node.js | >= 22.22.3（开发、CI）；仅运行后端时 22.12 即可 |
 | pnpm | >= 10 |
 | Docker | 带 Compose v2（`docker compose`，不是 `docker-compose`） |
+
+后端编译产物是 CommonJS，但 Nest 12 全家桶（`@nestjs/common`、`@nestjs/core`、
+`@nestjs/testing`…）连同 `@nestjs/config` 12、`@nestjs/jwt` 12、`@nestjs/typeorm` 12、
+`date-fns` 4、`uuid` 14 等依赖都已经是纯 ESM（package exports 里没有 `require` 条件），
+运行期全靠 Node 的 `require(ESM)` 加载。该能力从 22.12 / 20.19 起才可用，
+低于此版本会在 `node dist/main` 时直接抛 `ERR_REQUIRE_ESM`。
+
+开发门槛更高：`@nestjs/schematics` 12 的 engines 是 `^22.22.3 || ^24.15 || >=26`
+（跟着 Angular devkit 走），Nest CLI 的 `upgrade` / `generate` 按这条线支持。
+所以根 `package.json` 的 engines 卡在 22.22.3（`engineStrict`，低于它装依赖直接失败）；
+后端自己只声明 `>=22.12`，因为镜像里只跑 `node dist/main`。
+
+测试跑在 Vitest 上（Nest 12 新项目的默认测试栈），配置见后端的 `vitest.config.mts`。
+
 
 ## 配置文件
 

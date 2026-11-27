@@ -21,7 +21,7 @@ minimumReleaseAge: 0
 # 注意必须写在这里：workspace 成员自己 package.json 里的 pnpm.overrides
 # 不生效，overrides 只认工作区根。
 overrides:
-  '@internationalized/date': 3.12.3
+  "@internationalized/date": 3.12.3
 
 # @heroui/shared-utils 的 postinstall 会按 react 大版本把 dist/demi/reactXX
 # 覆盖到 dist（默认产物是 react18 那份）。pnpm 默认不跑依赖的构建脚本，
@@ -29,13 +29,13 @@ overrides:
 # 且 dist 会停留在 react18 变体。
 # pnpm 11 用 allowBuilds 取代了 onlyBuiltDependencies。
 allowBuilds:
-  '@heroui/shared-utils': true
-  # 后端侧：jest-resolve → unrs-resolver，postinstall 选取当前平台的原生绑定
-  unrs-resolver: true
+  "@heroui/shared-utils": true
   # 后端侧：@nestjs/swagger → swagger-ui-dist → @scarf/scarf，postinstall 只做
   # 安装量埋点上报，对构建无用，明确拒绝
-  '@scarf/scarf': false
-  # 后端侧：jest-haste-map 30.5 起改用 @parcel/watcher 做文件监听，
-  # postinstall 通过 node-gyp-build 选取当前平台的原生绑定（各平台产物已在
-  # optionalDependencies 里，无需编译），与 unrs-resolver 同理，放行。
-  '@parcel/watcher': true
+  "@scarf/scarf": false
+  # 后端侧：测试跑在 Vitest 上，TS 转换走 unplugin-swc → @swc/core，
+  # postinstall 负责选取当前平台的原生绑定，放行。
+  "@swc/core": true
+  # 前端侧：OpenAPI 生成器 CLI，postinstall 只是 opencollective 募捐提示
+  # （`opencollective || exit 0`），对产出零影响，明确拒绝
+  "@openapitools/openapi-generator-cli": false
